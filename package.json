@@ -41,6 +41,7 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "paynow": "^1.2.0",
     "pdf-creator-node": "^2.3.5",
     "puppeteer": "^19.7.2",
     "stripe": "^15.11.0",
