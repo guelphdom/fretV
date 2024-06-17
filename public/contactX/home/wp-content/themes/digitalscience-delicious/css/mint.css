@@ -1,0 +1,345 @@
+/**
+ * * * * * * * * * * * * * * * * * * * * *  
+ * * DELICIOUS THEME STYLESHEET* * * * * *
+ * * TABLE OF CONTENTS * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * *
+ * 1. CSS RESET
+ * 2. HEADER SECTION
+ * 3. GENERAL SECTION STYLES
+ * 4. SECTION TYPO & DETAILS
+ * 5. SEPARATORS AND TRIANGLES
+ * 6. ICON COLUMNS
+ * 7. BUTTONS             
+ * 8. REVIEWS
+ * 9. SCREENS
+ * 10. DEMO
+ * 11. FORMS
+ * 12. FOOTER
+ * 13. BLOG
+ * * * * * * * * * * * * * * * * * * * * */
+
+/**
+ * MAIN COLORS
+ * green           = #63B83A
+ * alternate green = #ACC83C
+ */
+
+/**
+ *
+ * 
+ * 1. CSS RESET
+ *
+ * 
+ */
+
+a {
+    color: #63B83A;
+}
+
+a:hover {
+    color: #c8c8c8;
+}
+
+blockquote {
+    border-color: #63B83A;
+}
+
+/**
+ *
+ * 
+ * 2. HEADER SECTION (menu&slider)
+ *
+ * 
+ */
+
+#topContainer {
+    background-image: url('../img/mint/background.jpg');
+}
+
+.menuActive a {
+    color: #ACC83C !important;
+}
+
+.mainMenu li a:hover {
+    color: #ACC83C;
+}
+
+#followMenu .mainMenu li a:hover,
+#followMenu .mainMenu .menuActive a {
+    background: #63B83A !important;
+}
+
+#responsiveMenuToggle {
+    background: #63B83A;
+}
+
+/**
+ *
+ * 
+ * 3. GENERAL SECTION STYLES
+ *
+ * 
+ */
+
+/**
+ *
+ * 
+ * 4. SECTION TYPO & DETAILS
+ *
+ * 
+ */
+
+.titleSeparator {
+    background-color: #63B83A;
+}
+
+.textureBgSection1 {
+    background-image: url(../img/mint/bg-texture1.jpg);
+}
+
+.textureBgSection2 {
+    background-image: url(../img/mint/bg-texture2.jpg);
+}
+
+/**
+ *
+ * 6. ICON COLUMNS
+ * 
+ */
+
+.iconColWrap i.fa {
+    border-color: #63B83A;
+    color: #63B83A;
+}
+
+.iconColWrap:hover i.fa {
+    background: #63B83A;
+}
+
+.iconColWrap:hover h2 {
+    color: #63B83A;
+}
+
+/*right icon col*/
+
+.iconRightColWrap i.fa {
+    border-color: #63B83A;
+    color: #63B83A;
+}
+
+.iconRightColWrap:hover i.fa {
+    background: #63B83A;
+}
+
+.iconRightColWrap:hover h2 {
+    color: #63B83A;
+}
+
+/*left icon col*/
+
+.iconLeftColWrap i.fa {
+    border-color: #63B83A;
+    color: #63B83A;
+}
+
+.iconLeftColWrap:hover i.fa {
+    background: #63B83A;
+}
+
+.iconLeftColWrap:hover h2 {
+    color: #63B83A;
+}
+
+/**
+ *
+ * 7. BUTTONS
+ * 
+ */
+
+.buttonBig:hover,
+.dlButton:hover {
+    color: #ACC83C;
+}
+
+/**
+ *
+ * 
+ * 8. REVIEWS
+ *
+ * 
+ */
+
+.revText {
+    color: #63B83A;
+}
+
+/**
+ *
+ * 
+ * 9. SCREENS
+ *
+ * 
+ */
+
+.screenImg:hover {
+    border-color: #63B83A;
+}
+
+button.active,
+button:hover,
+input[type="submit"]:hover {
+    background: #00B728;
+    border-color: #00B728;
+}
+
+.screensArrowsActive:hover {
+    background: #63B83A;
+}
+
+/**
+ *
+ * 
+ * 10. DEMO
+ *
+ * 
+ */
+
+.floatingPhone {
+    background-image: url('../img/mint/demoimg/phone2.png');
+}
+
+/**
+ *
+ * 
+ * 11. FORMS
+ *
+ * 
+ */
+
+input:focus,
+textarea:focus {
+    border-color: #63B83A;
+}
+
+input[type="submit"] {
+    color: #63B83A;
+    border-color: #63B83A;
+}
+
+.del-fa {
+    border-color: #63B83A;
+    color: #63B83A;
+}
+
+/**
+ *
+ * 
+ * 12. FOOTER
+ *
+ * 
+ */
+
+.footer i.fa:hover {
+    color: #63B83A;
+}
+
+.footer p a {
+    color: #99ffcc;
+}
+
+/**
+ *
+ * 
+ * 13. BLOG
+ *
+ * 
+ */
+
+.postDate {
+    background: #63B83A;
+}
+
+.postType {
+    border-color: #63B83A;
+    color: #63B83A;
+}
+
+#searchform #searchsubmit {
+    background-image: url(../img/mint/search.png);
+}
+
+#sidebarDelicious ul li a:hover {
+    color: #63B83A;
+}
+
+#sidebarDelicious ul li a:hover .delCatCount {
+    background: #63B83A;
+    border-color: #63B83A;
+}
+
+#sidebarDelicious .tagcloud a:hover {
+    background: #63B83A;
+    border-color: #63B83A;
+}
+
+.divPopRec .postTextWidg a:hover {
+    color: #63B83A;
+}
+
+.divPopRec .post-date {
+    color: #63B83A;
+}
+
+#comments .avatar {
+    border-color: #63B83A;
+}
+
+.comment-reply-link:hover {
+    border-color: #63B83A;
+}
+
+.moreButton {
+    color: #63B83A;
+    border-color: #63B83A;
+}
+
+.moreButton:hover {
+    background: #63B83A;
+}
+
+.commButton:hover,
+.commButton:hover span {
+    color: #63B83A;
+    border-color: #63B83A;
+}
+
+.navigation ul li.active {
+    border-color: #63B83A;
+    background: #63B83A;
+}
+
+.navigation ul li a:hover {
+    border-color: #63B83A;
+    background: #63B83A;
+}
+
+.pagetype {
+    background: #63B83A;
+}
+
+.postTitle a:hover {
+    color: #63B83A;
+}
+
+.del_tweet_img a {
+    background: #63B83A;
+}
+
+.del_tweet_img a:hover {
+    background: #ACC83C;
+}
+
+.imgZoomIcon {
+    background: #63B83A;
+}

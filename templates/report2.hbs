@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Latest compiled and minified CSS -->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+		<!--end::Fonts-->
+		<!--begin::Page Vendor Stylesheets(used by this page)-->
+		<link href="assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+		
+		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Page Vendor Stylesheets-->
+		<!--begin::Global Stylesheets Bundle(used by all pages)-->
+		<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Global Stylesheets Bundle-->
+</head>
+<body>
+   <div class="container">
+<!--begin::Post-->
+						<div class="post d-flex flex-column-fluid" id="kt_post">
+							<!--begin::Container-->
+							<div id="kt_content_container" class="container-xxl">
+								<!--begin::Row-->
+								<div class="row gy-5 g-xl-8">
+									<!--begin::Col-->
+												<div class="row g-5 g-xl-10">
+									<!--begin::Col-->
+									<div class="col-xl-12 mb-5 mb-xl-10">
+										<!--begin::List widget 21-->
+										<div class="card card-flush h-xl-100">
+											<!--begin::Header-->
+											<div class="card-header border-0 pt-5">
+												<h3 class="card-title align-items-start flex-column">
+													<span class="card-label fw-bolder text-dark"> Registered Subjects</span>
+													<span class="text-muted mt-1 fw-bold fs-7">Student Average Marks %</span>
+												</h3>
+												<!--begin::Toolbar-->
+												<div class="card-toolbar">
+													<a href="#" class="btn btn-sm btn-light">All Subjects</a>
+												</div>
+												<!--end::Toolbar-->
+											
+											</div>
+											<!--end::Header-->
+											<!--begin::Body-->
+						
+											<div class="card-body pt-5">
+												<!--begin::Item-->
+																   {{#each this}}
+												<div class="d-flex flex-stack">
+													<!--begin::Wrapper-->
+													<div class="d-flex align-items-center me-3">
+														<!--begin::Logo-->
+														<img src="{{this.icon}}" class="me-4 w-30px" alt="" />
+														<!--end::Logo-->
+														<!--begin::Section-->
+														<div class="flex-grow-1">
+															<!--begin::Text-->
+															{{this.uid}}
+															<a href="#" class="text-gray-800 text-hover-primary fs-5 fw-bolder lh-0">{{this.subject}}</a>
+															<!--end::Text-->
+															<!--begin::Description-->
+															<span class="text-gray-400 fw-bold d-block fs-6"></span>
+															<!--end::Description=-->
+														</div>
+														<!--end::Section-->
+													</div>
+													<!--end::Wrapper-->
+													<!--begin::Statistics-->
+													<div class="d-flex align-items-center w-100 mw-125px">
+														<!--begin::Progress-->
+														<div class="progress h-6px w-100 me-2 bg-light-success">
+															<div class="{{this.color}}" role="progressbar" style="width: {{this.percentage}}%" aria-valuenow="{{this.percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+														</div>
+														<!--end::Progress-->
+														<!--begin::Value-->
+														<span class="text-gray-400 fw-bold">{{this.percentage}}%</span>
+														<!--end::Value-->
+													</div>
+													<!--end::Statistics-->
+												</div>
+												<!--end::Item-->
+												<!--begin::Separator-->
+												<div class="separator separator-dashed my-3"></div>
+												<!--end::Separator-->
+												<!--begin::Item-->
+												 {{/each}}
+												<!--end::Item-->
+											</div>
+											<!--end::Body-->
+											  
+										</div>
+										<!--end::List widget 21-->
+									</div>
+   </div>
+</body>
+</html>

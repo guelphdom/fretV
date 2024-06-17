@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Reporting demo</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="statements/css/styles.css" />
+        <link rel="stylesheet" href="statements/css/statement.css" />
+        <link rel="stylesheet" href="statements/css/addendum.css" />
+
+        <style type="text/css">
+            @page statement {
+                @bottom-right {
+                    content: "Page " counter(page) " of " target-counter(url("#end"), page);
+                }
+            }
+        </style>
+    </head>
+
+    <body lang="en">
+         
+            <article>
+    <section class="statement">
+        <div>
+    <div class="footer">
+        <div>ZOPYX Global Enterprise<br/>Phone: (+49) 7071 793376, Fax: (+49) 7071 793376,  Website: www.zopyx.com<br />Email: info@zopyx.com</div>
+    </div>
+
+    <div class="head1-left">
+        <!--
+            <img src="logo.png" />
+        -->
+        <img src="statements/assets/LogoSizingSample.png" />
+    </div>
+
+    <div class="head1-right">
+        <div class="head-title">Student Details</div>
+       <!-- <div class="head-date">January 01, 2019 to March 31, 2019</div>-->
+    </div>
+
+    <!--<div class="head2-left">
+        <div class="sequence-number">000024</div>
+        <div>HHKO MFIU</div>
+        <div>2888 XMYVFEJ FI</div>
+        <div>AXYDTPL QP  G4I 2U8</div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>-->
+
+    <div class="head2-right">
+        <div class="advisor-title" xpath=".//YFAS_TITLE">{{doc.fullname}}</div>
+        <div class="advisor-outer">
+            <div class="advisor">
+                <div><em> Class: {{doc.class1}}</em></div>
+                <div><em>Grade: {{doc.grade}}</em> </div>
+                <div><em>Student ID: {{doc.uid}}</em></div>
+                <!--<div>NANAIMO BC B1A 2CB</div>-->
+                <div></div>
+                <div></div>
+                <!--<div>Telephone Number</div>
+                <div>(299)  555-1234</div>-->
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer">&nbsp;</div>
+
+    <div class="two-tables">
+        <table class="accounting table-left">
+    <caption>
+        <span>Hostel Information</span>
+    </caption>
+   <!-- <thead>
+        <tr class="headers">
+            <th class="text-left">Account Type</th>
+            <th class="text-left">Account Number</th>
+        </tr>
+    </thead>-->
+    <tbody>
+        <tr class="headers border-bottom" >
+            <td class="text-left text-10 bold">Hostel - {{doc.hostel}}</td>
+            <!--<td class="text-left text-10 bold">19570</td>-->
+        </tr>
+    </tbody>
+    <tfoot>
+        
+            <tr class="border-bottom">
+                <td colspan="2">
+                    <div class="text-left text-10 bold">Room - {{doc.room}} </div>
+                    <!--<div class="text-left">{{doc.room}}</div>
+                       <div class="text-left">{{doc.floor}}</div>-->
+                    These investments are registered in the name of FIDELITY CLEARING CANADA ULC on your behalf.
+                </td>
+            </tr>
+        
+        
+        
+    </tfoot>
+</table>
+       <!-- <table class="accounting table-right">
+    <caption>
+        <span>Account Value</span>
+    </caption>
+    <tbody>
+        <tr class="border-bottom">
+            <td class="text-left text-10">
+              Closing Market Value This<br />Period
+            </td>
+            <td class="text-right text-10">
+              $7,047.73
+            </td>
+        </tr>
+        <tr class="border-bottom">
+            <td class="text-left">
+              Opening Balance
+            </td>
+            <td class="text-right">
+              $6,070.12
+            </td>
+        </tr>
+        <tr class="border-bottom">
+            <td class="text-left">
+              Book Cost
+            </td>
+            <td class="text-right">
+              $6,390.75
+            </td>
+        </tr>
+    </tbody>-->
+</table>
+        <div style="clear: both"></div>
+    </div>
+     {{#each listX}}
+    <table class="accounting account-summary">
+               
+    <caption>
+        <span>{{this.type}}</span>
+    </caption>
+
+    <thead>
+        <tr class="headers border-bottom">
+            <th class="text-left">Description</th>
+            <th class="text-center">Mark</th>
+            <th class="text-right">Level</th>
+            <th class="text-right">Code</th>
+            <!--<th class="text-right">Unit<br />Balance</th>
+            <th class="text-right">Unit<br />Price ($)</th>
+            <th class="text-right">Market<br />Value ($)</th>-->
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr class="border-bottom">
+            <td colspan="7" class="text-7 text-left">{{this.type}}</td>
+        </tr>
+        
+        <tr class="border-bottom">
+            <td class="text-left">{{this.name}}</td>
+            <td class="text-center">{{this.mark}}</td>
+            <td class="text-right">{{this.level}}</td>
+            <td class="text-right">{{this.code}}</td>
+            <!--<td class="text-right">399.869</td>
+            <td class="text-right">17.6251</td>
+            <td class="text-right">7,047.73</td>-->
+        </tr>
+        <tr class="border-bottom">
+            <td class="text-left" colspan="2"></td>
+            <td class="text-right" colspan="1"></td>
+            <td class="text-right" colspan="4"></td>
+        </tr>
+        
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-7" colspan="7">"<b> {{this.comments}}</b>": Hostel Head Comments</td>
+        </tr>
+    </tfoot>
+   
+</table>
+
+     {{/each}}
+
+ 
+
+   <!-- <div>Please review your statement of account carefully.  If there is any information that does not match your records, contact your Financial Advisor or our Client Services department within 60 days.</div>-->
+    <div></div>
+    <div></div>
+
+</div>
+        <div id="end"></div>
+    </section>
+
+    
+
+
+    <!-- MAT.PDF as two images
+    <div class="addendum-images">
+        <img src="MAT_INSERT_20190331_V1-0.png"/>
+        <img src="MAT_INSERT_20190331_V1-1.png"/>
+    </div>
+    -->
+
+</article> 
+        
+    </body>
+</html>

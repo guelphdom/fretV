@@ -1,0 +1,658 @@
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+.form-all {
+    font-family: "Inter", sans-serif;
+}
+
+.main .jotform-form {
+    width: 100%;
+    padding: 0 3%;
+}
+
+.form-all {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 752px;
+}
+
+.form-line-active {
+    background-color: #d6f8ff !important;
+}
+
+.form-all {
+    font-size: 16px;
+}
+
+li.form-line {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.form-line {
+    padding: 12px 10px;
+}
+
+.form-section {
+    padding: 0px 38px;
+}
+
+.form-textbox,
+.form-textarea,
+li[data-type=control_fileupload] .qq-upload-button,
+.signature-wrapper {
+    border-color: rgba(36, 155, 180, 0.3);
+    color: #249bb4;
+}
+
+.form-textarea:hover,
+.form-textbox:hover,
+li[data-type=control_fileupload] .qq-upload-button:hover,
+.signature-wrapper:hover {
+    border-color: rgba(36, 155, 180, 0.5);
+    box-shadow: 0 0 0 2px rgba(36, 155, 180, 0.25);
+}
+
+.form-textarea:focus,
+.form-textbox:focus,
+li[data-type=control_fileupload] .qq-upload-button:focus,
+.signature-wrapper:focus {
+    border-color: #249bb4;
+    box-shadow: 0 0 0 3px rgba(36, 155, 180, 0.25);
+}
+
+.form-textbox,
+.form-textarea,
+.form-radio-other-input,
+.form-checkbox-other-input,
+.form-captcha input,
+.form-spinner input {
+    background-color: #ffffff;
+}
+
+.form-label {
+    font-family: "Inter", sans-serif;
+}
+
+.form-line-column {
+    width: calc(50% - 8px);
+}
+
+.form-dropdown:first-child {
+    border-color: rgba(36, 155, 180, 0.3);
+}
+
+.form-checkbox-item label,
+.form-checkbox-item span,
+.form-radio-item label,
+.form-radio-item span {
+    color: #404a64;
+}
+
+.form-radio-item,
+.form-checkbox-item {
+    padding-bottom: 0px !important;
+}
+
+.form-radio-item:last-child,
+.form-checkbox-item:last-child {
+    padding-bottom: 0;
+}
+
+.form-single-column .form-checkbox-item,
+.form-single-column .form-radio-item {
+    width: 100%;
+}
+
+.form-checkbox-item .editor-container div,
+.form-radio-item .editor-container div {
+    position: relative;
+}
+
+.form-checkbox-item .editor-container div:before,
+.form-radio-item .editor-container div:before {
+    display: inline-block;
+    vertical-align: middle;
+    left: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.form-checkbox-item input,
+.form-radio-item input {
+    margin-top: 2px;
+}
+
+.form-checkbox:checked+label:before,
+.form-checkbox:checked+span:before {
+    background-color: #249bb4;
+    border-color: #249bb4;
+}
+
+.form-radio:checked+label:before,
+.form-radio:checked+span:before {
+    border-color: #249bb4;
+}
+
+.form-radio:checked+label:after,
+.form-radio:checked+span:after {
+    background-color: #249bb4;
+}
+
+.form-checkbox:hover+label:before,
+.form-checkbox:hover+span:before,
+.form-radio:hover+label:before,
+.form-radio:hover+span:before {
+    border-color: rgba(36, 155, 180, 0.5);
+    box-shadow: 0 0 0 2px rgba(36, 155, 180, 0.25);
+}
+
+.form-checkbox:focus+label:before,
+.form-checkbox:focus+span:before,
+.form-radio:focus+label:before,
+.form-radio:focus+span:before {
+    border-color: #249bb4;
+    box-shadow: 0 0 0 3px rgba(36, 155, 180, 0.25);
+}
+
+.submit-button {
+    font-size: 16px;
+    font-weight: normal;
+    font-family: "Inter", sans-serif;
+}
+
+.submit-button {
+    min-width: 180px;
+}
+
+.form-all .form-pagebreak-back,
+.form-all .form-pagebreak-next {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.form-all .form-pagebreak-back,
+.form-all .form-pagebreak-next {
+    min-width: 128px;
+}
+
+li[data-type="control_image"] div {
+    text-align: left;
+}
+
+li[data-type="control_image"] img {
+    border: none;
+    border-width: 0px !important;
+    border-style: solid !important;
+    border-color: false !important;
+}
+
+.supernova {
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center top;
+    background-attachment: fixed;
+    background-size: auto;
+    background-size: cover;
+}
+
+.supernova {
+    background-image: none;
+    background-image: url("https://www.jotform.com/uploads/beril/form_files/job-application-bg.png");
+}
+
+#stage {
+    background-image: none;
+    background-image: url("https://www.jotform.com/uploads/beril/form_files/job-application-bg.png");
+}
+
+/* | */
+
+.form-all {
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center top;
+    background-repeat: repeat;
+}
+
+.form-header-group {
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center top;
+}
+
+.header-large h1.form-header {
+    font-size: 2em;
+}
+
+.header-large h2.form-header {
+    font-size: 1.5em;
+}
+
+.header-large h3.form-header {
+    font-size: 1.17em;
+}
+
+.header-large h1+.form-subHeader {
+    font-size: 1em;
+}
+
+.header-large h2+.form-subHeader {
+    font-size: .875em;
+}
+
+.header-large h3+.form-subHeader {
+    font-size: .75em;
+}
+
+.header-default h1.form-header {
+    font-size: 2em;
+}
+
+.header-default h2.form-header {
+    font-size: 1.5em;
+}
+
+.header-default h3.form-header {
+    font-size: 1.17em;
+}
+
+.header-default h1+.form-subHeader {
+    font-size: 1em;
+}
+
+.header-default h2+.form-subHeader {
+    font-size: .875em;
+}
+
+.header-default h3+.form-subHeader {
+    font-size: .75em;
+}
+
+.header-small h1.form-header {
+    font-size: 2em;
+}
+
+.header-small h2.form-header {
+    font-size: 1.5em;
+}
+
+.header-small h3.form-header {
+    font-size: 1.17em;
+}
+
+.header-small h1+.form-subHeader {
+    font-size: 1em;
+}
+
+.header-small h2+.form-subHeader {
+    font-size: .875em;
+}
+
+.header-small h3+.form-subHeader {
+    font-size: .75em;
+}
+
+.form-header-group {
+    text-align: left;
+}
+
+.form-header-group {
+    font-family: "Inter", sans-serif;
+}
+
+div.form-header-group.header-large,
+div.form-header-group.hasImage {
+    margin: 0px -38px;
+}
+
+div.form-header-group.header-large,
+div.form-header-group.hasImage {
+    padding: 40px 52px;
+}
+
+.form-header-group .form-header,
+.form-header-group .form-subHeader {
+    color: #249bb4;
+}
+
+.form-line-error {
+    overflow: hidden;
+    -webkit-transition-property: none;
+    -moz-transition-property: none;
+    -ms-transition-property: none;
+    -o-transition-property: none;
+    transition-property: none;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -ms-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -ms-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    transition-timing-function: ease;
+    background-color: #fff4f4;
+}
+
+.form-line-error .form-error-message {
+    background-color: #f23a3c;
+    clear: both;
+    float: none;
+}
+
+.form-line-error .form-error-message .form-error-arrow {
+    border-bottom-color: #f23a3c;
+}
+
+.form-line-error input:not(#coupon-input),
+.form-line-error textarea,
+.form-line-error .form-validation-error {
+    border: 1px solid #f23a3c;
+    box-shadow: 0 0 3px #f23a3c;
+}
+
+.supernova {
+    background-color: #ffffff;
+    background-color: #f3f3fe;
+}
+
+.supernova body {
+    background-color: transparent;
+}
+
+.supernova .form-all,
+.form-all {
+    background-color: #ffffff;
+}
+
+.form-textbox,
+.form-textarea,
+.form-radio-other-input,
+.form-checkbox-other-input,
+.form-captcha input,
+.form-spinner input {
+    background-color: #ffffff;
+}
+
+.form-matrix-table tr {
+    border-color: #e6e6e6;
+}
+
+.form-matrix-table tr:nth-child(2n) {
+    background-color: #f2f2f2;
+}
+
+.form-all {
+    color: #2c3345;
+}
+
+.form-label-top,
+.form-label-left,
+.form-label-right,
+.form-html {
+    color: #2c3345;
+}
+
+.form-line-error {
+    overflow: hidden;
+    -webkit-transition-property: none;
+    -moz-transition-property: none;
+    -ms-transition-property: none;
+    -o-transition-property: none;
+    transition-property: none;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -ms-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -ms-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    transition-timing-function: ease;
+    background-color: #fff4f4;
+}
+
+/*__INSPECT_SEPERATOR__*/
+
+.form-sub-label,
+::placeholder,
+.form-dropdown:first-child,
+.form-spinner-button,
+.appointmentCalendarContainer,
+.appointmentSlot,
+.pickerItem select,
+.selectedDate input,
+.clear-pad-btn,
+.calendar.popup th,
+.FITB-button,
+.form-submit-reset,
+.stageEmpty.isSmall,
+.appointmentCalendar .calendarDay,
+.rating-item label,
+li[data-type=control_fileupload] .qq-upload-button,
+.rating-item input:focus+label,
+.rating-item input:hover+label {
+    color: #249BB4;
+}
+
+.appointmentCalendar .dayOfWeek,
+.form-matrix-headers {
+    color: #ffffff;
+}
+
+.rating-item label,
+li[data-type=control_fileupload] .qq-upload-button {
+    color: #1989A0;
+}
+
+.appointmentCalendar .calendarDay.isUnavailable {
+    color: rgba(36, 155, 180, 0.3);
+}
+
+.rating-item label {
+    background-color: #ffffff;
+}
+
+.rating-item input:focus+label,
+.rating-item input:hover+label {
+    border-color: #ffffff;
+    color: #fff;
+}
+
+.rating-item-title.for-to>label:first-child,
+.rating-item-title.for-from>label:first-child,
+.rating-item-title .editor-container * {
+    background-color: transparent;
+}
+
+.rating-item {
+    width: 70px;
+}
+
+.rating-item>label {
+    width: 70px;
+    height: 34px;
+    border-radius: 8px;
+}
+
+li[data-type="control_rating"].form-line-error .form-star-rating .form-star-rating-star:not(:last-child) {
+    background-position: -129px 0px !important;
+}
+
+.form-matrix-headers,
+.form-spinner-button,
+.appointmentCalendar .dayOfWeek,
+.appointmentCalendar .calendarDay.isActive .calendarDayEach,
+.appointmentFieldRow.forSelectedDate,
+.appointmentCalendar .dayOfWeek,
+.calendar.popup th,
+.FITB-button,
+.appointmentDayPickerButton,
+.appointmentCalendar .calendarDay:after,
+.rating-item input:focus+label,
+.rating-item input:hover+label {
+    background-color: #249BB4;
+}
+
+.appointmentSlot.active {
+    background-color: #1989A0 !important;
+}
+
+.appointmentDayPickerButton:hover {
+    background-color: #046E84;
+}
+
+.appointmentSlot:not(.disabled):not(.active):hover,
+.rating-item input:focus+label,
+.rating-item input:hover+label,
+.form-collapse-table:hover,
+.clear-pad-btn:hover {
+    background-color: rgba(36, 155, 180, 0.5);
+}
+
+.stageEmpty,
+.form-collapse-table,
+.clear-pad-btn,
+li[data-type=control_fileupload] .qq-upload-button {
+    background-color: rgba(36, 155, 180, 0.1);
+}
+
+.rating-item label,
+.rating-item input:checked+label,
+.form-matrix-column-headers,
+.form-matrix-table td,
+.form-matrix-table td:last-child,
+.form-matrix-table th,
+.form-matrix-table th:last-child,
+.form-matrix-table tr:last-child td,
+.form-matrix-table tr:last-child th,
+.form-matrix-table tr:not([role=group])+tr[role=group] th {
+    border-color: #1989A0;
+}
+
+.form-checkbox+label:before,
+.form-checkbox+span:before,
+.form-radio+label:before,
+.form-radio+span:before {
+    border-color: #046E84;
+}
+
+.rating-item input:focus+label,
+.rating-item input:hover+label {
+    border-color: #249BB4;
+}
+
+.appointmentSlot,
+.appointmentCalendar .calendarDay.isActive .calendarDayEach,
+.appointmentCalendar .calendarDay.isToday .calendarDayEach,
+.appointmentCalendar .calendarDay:not(.empty):hover .calendarDayEach {
+    border: 1px solid #249BB4;
+}
+
+.stageEmpty {
+    border: 2px dashed #249BB4;
+}
+
+.form-matrix-headers.form-matrix-column-headers {
+    border-top: 1px solid #046E84;
+}
+
+.isSelected .form-matrix-column-headers:nth-last-of-type(2) {
+    border-right: 1px solid #046E84;
+}
+
+.rating-item input:checked+label {
+    background-color: #1989A0;
+}
+
+.rating-item-title.for-to>label:first-child,
+.rating-item-title.for-from>label:first-child,
+.rating-item-title .editor-container * {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+.signature-pad-passive,
+.signature-placeholder:after {
+    background-image: url("data:image/svg+xml,%3Csvg width='198' height='40' viewBox='0 0 198 40' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath d='M74.1044 6.34508H75.5859C75.5412 4.7144 74.0994 3.53116 72.0312 3.53116C69.9879 3.53116 68.4219 4.69948 68.4219 6.45446C68.4219 7.87136 69.4361 8.70162 71.0717 9.14409L72.2749 9.47221C73.3636 9.76056 74.2038 10.1185 74.2038 11.0233C74.2038 12.0177 73.2543 12.6739 71.9467 12.6739C70.7635 12.6739 69.7791 12.1469 69.6896 11.0383H68.1484C68.2479 12.8827 69.6747 14.0212 71.9567 14.0212C74.348 14.0212 75.7251 12.7634 75.7251 11.0383C75.7251 9.20375 74.0895 8.49281 72.7969 8.17463L71.8026 7.9161C71.0071 7.71227 69.9482 7.3394 69.9531 6.36497C69.9531 5.49991 70.7436 4.85858 71.9964 4.85858C73.1648 4.85858 73.995 5.40545 74.1044 6.34508Z' fill='%23249BB4'/%3E%3Cpath d='M77.4416 13.8522H78.9281V6.21582H77.4416V13.8522ZM78.1923 5.03755C78.7044 5.03755 79.1319 4.63983 79.1319 4.15261C79.1319 3.66539 78.7044 3.2627 78.1923 3.2627C77.6752 3.2627 77.2527 3.66539 77.2527 4.15261C77.2527 4.63983 77.6752 5.03755 78.1923 5.03755Z' fill='%23249BB4'/%3E%3Cpath d='M84.1296 16.86C86.0735 16.86 87.5749 15.9701 87.5749 14.0212V6.21582H86.1183V7.45375H86.0089C85.7454 6.98145 85.2184 6.11639 83.7965 6.11639C81.9521 6.11639 80.5948 7.57306 80.5948 10.0042C80.5948 12.4403 81.9819 13.7378 83.7866 13.7378C85.1886 13.7378 85.7305 12.9474 85.9989 12.4601H86.0934V13.9616C86.0934 15.1398 85.2731 15.6618 84.1445 15.6618C82.9066 15.6618 82.4244 15.0404 82.1609 14.6178L80.8832 15.1448C81.2859 16.0645 82.305 16.86 84.1296 16.86ZM84.1147 12.5049C82.7873 12.5049 82.0962 11.4857 82.0962 9.98429C82.0962 8.51767 82.7724 7.37917 84.1147 7.37917C85.4123 7.37917 86.1083 8.43812 86.1083 9.98429C86.1083 11.5603 85.3974 12.5049 84.1147 12.5049Z' fill='%23249BB4'/%3E%3Cpath d='M91.055 9.31809C91.055 8.10005 91.8008 7.40403 92.8349 7.40403C93.8441 7.40403 94.4556 8.06525 94.4556 9.17392V13.8522H95.9421V8.99494C95.9421 7.10574 94.9031 6.11639 93.342 6.11639C92.1935 6.11639 91.4428 6.64835 91.0898 7.45872H90.9954V6.21582H89.5685V13.8522H91.055V9.31809Z' fill='%23249BB4'/%3E%3Cpath d='M101.76 13.8522H103.296V9.41255H108.372V13.8522H109.914V3.67037H108.372V8.09508H103.296V3.67037H101.76V13.8522Z' fill='%23249BB4'/%3E%3Cpath d='M115.323 14.0063C116.988 14.0063 118.166 13.186 118.504 11.9431L117.097 11.6895C116.829 12.4104 116.183 12.7783 115.338 12.7783C114.065 12.7783 113.21 11.953 113.17 10.4814H118.599V9.95446C118.599 7.19522 116.948 6.11639 115.218 6.11639C113.09 6.11639 111.688 7.73713 111.688 10.0837C111.688 12.4552 113.07 14.0063 115.323 14.0063ZM113.175 9.36781C113.235 8.284 114.02 7.34437 115.228 7.34437C116.382 7.34437 117.137 8.19949 117.142 9.36781H113.175Z' fill='%23249BB4'/%3E%3Cpath d='M120.248 13.8522H121.735V9.18883C121.735 8.18954 122.505 7.46866 123.559 7.46866C123.868 7.46866 124.216 7.52335 124.335 7.55815V6.13627C124.186 6.11639 123.892 6.10147 123.703 6.10147C122.809 6.10147 122.043 6.60858 121.765 7.42889H121.685V6.21582H120.248V13.8522Z' fill='%23249BB4'/%3E%3Cpath d='M128.639 14.0063C130.305 14.0063 131.483 13.186 131.821 11.9431L130.414 11.6895C130.145 12.4104 129.499 12.7783 128.654 12.7783C127.381 12.7783 126.526 11.953 126.486 10.4814H131.915V9.95446C131.915 7.19522 130.265 6.11639 128.535 6.11639C126.407 6.11639 125.005 7.73713 125.005 10.0837C125.005 12.4552 126.387 14.0063 128.639 14.0063ZM126.491 9.36781C126.551 8.284 127.336 7.34437 128.545 7.34437C129.698 7.34437 130.454 8.19949 130.459 9.36781H126.491Z' fill='%23249BB4'/%3E%3Cpath d='M1 36.0229C12.2461 39.2205 23.182 35.0328 32.5084 28.8511C37.4404 25.5822 42.3341 21.6687 45.3329 16.5101C46.5283 14.4539 47.9893 10.8844 44.2271 10.8528C40.1337 10.8183 37.0864 14.5142 35.5588 17.8744C33.3681 22.6933 33.291 28.4004 35.9656 33.0441C38.4971 37.4396 42.7445 39.5184 47.8114 38.6639C53.1037 37.7713 57.7304 34.1562 61.5765 30.6785C62.993 29.3976 64.3209 28.0475 65.542 26.5857C65.6842 26.4155 66.1842 25.5798 66.508 25.5218C66.6284 25.5002 66.8064 29.1645 66.8385 29.3643C67.1255 31.1543 68.0294 33.1706 70.1431 33.2318C72.8332 33.3097 75.0826 31.0591 76.8922 29.4018C77.5026 28.8428 79.4425 26.1601 80.4764 26.1601C80.9014 26.1601 81.7249 28.3038 81.9127 28.5883C84.3972 32.3523 88.0446 30.9894 90.8733 28.3505C91.3934 27.8653 94.1781 23.9839 95.3091 24.6832C96.2203 25.2466 96.6217 26.5765 97.0886 27.4618C97.8484 28.9029 98.8107 29.9294 100.419 30.4657C103.912 31.631 107.68 28.363 111.222 28.363C112.255 28.363 112.783 28.9316 113.332 29.7148C114.081 30.7823 114.853 31.5276 116.205 31.8175C120.393 32.7155 123.822 28.7399 127.872 29.0889C129.053 29.1907 129.935 30.3816 130.821 31.0164C132.609 32.2969 134.759 33.1836 136.948 33.4947C140.457 33.9934 143.975 33.3326 147.395 32.5935C153.3 31.3174 159.147 29.7958 165.062 28.5633' stroke='%23249BB4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M196.515 15.0778L184.492 0.551795C184.257 0.26781 183.838 0.22826 183.554 0.463307L180.649 2.86788C180.365 3.10293 180.325 3.5224 180.56 3.80638L192.583 18.3324C192.7 18.4741 192.864 18.5551 193.034 18.5712C193.204 18.5872 193.38 18.5382 193.522 18.4209L196.427 16.0164C196.711 15.7813 196.75 15.3618 196.515 15.0778Z' fill='%23249BB4'/%3E%3Cpath d='M181.436 6.9572L170.855 9.82593C170.622 9.88901 170.441 10.0729 170.383 10.3071L166.155 27.1017L173.975 20.6291C173.245 19.2612 173.55 17.5189 174.79 16.4921C176.206 15.3198 178.312 15.5191 179.483 16.9346C180.655 18.3508 180.456 20.4561 179.041 21.6278C178.333 22.2139 177.452 22.4577 176.603 22.3776C175.964 22.3174 175.343 22.074 174.825 21.6568L167.005 28.1286L184.294 27.1137C184.534 27.0996 184.749 26.9571 184.854 26.7401L189.65 16.8814L181.436 6.9572Z' fill='%23249BB4'/%3E%3C/svg%3E");
+}
+
+.form-spinner-button.form-spinner-up:before {
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='%23ffffff' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7.5 12.4004L7.5 7.40039L12.5 7.40039C12.776 7.40039 13 7.17639 13 6.90039C13 6.62439 12.776 6.40039 12.5 6.40039L7.5 6.40039L7.5 1.40039C7.5 1.12439 7.276 0.90039 7 0.90039C6.724 0.90039 6.5 1.12439 6.5 1.40039L6.5 6.40039L1.5 6.40039C1.224 6.40039 1 6.62439 1 6.90039C1 7.17639 1.224 7.40039 1.5 7.40039L6.5 7.40039L6.5 12.4004C6.5 12.6764 6.724 12.9004 7 12.9004C7.276 12.9004 7.5 12.6764 7.5 12.4004Z' fill='white' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E");
+}
+
+.form-spinner-button.form-spinner-down:before {
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='2' viewBox='0 0 14 2' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath d='M12.5 1.40039L7.5 1.40039L1.5 1.40039C1.224 1.40039 1 1.17639 1 0.90039C1 0.62439 1.224 0.40039 1.5 0.40039L6.5 0.40039L12.5 0.400391C12.776 0.400391 13 0.624391 13 0.900391C13 1.17639 12.776 1.40039 12.5 1.40039Z' fill='white' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E");
+}
+
+.appointmentDayPickerButton {
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='10' viewBox='0 0 6 10' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath d='M1 9L5 5L1 1' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+}
+
+.appointmentCalendarContainer .monthYearPicker .pickerArrow.prev:after {
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.599 5.337a.837.837 0 001.158-.02.834.834 0 000-1.179l-.667-.623-1.434-1.34L5.57.226a.837.837 0 00-1.136 0L.263 4.118c-.343.341-.35.87-.02 1.199a.832.832 0 001.155.02L5 1.975l3.599 3.362z' fill='%23249BB4' fill-rule='nonzero'/%3E%3C/svg%3E");
+}
+
+.appointmentCalendarContainer .monthYearPicker .pickerArrow.next:after {
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.403.227a.837.837 0 00-1.158.02.834.834 0 000 1.178l.666.623 1.435 1.34 2.087 1.95a.837.837 0 001.136 0l4.17-3.893c.343-.34.35-.87.02-1.198a.832.832 0 00-1.155-.02L5.002 3.588 1.403.227z' fill='%23249BB4' fill-rule='nonzero'/%3E%3C/svg%3E");
+}
+
+li[data-type=control_datetime] [data-wrapper-react=true].extended>div+.form-sub-label-container .form-textbox:placeholder-shown,
+li[data-type=control_datetime] [data-wrapper-react=true]:not(.extended) .form-textbox:not(.time-dropdown):placeholder-shown,
+li[data-type=control_datetime] [data-wrapper-react=true].extended>div+.form-sub-label-container .form-textbox,
+li[data-type=control_datetime] [data-wrapper-react=true]:not(.extended) .form-textbox:not(.time-dropdown) {
+    background-position: left 10px bottom 50%;
+    padding-left: 36px;
+}
+
+.appointmentCalendarContainer .currentDate,
+li[data-type=control_datetime] [data-wrapper-react=true].extended>div+.form-sub-label-container .form-textbox:placeholder-shown,
+li[data-type=control_datetime] [data-wrapper-react=true]:not(.extended) .form-textbox:not(.time-dropdown):placeholder-shown,
+li[data-type=control_datetime] [data-wrapper-react=true].extended>div+.form-sub-label-container .form-textbox,
+li[data-type=control_datetime] [data-wrapper-react=true]:not(.extended) .form-textbox:not(.time-dropdown) {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='18' viewBox='0 0 16 18' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M5 0.75C5.41421 0.75 5.75 1.08579 5.75 1.5V2.25H10.25V1.5C10.25 1.08579 10.5858 0.75 11 0.75C11.4142 0.75 11.75 1.08579 11.75 1.5V2.25H13.25C14.4926 2.25 15.5 3.25736 15.5 4.5V7.5V15C15.5 16.2426 14.4926 17.25 13.25 17.25H2.75C1.50736 17.25 0.5 16.2426 0.5 15V7.5V4.5C0.5 3.25736 1.50736 2.25 2.75 2.25H4.25V1.5C4.25 1.08579 4.58579 0.75 5 0.75ZM14 4.5V6.75H2V4.5C2 4.08579 2.33579 3.75 2.75 3.75H4.25V4.5C4.25 4.91421 4.58579 5.25 5 5.25C5.41421 5.25 5.75 4.91421 5.75 4.5V3.75H10.25V4.5C10.25 4.91421 10.5858 5.25 11 5.25C11.4142 5.25 11.75 4.91421 11.75 4.5V3.75H13.25C13.6642 3.75 14 4.08579 14 4.5ZM3.5 10.5C3.5 10.0858 3.83579 9.75 4.25 9.75H6.5C6.91421 9.75 7.25 10.0858 7.25 10.5V12C7.25 12.4142 6.91421 12.75 6.5 12.75H4.25C3.83579 12.75 3.5 12.4142 3.5 12V10.5Z' fill='%23249BB4'/%3E%3C/svg%3E");
+}
+
+li[data-type=control_fileupload] .qq-upload-button:before {
+    background-image: url("data:image/svg+xml,%3Csvg width='38' height='26' viewBox='0 0 38 26' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath d='M31.7484 11.2048C30.8903 4.76667 25.4968 0 19 0C13.4226 0 8.58065 3.52857 6.80323 8.85238C2.81936 9.71905 0 13.1857 0 17.3333C0 21.8524 3.49355 25.6286 7.96774 26H31.2581H31.3194C35.0581 25.6286 38 22.4095 38 18.5714C38 14.919 35.3032 11.7619 31.7484 11.2048ZM25.5581 14.6714C25.4355 14.7952 25.3129 14.8571 25.129 14.8571C24.9452 14.8571 24.8226 14.7952 24.7 14.6714L19.6129 9.53333V21.6667C19.6129 22.0381 19.3677 22.2857 19 22.2857C18.6323 22.2857 18.3871 22.0381 18.3871 21.6667V9.53333L13.3 14.6714C13.0548 14.919 12.6871 14.919 12.4419 14.6714C12.1968 14.4238 12.1968 14.0524 12.4419 13.8048L18.571 7.61429C18.6323 7.55238 18.6935 7.49048 18.7548 7.49048C18.8774 7.42857 19.0613 7.42857 19.2452 7.49048C19.3065 7.55238 19.3677 7.55238 19.429 7.61429L25.5581 13.8048C25.8032 14.0524 25.8032 14.4238 25.5581 14.6714Z' fill='%23249BB4'/%3E%3C/svg%3E");
+}
+
+.form-star-rating .form-star-rating-star {
+    width: 24px;
+    height: 24px;
+    background-image: url("https://cdn.jotfor.ms/assets/img/new-default-theme/star-rating/star_rating_job_application.svg") !important;
+}
+
+.form-dropdown {
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23046E84' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.form-collapse-table:after {
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 0C1.34315 0 0 1.34315 0 3V17C0 18.6569 1.34315 20 3 20H17C18.6569 20 20 18.6569 20 17V3C20 1.34315 18.6569 0 17 0H3ZM6.70711 8.29289C6.31658 7.90237 5.68342 7.90237 5.29289 8.29289C4.90237 8.68342 4.90237 9.31658 5.29289 9.70711L9.29289 13.7071C9.68342 14.0976 10.3166 14.0976 10.7071 13.7071L14.7071 9.70711C15.0976 9.31658 15.0976 8.68342 14.7071 8.29289C14.3166 7.90237 13.6834 7.90237 13.2929 8.29289L10 11.5858L6.70711 8.29289Z' fill='%23249BB4'/%3E%3C/svg%3E");
+    background-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+li[data-type="control_email"] input {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='12' viewBox='0 0 16 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.666626 3.01377V10C0.666626 11.1046 1.56206 12 2.66663 12H13.3333C14.4379 12 15.3333 11.1046 15.3333 10V3.01377L9.14688 7.34426C8.45824 7.8263 7.54167 7.8263 6.85303 7.34426L0.666626 3.01377ZM15.2543 1.44154C15.0126 0.608743 14.244 0 13.3333 0H2.66663C1.75589 0 0.987327 0.608743 0.745638 1.44154L7.61765 6.25195C7.8472 6.41263 8.15272 6.41263 8.38227 6.25195L15.2543 1.44154Z' fill='%23249BB4'/%3E%3C/svg%3E%0A");
+    background-position: left 10px bottom 50%;
+    padding-left: 36px;
+    background-repeat: no-repeat;
+}
+
+.mask-phone-number {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='\http\://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M6.62709 5.28453L6.31847 5.59315C6.39003 5.76343 6.48441 5.97437 6.60128 6.20786C6.90838 6.8214 7.35147 7.55137 7.9159 8.11579C8.48033 8.68022 9.21029 9.12331 9.82383 9.43042C10.0573 9.54729 10.2683 9.64166 10.4385 9.71323L10.7472 9.40461C11.3942 8.75758 12.4432 8.75758 13.0903 9.40461L15.0458 11.3601C15.6928 12.0072 15.6928 13.0562 15.0458 13.7032L13.9892 14.7598C13.2336 15.5154 12.0718 15.7348 11.0932 15.2341C9.53491 14.4369 6.62632 12.8331 4.91247 11.1192C3.19861 9.40537 1.59475 6.49678 0.797574 4.93851C0.296928 3.95987 0.516285 2.7981 1.2719 2.04248L2.32847 0.985915C2.9755 0.338883 4.02454 0.338883 4.67158 0.985915L6.62709 2.94143C7.27412 3.58846 7.27412 4.6375 6.62709 5.28453Z' fill='%23249BB4'/%3E%3C/svg%3E");
+    background-position: left 10px bottom 50%;
+    padding-left: 36px;
+    background-repeat: no-repeat;
+}

@@ -1,0 +1,21 @@
+npm i @handlebars/allow-prototype-access@1.0.5 bcrypt-nodejs@0.0.3 body-parser@1.19.1 connect-flash@0.1.1 connect-mongo@3.2.0 cookie-parser@1.4.6 express-handlebars@5.3.0 express-session@1.17.3 express-validator@5.3.1 googleapis@111.0.0 intl-relative-time-format@1.0.7 jsonwebtoken@9.0.0 moment@2.29.4 mongodb@4.11.0 mongoose@6.7.2 morgan multer node-localstorage nodemailer@6.9.1 nodemon passport@0.6.0 passport-local@1.0.0 path  stripe twilio xlsx
+
+<input type='checkbox' onchange='handleChange(this);'> Checkbox.
+function handleChange(checkbox) {
+if(checkbox. checked == true){
+document. getElementById("submit"). removeAttribute("disabled");
+}else{
+document. getElementById("submit"). setAttribute("disabled", "disabled");
+}
+
+
+
+<div class="input-group">
+  <div class="form-outline">
+    <input type="search" id="form1" class="form-control" />
+    <label class="form-label" for="form1">Search</label>
+  </div>
+  <button type="button" class="btn btn-primary">
+    <i class="fas fa-search"></i>
+  </button>
+</div>

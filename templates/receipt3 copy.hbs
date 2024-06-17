@@ -1,0 +1,289 @@
+
+
+
+
+
+
+<link rel='stylesheet' href='hurlings/bootstrap.min.css'>
+
+
+
+
+
+
+
+
+
+<style>
+    body{margin-top:20px;
+background:#eee;
+}
+
+/*Invoice*/
+.invoice .top-left {
+    font-size:65px;
+	color:#3ba0ff;
+}
+
+.invoice .top-right {
+	text-align:right;
+	padding-right:20px;
+}
+
+.invoice .table-row {
+	margin-left:-15px;
+	margin-right:-15px;
+	margin-top:25px;
+}
+
+.invoice .payment-info {
+	font-weight:500;
+}
+
+.invoice .table-row .table>thead {
+	border-top:1px solid #ddd;
+}
+
+.invoice .table-row .table>thead>tr>th {
+	border-bottom:none;
+}
+
+.invoice .table>tbody>tr>td {
+	padding:8px 20px;
+}
+
+.invoice .invoice-total {
+	margin-right:-10px;
+	font-size:16px;
+}
+
+.invoice .last-row {
+	border-bottom:1px solid #ddd;
+}
+
+.invoice-ribbon {
+	width:85px;
+	height:88px;
+	overflow:hidden;
+	position:absolute;
+	top:-1px;
+	right:14px;
+}
+
+.ribbon-inner {
+	text-align:center;
+	-webkit-transform:rotate(45deg);
+	-moz-transform:rotate(45deg);
+	-ms-transform:rotate(45deg);
+	-o-transform:rotate(45deg);
+	position:relative;
+	padding:7px 0;
+	left:-5px;
+	top:11px;
+	width:120px;
+	background-color:#66c591;
+	font-size:15px;
+	color:#fff;
+}
+
+.ribbon-inner:before,.ribbon-inner:after {
+	content:"";
+	position:absolute;
+}
+
+.ribbon-inner:before {
+	left:0;
+}
+
+.ribbon-inner:after {
+	right:0;
+}
+
+@media(max-width:575px) {
+	.invoice .top-left,.invoice .top-right,.invoice .payment-details {
+		text-align:center;
+	}
+
+	.invoice .from,.invoice .to,.invoice .payment-details {
+		float:none;
+		width:100%;
+		text-align:center;
+		margin-bottom:25px;
+	}
+
+	.invoice p.lead,.invoice .from p.lead,.invoice .to p.lead,.invoice .payment-details p.lead {
+		font-size:22px;
+	}
+
+	.invoice .btn {
+		margin-top:10px;
+	}
+}
+
+@media print {
+	.invoice {
+		width:900px;
+		height:800px;
+	}
+}
+
+	.flex{
+		display: inline-flex;
+		width: 100%;
+	}
+	.w-50{
+		width: 50%;
+	}
+	.text-center{
+		text-align:center;
+	}
+	.text-right{
+		text-align:right;
+	}
+	table.wborder{
+		width: 100%;
+		border-collapse: collapse;
+	}
+	table.wborder>tbody>tr, table.wborder>tbody>tr>td{
+		border:1px solid;
+	}
+	p{
+		margin:unset;
+	}
+	.content-container:before
+	{
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-image: url();
+		background-size: 500px;
+		background-position: center;
+		background-repeat: no-repeat;
+		width: 100%;
+		height: 100%;
+		opacity: .3;
+		z-index: 2;
+	}
+
+</style>
+<body>
+
+<script type="text/javascript">
+
+//window.print();
+//-->
+</script>
+	
+
+<div class="row">
+  <div class="col-sm-12">
+	  	<div class="panel panel-default invoice" id="invoice">
+		  <div class="panel-body">
+			<div class="invoice-ribbon"><div class="ribbon-inner">PAID</div></div>
+		    <div class="row">
+
+				<div class="col-sm-6 top-left">
+					<i class="fa fa-rocket"></i>
+				</div>
+
+				<div class="col-sm-6 top-right">
+						<h3 class="marginright">FEES RECEIPT-1234578</h3>
+						<span class="marginright">{{date}}</span>
+			    </div>
+
+			</div>
+			<hr>
+			<div class="row">
+
+				<div class="col-xs-4 from">
+					<p class="lead marginbottom">From : Hurlings PreSchool</p>
+					<p>1 Ingatestone rd Marlbereign</p>
+					<p>rd Marlbereign</p>
+					<p>near Greencroft shops</p>
+					<p>Phone: +263 077 552 9777</p>
+					<p>Email: info@hurlings@.co.zw</p>
+				</div>
+
+				<div class="col-xs-4 to">
+					<p class="lead marginbottom">To : Mrs Johns</p>
+		             	<p>Student ID: <b>{{user.uid}}</b></p>
+		             	<p>Student: <b>{{user.fullname}}</b></p>
+			            <p>Class: <b>{{user.class1}}</b></p>
+					    <p>Phone: {{parentPhone}}</p>
+					    <p>Email: {{parentEmail}}</p>
+
+			    </div>
+
+			    <div class="col-xs-4 text-right payment-details">
+					<p class="lead marginbottom payment-info">Payment details</p>
+				    <p>Payment Date: <b>{{date}}</b></p>
+			        <p>Paid Amount: <b>${{amount}}</b></p>
+			    </div>
+
+			</div>
+
+			<div class="row table-row">
+				<table class="table table-striped">
+			    <tr>
+			<td width="50%">
+				<p><b>Receipt Details</b></p>
+				<hr>
+				<table width="100%">
+					<tr>
+						<td width="50%">Clerk:</td>
+						<td width="50%" class='text-right'>{{clerk}}</td>
+					</tr>
+			
+				<tr>
+					<td><b>Receipt Number</b></td>
+					<td class='text-right'><b>{{receiptNumber}}</b></td>
+				</tr>
+			
+				</table>
+			</td>			
+			<td width="50%">
+			<p><b>Student Account Details</b></p>
+			
+				<table width="100%" class="wborder">
+					<tr>
+						<td>Old Balance ($)</td>
+						<td class='text-right'><b>{{user.balanceCarriedOver}}</b></td>
+					</tr>
+					<tr>
+						<td>Total Paid ($)</td>
+						<td class='text-right'><b>{{amount}}</b></td>
+					</tr>
+					<tr>
+						<td>New Balance ($)</td>
+						<td class='text-right'><b>${{user.balance}}</b></td>
+					</tr>
+				</table>
+			</td>			
+		</tr>
+			    </table>
+
+			</div>
+
+			<div class="row">
+			<div class="col-xs-6 margintop">
+				<p class="lead marginbottom">THANK YOU!</p>
+
+				<!--<button class="btn btn-success" id="invoice-print"><i class="fa fa-print"></i> Print Invoice</button>
+				<button class="btn btn-danger"><i class="fa fa-envelope-o"></i> Mail Invoice</button>-->
+			</div>
+		<!--	<div class="col-xs-6 text-right pull-right invoice-total">
+					  <p>Subtotal : $1019</p>
+			          <p>Discount (10%) : $101 </p>
+			          <p>VAT (8%) : $73 </p>
+			          <p>Total : $991 </p>
+			</div>-->
+			</div>
+
+		  </div>
+		</div>
+	</div>
+</div>
+
+
+ 

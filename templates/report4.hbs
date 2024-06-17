@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Latest compiled and minified CSS -->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+		<!--end::Fonts-->
+		<!--begin::Page Vendor Stylesheets(used by this page)-->
+		<link href="assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+		
+		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Page Vendor Stylesheets-->
+		<!--begin::Global Stylesheets Bundle(used by all pages)-->
+		<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<!--end::Global Stylesheets Bundle-->
+</head>
+
+<style>
+	
+html {
+    font-family:arial;
+    font-size: 18px;
+  }
+  
+  td {
+    border: 1px solid #726E6D;
+    padding: 15px;
+  }
+  
+  thead{
+    font-weight:bold;
+    text-align:center;
+    background: #625D5D;
+    color:white;
+  }
+  
+  table {
+    border-collapse: collapse;
+	
+  }
+  
+  .footer {
+    text-align:right;
+    font-weight:bold;
+  }
+  
+  tbody >tr:nth-child(odd) {
+    background: #D1D0CE;
+  }
+  
+  
+  
+  
+  
+  
+</style>
+<body>
+   <div class="container">
+<!--begin::Post-->
+					<table class="table" >
+        <thead>
+          <tr>
+            <td colspan="3">Student </td>
+            <td rowspan="2"> Month </td>
+            <td rowspan="2"> Term </td>
+            <td colspan="3"> Grade </td>
+          </tr>
+          <tr>
+            <td> </td>
+            <td colspan="2"> Name </td>
+            <td> Symbol </td>
+            <td colspan="2"> % </td>
+          </tr>
+        </thead>
+        <tbody>
+			   {{#each this}}
+          <tr>
+            <td>{{this.uid}} </td>
+            <td colspan="2">{{this.fullname}} | {{subject}}</td>
+            <td> {{this.month}} | {{this.year}}</td>
+            <td> {{this.term}} </td>
+            <td> {{this.symbol}}</td>
+            <td colspan="2"> {{this.percentage}}% </td>
+          </tr>
+           {{/each}}
+        </tbody>
+       <!--<tfoot>
+          <tr>
+            <td colspan="4" class="footer">Total</td>
+            <td> 15.0 </td>
+            <td colspan="2">55.95 </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="footer">GPA</td>
+            <td colspan="3">3.73 / 4.0 </td>
+          </tr>--> 
+      </table>
+   </div>
+</body>
+</html>

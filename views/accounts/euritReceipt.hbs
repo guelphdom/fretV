@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<script type="text/javascript">
+
+    window.print();
+    //-->
+    </script>
+    <style>
+        p
+{
+  margin:0;
+  padding:0;
+
+    line-height:15px;
+}
+
+
+    </style>
+<body>
+<script type="text/javascript">
+
+window.print();
+//-->
+</script>
+    <div class="container" style="
+        margin: auto;
+        width: 100%;
+        border: 3px solid white;
+        padding: 10px;
+      ">
+    <div class="h-100 d-flex align-items-center justify-content-center" style="align-content: center;">
+<h2 style="font-size:small;text-align: center; "> <b>Receipt Number: {{receiptNumber}} </b> </h2>
+<h1 style="font-size:small;text-align: center; ">ST. EURIT INTERNATIONAL SCHOOL</h1>
+      <h2 style="text-align: center; font-size: smaller;   margin:0;
+      padding:0;"> <b>Payment Receipt </b> </h2>
+        <img src="https://scontent.fhre2-2.fna.fbcdn.net/v/t39.30808-6/294449327_409179577902789_8604891474966604843_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=5f2048&_nc_ohc=L4CQ28TtoHUAb58BcZD&_nc_ht=scontent.fhre2-2.fna&oh=00_AfCcaYkveEihBEYZtABJf5DysBzFdSEnmuXEdPAIuxMN2g&oe=66280A78"  alt="Responsive image"    vspace="5"  style="display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 130px;
+        padding:0;
+     
+ " >
+        <div class=" text-center" >
+        
+                 <p>129 Bishop Gaul Ave</b></p>
+                <p>Avondale</b></p>
+                <p>Harare,Zim</p>
+                <p>admin@steuritinternationalschool.org</p>
+             
+
+        </div>
+        <br>
+        
+    <table border="1" style="width: 100%;  margin-left: auto;
+    margin-right: auto; "  >
+     <tr>
+         <td colspan="3" style=" height: 30px;">Received From</td>
+      
+     </tr>
+     <tr>
+        <td colspan="3" style=" height: 50px;"> {{studentName}}<br>
+        {{studentAddress}}</td>
+      
+    </tr>
+    <tr>
+        <td>Date</td>
+        <td style="text-align: end;">{{date}}</td>
+     
+    </tr>
+
+    <tr>
+        <td>Payment Method</td>
+        <td style="text-align: end;">Cash</td>
+     
+    </tr>
+
+    <tr>
+        <td>Check/Ref No</td>
+        <td></td>
+     
+    </tr>
+    </table>
+
+
+
+<br>
+
+
+    
+    <table border="1" style="width: 100%;  margin-left: auto;
+    margin-right: auto;">
+        <tr>
+            <td >Payment Amount</td>
+            <td >${{amountPaid}}</td>
+         
+        </tr>
+        <tr>
+            <td >Total Amount Due</td>
+            <td >${{amountDue}}</td>
+         
+       </tr>
+    
+       </table>
+
+
+<br>
+
+
+
+</div>
+
+
+</div>
+
+
+<table border="1" style="width: 100%; margin-left: auto;
+margin-right: auto;   border-collapse: collapse;" >
+   
+    <thead style="border-collapse: collapse;">
+     
+        <tr >
+            <th style="text-align:center; width:35%;">
+                Date
+            </th>
+
+            <th style="text-align:center; width:25%;font-size:small ">
+             Invoice N
+            </th>
+
+            
+            <th style="text-align:center;width:25%;">
+                 AMT PAID
+               </th>
+
+               <th style="text-align:center;width:25%; ">
+                INV. AMT
+                </th>
+        
+        </tr>
+       
+    </thead>
+
+    <tbody >
+             {{#each listX}} 
+        <tr style="border:1;">
+       
+            <td style="border:1px solid black;
+    border-top: none;
+    border-bottom: none;">
+                {{date}}
+            </td>
+           
+            <td style="border:1px solid black;
+    border-top: none;
+    border-bottom: none; text-align:end;"> 
+            
+               {{this.invoiceNumber}}
+            </td>
+          
+            <td style="border:1px solid black;
+    border-top: none;
+    border-bottom: none; text-align:end;">
+                 ${{this.amountPaid}} 
+            </td>
+
+            <td style="border:1px solid black;
+    border-top: none;
+    border-bottom: none;text-align:end;">
+             
+                 ${{this.invoiceTotal}}
+             </td>
+        </tr>
+     
+
+
+      
+     {{/each}}
+
+
+<tr style="border:1; height: 50px;">
+                            
+                        <td style="border:1px solid black;    border-top: none;
+    border-bottom: none;
+text-align:end;"></td>
+                         <td style="border:1px solid black;    border-top: none;
+    border-bottom: none;
+text-align:end;"></td>
+                          <td style="border:1px solid black;    border-top: none;
+    border-bottom: none;
+text-align:end;"></td>
+
+                                    
+                                </tr>
+
+    </tbody>
+ 
+</table>
+</body>
+</html>

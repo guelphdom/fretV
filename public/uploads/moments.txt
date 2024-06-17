@@ -1,0 +1,42 @@
+var now = moment('2018-03-28 14:02');
+var end = moment('2018-06-02 00:00'); // another date
+var duration = moment.duration(end.diff(now));
+
+//Get Days and subtract from duration
+var days = duration.asDays();
+duration.subtract(moment.duration(days,'days'));
+
+//Get hours and subtract from duration
+var hours = duration.hours();
+duration.subtract(moment.duration(hours,'hours'));
+
+//Get Minutes and subtract from duration
+var minutes = duration.minutes();
+duration.subtract(moment.duration(minutes,'minutes'));
+
+//Get seconds
+var seconds = duration.seconds();
+console.log("Days: ",days);
+console.log("Hours: ",hours);
+console.log("Minutes: ",minutes);
+console.log("Seconds: ",seconds);
+
+
+
+
+/////////////
+
+// start time and end time
+var startTime = moment('12:16:59 am', 'HH:mm:ss a');
+var endTime = moment('06:12:07 pm', 'HH:mm:ss a');
+
+// calculate total duration
+var duration = moment.duration(endTime.diff(startTime));
+
+// duration in hours
+var hours = parseInt(duration.asHours());
+
+// duration in minutes
+var minutes = parseInt(duration.asMinutes()) % 60;
+
+alert(hours + ' hour and ' + minutes + ' minutes.');
