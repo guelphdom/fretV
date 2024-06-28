@@ -6802,10 +6802,10 @@ User.find({uid:teacherId},function(err,cok){
 let uid = doc.uid
 let userId = doc._id
 let class1 = doc.class1
-TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+TeacherSub.find({teacherId:uid},function(err,locs){
  let teacherSubId = locs[0]._id
 
- StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ StudentSub.find({class1:class1},function(err,tocs){
    let studentSubId = tocs[0]._id
    AttendanceReg.find({regId:id},function(err,docs){
   let month = docs[0].month
@@ -10167,7 +10167,7 @@ router.get('/test',function(req,res){
     
       var m = moment()
       var displayFormat = m.format('MMMM Do YYYY')
-      var dateValueOf = m2.valueOf()
+      var dateValueOf = m.valueOf()
       var year = m.format('YYYY')
       var pro = req.user
       var class1= req.user.class1
@@ -10331,7 +10331,7 @@ for(var x = 0;x<vocs.length;x++){
         var year = m.format('YYYY')
         var mformat = m.format('L')
         var class1 = req.user.class1
-        let filename = date+'_Register'+'.pdf'
+        let filename = date+'_Register_'+class1+'.pdf'
         var head = req.user.fullname
     /*console.log(arr,'iiii')*/
    
@@ -10386,7 +10386,7 @@ for(var x = 0;x<vocs.length;x++){
     await page.pdf({
       //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
       //  path:(`./public/eotReports/${year}/${term}/${month}`+'.pdf'),
-      path:(`./public/attReports/${year}/${month}/${date}_Register`+'.pdf'),
+      path:(`./public/attReports/${year}/${month}/${date}_Register_${class1}`+'.pdf'),
       format:"A4",
       width:'30cm',
     height:'21cm',
@@ -10410,7 +10410,7 @@ console.log("Done creating pdf")
 
 
 
-const file = await fs.readFile(`./public/attReports/${year}/${month}/${date}_Register`+'.pdf');
+const file = await fs.readFile(`./public/attReports/${year}/${month}/${date}_Register_${class1}`+'.pdf');
 const form = new FormData();
 form.append("file", file,filename);
 //const headers = form.getHeaders();

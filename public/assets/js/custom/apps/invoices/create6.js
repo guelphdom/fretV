@@ -51,6 +51,9 @@ var KTAppInvoicesCreate = function ()
    
         document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="title"] ').id= 'code'+v
 
+        
+        document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="stock"] ').id= 'stock'+v
+
         document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="xid"] ').id= 'xid'+v
 
         document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="description"] ').id= 'description'+v
@@ -127,6 +130,7 @@ console.log(v - 1,'vv')
                                  $("#code1").val(data.code)
                                  $("#description1").val(data.item)
                                $("#price1").val(data.price)  
+                               $("#stock1").val(data.qty)
                                /*  document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]').innerText= data.price
                                  document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]').textContent= data.price
                                  console.log(document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]' ),'555555')*/
@@ -224,7 +228,8 @@ console.log(v - 1,'vv')
                                 
                                   $("#code2").val(data.code)
                                   $("#description2").val(data.item)
-                               $("#price2").val(data.price)  
+                               $("#price2").val(data.price) 
+                               $("#stock2").val(data.qty) 
 
                                let price = document.getElementById('price').value
                                let quantity =  document.getElementById('quantity').value
@@ -354,6 +359,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                               $("#code3").val(data.code)
                               $("#description3").val(data.item)
                               $("#price3").val(data.price)  
+                              $("#stock3").val(data.qty)
                                /*  document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]').innerText= data.price
                                  document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]').textContent= data.price
                                  console.log(document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]' ),'555555')*/
@@ -556,6 +562,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                                    $("#price4").val(data.price)  
                                    $("#code4").val(data.code)
                                    $("#description4").val(data.item)
+                                   $("#stock4").val(data.qty)
                                      document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]').innerText= data.price
                                      console.log(document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"]' ),'555555')
 //$("#price2").val(data.price)   
@@ -674,6 +681,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                                       $("#code5").val(data.code)
                                       $("#description5").val(data.item)
                                      $("#price5").val(data.price)
+                                     $("#stock5").val(data.qty)
                                        $("#total2").textContent=data.price
                                     $("#xid").val(data._id)
                                     document.querySelector(' [id="total5"]').innerText  = data.price
@@ -792,6 +800,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                                     $("#code6").val(data.code)
                                     $("#description6").val(data.item)
                                    $("#price6").val(data.price)
+                                   $("#stock6").val(data.qty)
                                      $("#total6").textContent=data.price
                                   $("#xid").val(data._id)
                                   document.querySelector(' [id="total6"]').innerText  = data.price
@@ -913,6 +922,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                                   $("#description7").val(data.item)
                                  $("#price7").val(data.price)
                                    $("#total7").textContent=data.price
+                                   $("#stock7").val(data.qty)
                                 $("#xid").val(data._id)
                                 document.querySelector(' [id="total7"]').innerText  = data.price
                               
@@ -1052,6 +1062,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                                 $("#description8").val(data.item)
                                $("#price8").val(data.price)
                                  $("#total8").textContent=data.price
+                                 $("#stock8").val(data.qty)
                               $("#xid").val(data._id)
                               document.querySelector(' [id="total8"]').innerText  = data.price
                             
@@ -1193,6 +1204,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                               $("#description9").val(data.item)
                              $("#price9").val(data.price)
                                $("#total9").textContent=data.price
+                               $("#stock9").val(data.qty)
                             $("#xid").val(data._id)
                             document.querySelector(' [id="total9"]').innerText  = data.price
 
@@ -1351,6 +1363,7 @@ document.querySelector('[data-kt-element="sub-total"]').innerText  = grandTotal
                             $("#description10").val(data.item)
                            $("#price10").val(data.price)
                              $("#total10").textContent=data.price
+                             $("#stock10").val(data.qty)
                           $("#xid").val(data._id)
                           document.querySelector(' [id="total10"]').innerText  = data.price
                         

@@ -824,8 +824,8 @@ router.get('/', function (req, res, next) {
     }else if(req.user.role == 'teacher')
     res.redirect('/teacher/passRate')
     else if(req.user.role == 'clerk')
-    res.redirect('/clerk/pollCheck')
-  
+    //res.redirect('/clerk/pollCheck')
+    res.redirect("/clerk/idUp");
     else if(req.user.role == 'records')
     res.redirect('/records/stats')
       else if(req.user.role == 'student')
@@ -2110,7 +2110,7 @@ router.get('/idUp',isLoggedIn,function(req,res){
 
 
 
-router.get('/classCheck',isLoggedIn,adminX,function(req,res){
+router.get('/classCheck',isLoggedIn,function(req,res){
   
   Class1.find({},function(err,docs){
 
@@ -2447,7 +2447,7 @@ User.findOneAndUpdate({_id:req.body._id},req.body,
 
 //Monthly Income Stats
 
-router.get('/adminMonthInc', isLoggedIn,adminX,  function(req,res){
+router.get('/adminMonthInc', isLoggedIn,  function(req,res){
   var term = req.user.term
   var m = moment()
   var year = m.format('YYYY')
@@ -2531,7 +2531,7 @@ router.get('/adminMonthInc', isLoggedIn,adminX,  function(req,res){
 
 
 
-router.get('/adminMonthExp', isLoggedIn,adminX,  function(req,res){
+router.get('/adminMonthExp', isLoggedIn,  function(req,res){
   var term = req.user.term
   var m = moment()
   var year = m.format('YYYY')
@@ -2615,7 +2615,7 @@ router.get('/adminMonthExp', isLoggedIn,adminX,  function(req,res){
 
 
 
-router.get('/adminDashInc',isLoggedIn,adminX,function(req,res){
+router.get('/adminDashInc',isLoggedIn,function(req,res){
   var term = req.user.term
   var m = moment()
   var year = m.format('YYYY')
@@ -2715,7 +2715,7 @@ router.get('/adminDashInc',isLoggedIn,adminX,function(req,res){
 
 
 
-router.get('/adminDashExp',isLoggedIn,adminX,function(req,res){
+router.get('/adminDashExp',isLoggedIn,function(req,res){
 
   let arrX = []
   let totalX
@@ -2779,7 +2779,7 @@ for(var q = 0;q<hods.length; q++){
 
 //Exam Pass Rate
 
-router.get('/passRate',isLoggedIn,adminX, function(req,res){
+router.get('/passRate',isLoggedIn, function(req,res){
   var totalStudents, students, passRate
   var m = moment()
   var year = m.format('YYYY')
@@ -2860,7 +2860,7 @@ res.redirect('/passRateX')
 
 //Class Test
 
-router.get('/passRateX',isLoggedIn,adminX, function(req,res){
+router.get('/passRateX',isLoggedIn, function(req,res){
   var totalStudents, students, passRate;
   var m = moment()
   var year = m.format('YYYY')
@@ -2952,7 +2952,7 @@ res.redirect('/adminGender')
 //student gender
 
 
-router.get('/adminGender',isLoggedIn,adminX,function(req,res){
+router.get('/adminGender',isLoggedIn,function(req,res){
   var term = req.user.term
   var m = moment()
   var year = m.format('YYYY')
@@ -3037,7 +3037,7 @@ router.get('/adminGender',isLoggedIn,adminX,function(req,res){
 
 //dashboard
 
-router.get('/dash',isLoggedIn,adminX, function(req,res){
+router.get('/dash',isLoggedIn, function(req,res){
   var pro = req.user
   const arr = []
   var arr2 = []
@@ -3141,7 +3141,7 @@ var year = m.format('YYYY')
 
  //notifications & messages
 
- router.post('/dashChartXX3',isLoggedIn,adminX,function(req,res){
+ router.post('/dashChartXX3',isLoggedIn,function(req,res){
                      
   var term = req.user.term
 
@@ -5489,7 +5489,7 @@ Note.findByIdAndUpdate(nId,{$set:{status2:'expired',status1:'old'}},function(err
 //passChart
 
 
-router.post('/passChart',isLoggedIn,adminX,function(req,res){
+router.post('/passChart',isLoggedIn,function(req,res){
   var m = moment()
   var year = m.format('YYYY')
   var term = req.user.term
@@ -5507,7 +5507,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
       })
 
 //passChartX
-      router.post('/passChartX',isLoggedIn,adminX,function(req,res){
+      router.post('/passChartX',isLoggedIn,function(req,res){
         var m = moment()
         var year = m.format('YYYY')
         var term = req.user.term
@@ -5525,7 +5525,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
             })
 
 //genderChart
-      router.post('/genChart',isLoggedIn,adminX,function(req,res){
+      router.post('/genChart',isLoggedIn,function(req,res){
 
               Gender.find({},function(err,docs){
                 if(docs == undefined){
@@ -5547,7 +5547,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
 //stats
 
 
-            router.post('/statChart',isLoggedIn,adminX,function(req,res){
+            router.post('/statChart',isLoggedIn,function(req,res){
               var m = moment()
               var year = m.format('YYYY')
         
@@ -5570,7 +5570,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
 
 //Income Chart for School terms
 
-            router.post('/incomeChart',isLoggedIn,adminX, function(req,res){
+            router.post('/incomeChart',isLoggedIn, function(req,res){
               var m = moment()
               var year = m.format('YYYY')
               var companyId = req.user.companyId
@@ -5588,7 +5588,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
 
 
 
-                  router.post('/incomeChart99',isLoggedIn,adminX, function(req,res){
+                  router.post('/incomeChart99',isLoggedIn, function(req,res){
                     var m = moment()
                     var year = m.format('YYYY')
                     var count = req.user.currentYearCount
@@ -5609,7 +5609,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
           
           
      //feesMonthIncomeChart             
-          router.post('/feesChart',isLoggedIn,adminX, function(req,res){
+          router.post('/feesChart',isLoggedIn, function(req,res){
               var m = moment()
               var year = m.format('YYYY')
               
@@ -5629,7 +5629,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
 
                        
      //expenseMonthIncomeChart             
-          router.post('/expenseChart',isLoggedIn,adminX, function(req,res){
+          router.post('/expenseChart',isLoggedIn, function(req,res){
             var m = moment()
             var year = m.format('YYYY')
     
@@ -5647,7 +5647,7 @@ router.post('/passChart',isLoggedIn,adminX,function(req,res){
                 })
 
 
-router.get('/analytics',isLoggedIn,adminX,function(req,res){
+router.get('/analytics',isLoggedIn,function(req,res){
   var pro = req.user
   Subject.find({},function(err,docs){
     Class1.find({},function(err,locs){
@@ -5660,14 +5660,14 @@ router.get('/analytics',isLoggedIn,adminX,function(req,res){
 
 
 
-router.get('/appraisal',isLoggedIn,adminX,function(req,res){
+router.get('/appraisal',isLoggedIn,function(req,res){
   var pro = req.user
   User.find({role:'teacher'},function(err,docs){
     res.render('admin/list5',{listX:docs,pro:pro})
   })
  
 })
-router.get('/teacherAnalytics/:id',isLoggedIn,adminX,function(req,res){
+router.get('/teacherAnalytics/:id',isLoggedIn,function(req,res){
   console.log(req.params.id,'iiiiii')
   var pro = req.user
   User.findById(req.params.id,function(err,voc){
@@ -5691,7 +5691,7 @@ router.get('/teacherAnalytics/:id',isLoggedIn,adminX,function(req,res){
   })
 
 
-router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
+router.post('/dashChartA1',isLoggedIn,function(req,res){
   var uid = req.user.uid
   var size
 
@@ -5765,7 +5765,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
 
 
   
-  router.post('/dashChart1',isLoggedIn,adminX,function(req,res){
+  router.post('/dashChart1',isLoggedIn,function(req,res){
                      
     var term = req.user.term
     var companyId = req.user.companyId
@@ -5900,7 +5900,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
 
 
   //////////////
-  router.post('/dashChart05',isLoggedIn,adminX,function(req,res){
+  router.post('/dashChart05',isLoggedIn,function(req,res){
     var uid = req.user.uid
     var size
 
@@ -5963,7 +5963,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
     
 
 
-    router.post('/dashChart06',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChart06',isLoggedIn,function(req,res){
       var uid = req.user.uid
       var size
 
@@ -6026,7 +6026,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
 
 
       
-  router.post('/dashChart7',isLoggedIn,adminX,function(req,res){
+  router.post('/dashChart7',isLoggedIn,function(req,res){
     var uid = req.user.uid
 
   
@@ -6092,7 +6092,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
   
 
 
-  router.post('/dashChart8',isLoggedIn,adminX,function(req,res){
+  router.post('/dashChart8',isLoggedIn,function(req,res){
     var uid = req.body.uid
     var size
   console.log(uid,'uid')
@@ -6156,7 +6156,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
   
   
   
-    router.post('/dashChart9',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChart9',isLoggedIn,function(req,res){
       var uid = req.body.uid
       var size
     console.log(uid,'uid')
@@ -6219,7 +6219,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
     
   
 
-      router.post('/dashChartX',isLoggedIn,adminX,function(req,res){
+      router.post('/dashChartX',isLoggedIn,function(req,res){
         var uid = req.body.uid
         var size
        
@@ -6288,7 +6288,7 @@ router.post('/dashChartA1',isLoggedIn,adminX,function(req,res){
 
 
 
-        router.post('/dashChartXI',isLoggedIn,adminX,function(req,res){
+        router.post('/dashChartXI',isLoggedIn,function(req,res){
           var uid = req.body.uid
           var size
     
@@ -6360,7 +6360,7 @@ router.get('/land',function(req,res){
 
 
 
-router.post('/dashChartP2',isLoggedIn,adminX,function(req,res){
+router.post('/dashChartP2',isLoggedIn,function(req,res){
                      
   var term = req.body.term
   let type = req.body.type
@@ -6424,7 +6424,7 @@ router.post('/dashChartP2',isLoggedIn,adminX,function(req,res){
 
 
 
-router.post('/dashChartP4',isLoggedIn,adminX,function(req,res){
+router.post('/dashChartP4',isLoggedIn,function(req,res){
                      
   var term = req.body.term
   let name = req.body.name
@@ -6486,7 +6486,7 @@ router.post('/dashChartP4',isLoggedIn,adminX,function(req,res){
 
               
 
-router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
+router.post('/dashChartP05',isLoggedIn,function(req,res){
 
   var size
 
@@ -6542,7 +6542,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
 
   })
   
-  router.post('/dashChartP06',isLoggedIn,adminX,function(req,res){
+  router.post('/dashChartP06',isLoggedIn,function(req,res){
     var uid = req.user.uid
     var size
 
@@ -6601,7 +6601,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
     
 
 
-    router.post('/dashChartP7',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChartP7',isLoggedIn,function(req,res){
  
       var term = req.body.term
       let name = req.body.name
@@ -6666,7 +6666,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
     
 
 
-    router.post('/dashChartP8',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChartP8',isLoggedIn,function(req,res){
   
       var term = req.body.term
   
@@ -6725,7 +6725,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
 
 
 
-    router.post('/dashChartP9',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChartP9',isLoggedIn,function(req,res){
 
       var term = req.body.term
   
@@ -6781,7 +6781,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
     })
 
 
-    router.post('/dashChartPX',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChartPX',isLoggedIn,function(req,res){
       var subjectCode = req.body.subjectCode
       var term = req.body.term
       var class1 = req.body.class1
@@ -6844,7 +6844,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
 
 
 
-    router.post('/dashChartPXI',isLoggedIn,adminX,function(req,res){
+    router.post('/dashChartPXI',isLoggedIn,function(req,res){
       var uid = req.body.uid
       var size
 
@@ -6906,7 +6906,7 @@ router.post('/dashChartP05',isLoggedIn,adminX,function(req,res){
       
 
 
-      router.post('/classChart',isLoggedIn,adminX,function(req,res){
+      router.post('/classChart',isLoggedIn,function(req,res){
         var uid = req.user.uid
         var size
     

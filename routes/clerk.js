@@ -13,7 +13,12 @@ const Level =require('../models/level');
 var InvoiceSubBatch = require('../models/invoiceSubBatch');
 var InvoiceCode = require('../models/invoiceCode');
 var InvoCode = require('../models/invoCode');
+var Learn = require('../models/learn');
+var IncStatement = require('../models/incStatement');
+var IncFiles = require('../models/incomeFiles');
 var InvoiceSubFile = require('../models/invoiceSubFile');
+var Stock = require('../models/stock');
+var StockV = require('../models/stockV');
 var InvoNum = require('../models/invoNum');
 var RecNum = require('../models/recNum');
 var Receipt = require('../models/receipt');
@@ -21,6 +26,7 @@ var InvoiceFiles = require('../models/invoiceFiles');
 var InvoiceFile = require('../models/invoiceFile');
 var ReceiptFile = require('../models/receiptFile');
 var Category = require('../models/category');
+var ExpCategory = require('../models/expCategory');
 var BStats = require('../models/bookStats');
 var CStats = require('../models/categoryStats');
 var nodemailer = require('nodemailer');
@@ -49,6 +55,9 @@ const MonthExpense =require('../models/expenseMonth');
 const TestX =require('../models/classTestX');
 const Stats =require('../models/stats');
 const Gender =require('../models/gender');
+var Message = require('../models/message');
+var Recepient = require('../models/recepients');
+var Note = require('../models/note');
 const Pass =require('../models/passRate');
 const PassX =require('../models/passRateX');
 const TeacherClassRate = require('../models/tcPassRateX')
@@ -58,6 +67,11 @@ const FeesUpdate =require('../models/feesUpdate');
 const StudentSub =require('../models/studentSubject');
 const TeacherSub =require('../models/teacherSubject');
 const Room =require('../models/room');
+const NoteW =require('../models/notew');
+const Truck = require('../models/truck');
+const Report = require('../models/reports');
+const Report2 = require('../models/reportsT');
+const ReportAtt = require('../models/reportsAtt');
 var Quiz = require('../models/quiz');
 const stripe = require('stripe')('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');
 const keys = require('../config1/keys')
@@ -266,6 +280,993 @@ router.get('/pass',isLoggedIn, (req, res) => {
       
       
 
+  router.get('/idUp',isLoggedIn,function(req,res){
+    var id = req.user._id
+  
+    var total, total2
+    var num
+    var idNumX = req.user.idNumX
+    
+    
+    User.find({},function(err,docs){
+    num = docs.length
+    total = idNumX + docs.length;
+    
+    
+    
+    User.findByIdAndUpdate(id,{$set:{actualCount:num }},function(err,locs){
+    
+    })
+    
+    res.redirect('/clerk/classCheck')
+    
+    })
+    
+    
+    })
+  
+  
+  
+  
+  
+    
+  
+      
+    
+      
+  
+  
+  
+  
+  
+  router.get('/classCheck',isLoggedIn,function(req,res){
+    
+    Class1.find({},function(err,docs){
+  
+  
+      for(var i= 0;i<docs.length;i++){
+        let classX = docs[i].class1
+        let id = docs[i]._id
+        User.find({class1:docs[i].class1},function(err,gocs){
+  let students = gocs.length;
+  User.find({ class1:classX, status:'paid'},function(err,yocs){
+    let paid = yocs.length;
+  
+    User.find({class1:classX,status:'owing'},function(err,locs){
+      let unpaid= locs.length
+  
+      User.find({ class1:classX,gender:'male'},function(err,xocs){
+        let male= xocs.length
+  
+        User.find({ class1:classX,gender:'female'},function(err,zocs){
+          let female= zocs.length
+  
+      Class1.findByIdAndUpdate(id,{$set:{numberOfStudents:students, paid:paid,unpaid:unpaid,male:male,female:female}},function(err,vocs){
+  
+      })
+    })
+    })
+  })
+  })
+        })
+      }
+      res.redirect('/clerk/std')
+    })
+    
+  })
+  
+  
+  
+  router.get('/upCheck',function(req,res){
+   User.find(function(err,focs){
+  for(var i = 0;i<focs.length; i++){
+  
+  let id = focs[i]._id
+  
+    User.findByIdAndUpdate(id,{$set:{admissionYear:2021,startYear:2021, stdYearCount:1,currentYearCount:1}},{multi:true},function(err,docs){
+  
+    })
+  }
+  })
+  })
+  
+  router.get('/std',isLoggedIn,function(req,res){
+  
+    var m = moment()
+    var year = m.format('YYYY')
+    var currCount = req.user.currentYearCount
+    var startYear = req.user.startYear
+    Student.find({}, function(err,locs){
+      if(locs.length == 0){
+  var std = Student();
+  std.year1 = 0;
+  std.year2 = 0;
+  std.year3 = 0;
+  std.year4 = 0;
+  std.year5 = 0;
+  std.year6 = 0;
+  std.year7 = 0;
+  std.year8 = 0;
+  std.year9 = 0;
+  std.year10 = 0;
+  std.count = 0;
+  std.startYear = 0;
+  
+  
+  std.save()
+  .then(std=>{
+  
+    User.find({  role:'student',stdYearCount:currCount},function(err,docs){
+      let total = docs.length;
+     if(currCount == 0){
+       Student.findByIdAndUpdate(std._id,{$set:{year1:total,count:currCount,startYear:startYear}},function(err,locs){
+  
+       })
+     } else if(currCount == 1){
+      Student.findByIdAndUpdate(std._id,{$set:{year2:total,count:currCount,startYear:startYear}},function(err,locs){
+  
+      })
+     }else if(currCount == 2){
+      Student.findByIdAndUpdate(std._id,{$set:{year3:total,count:currCount,startYear:startYear}},function(err,locs){
+  
+      })
+  
+     }
+     res.redirect('/clerk/adminMonthInc')
+      
+        })
+  
+  
+  })
+  
+      }else{
+  Student.find({},function(err,docs){
+    
+    User.find({  role:'student',stdYearCount:currCount},function(err,nocs){
+      if(nocs){
+  
+     
+      let total = nocs.length;
+  
+    
+  let id = docs[0]._id;
+  
+  
+  if(currCount == 0){
+    Student.findByIdAndUpdate(id,{$set:{year1:total,count:currCount,startYear:startYear}},function(err,locs){
+  
+    })
+  } 
+  
+       else if(currCount == 1){
+          Student.findByIdAndUpdate(id,{$set:{year2:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+        else if (currCount == 2){
+          Student.findByIdAndUpdate(id,{$set:{year3:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+  
+         else if (currCount == 3){
+          Student.findByIdAndUpdate(id,{$set:{year4:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+  
+        else if (currCount == 4){
+          Student.findByIdAndUpdate(id,{$set:{year5:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+  
+        else if (currCount == 5){
+          Student.findByIdAndUpdate(id,{$set:{year6:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+  
+        else if (currCount == 6){
+          Student.findByIdAndUpdate(id,{$set:{year7:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+  
+        else if (currCount == 7){
+          Student.findByIdAndUpdate(id,{$set:{year8:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+        else if (currCount == 8){
+          Student.findByIdAndUpdate(id,{$set:{year9:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+        else if (currCount == 9){
+          Student.findByIdAndUpdate(id,{$set:{year10:total,count:currCount,startYear:startYear}},function(err,locs){
+     
+          })
+        } 
+      }else{
+        console.log('flint')
+      }
+      })
+      res.redirect('/clerk/adminMonthInc')
+      })
+      }
+    })
+    
+  
+  })
+  
+  
+   
+      
+      
+    
+    
+  
+  
+  
+  
+  
+  //Monthly Income Stats
+  
+  router.get('/adminMonthInc', isLoggedIn,  function(req,res){
+    var term = req.user.term
+    var m = moment()
+    var year = m.format('YYYY')
+    var month = m.format('MMMM')
+    var fees
+    var arr1=[]
+    var number1
+    var totalStudents, students, passRate
+   
+  
+  
+    MonthIncome.find({year:year,month:month},function(err,docs){
+  
+      Fees.find({year:year,month:month},function(err,hods){
+  
+  
+      
+  
+      if(docs.length == 0  && hods.length == 0){
+  
+        
+  
+        var inc = MonthIncome();
+              inc.amount = 0;
+              inc.month = month;
+              inc.year = year
+              
+  
+              inc.save()
+      .then(incX =>{
+  
+        res.redirect('/clerk/adminMonthExp2')
+  
+      })
+  
+      }
+      else
+      MonthIncome.find({year:year,month:month},function(err,docs){
+  
+        var id3 = docs[0]._id
+      Fees.find({ year:year,month:month},function(err,hods){
+  
+        for(var q = 0;q<hods.length; q++){
+            
+          arr1.push(hods[q].amount)
+            }
+            //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+             number1=0;
+            for(var z in arr1) { number1 += arr1[z]; }
+  
+  
+  
+            MonthIncome.findByIdAndUpdate(id3,{$set:{amount:number1}},function(err,kocs){
+  
+            })
+            
+        
+  
+  
+  
+            res.redirect('/clerk/adminMonthExp2')
+  
+  
+      })
+    })
+  
+  
+  
+  
+  
+    })
+  
+  
+  })
+  
+  
+  
+  })
+  
+  
+  
+  
+  
+  router.get('/adminMonthExp2', isLoggedIn,  function(req,res){
+    var term = req.user.term
+    var m = moment()
+    var year = m.format('YYYY')
+    var month = m.format('MMMM')
+    var fees
+    var arr1=[]
+    var number1
+    var totalStudents, students, passRate
+    
+  
+  
+    MonthExpense.find({  year:year,month:month},function(err,docs){
+  
+      Expenses.find({year:year,month:month},function(err,hods){
+  
+  
+      
+  
+      if(docs.length == 0  && hods.length == 0){
+  
+        
+  
+        var exp = MonthExpense();
+              exp.amount = 0;
+              exp.month = month;
+              exp.year = year
+            
+  
+              exp.save()
+      .then(incX =>{
+  
+        res.redirect('/clerk/adminDashInc')
+  
+      })
+  
+      }
+      else
+      MonthExpense.find({ year:year,month:month},function(err,docs){
+  
+        var id3 = docs[0]._id
+      Expenses.find({  year:year,month:month},function(err,hods){
+  
+        for(var q = 0;q<hods.length; q++){
+            
+          arr1.push(hods[q].amount)
+            }
+            //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+             number1=0;
+            for(var z in arr1) { number1 += arr1[z]; }
+  
+  
+  
+            MonthExpense.findByIdAndUpdate(id3,{$set:{amount:number1}},function(err,kocs){
+  
+            })
+            
+        
+  
+  
+  
+            res.redirect('/clerk/adminDashInc')
+  
+  
+      })
+    })
+  
+  
+  
+  
+  
+    })
+  
+  
+  })
+  
+  
+  
+  })
+  
+  
+  
+  
+  
+  router.get('/adminDashInc',isLoggedIn,function(req,res){
+    var term = req.user.term
+    var m = moment()
+    var year = m.format('YYYY')
+    var fees
+    var arr1=[]
+    var number1
+    var totalStudents, students, passRate
+  
+  
+  
+    Income.find({ year:year},function(err,docs){
+  
+      Fees.find({  term:term,year:year},function(err,hods){
+  
+  
+      
+  
+      if(docs.length == 0  && hods.length == 0){
+  
+        
+  
+        var inc = Income();
+              inc.firstTermIncome = 0;
+              inc.firstTermExpense = 0;
+              inc.secondTermIncome = 0;
+              inc.secondTermExpense = 0
+              inc.thirdTermIncome = 0
+              inc.thirdTermExpense = 0
+              inc.year = year
+              
+  
+              inc.save()
+      .then(incX =>{
+  
+        res.redirect('/clerk/adminDashExp')
+  
+      })
+  
+      }
+      else
+      Income.find({year:year},function(err,docs){
+  
+        var id3 = docs[0]._id
+      Fees.find({ term:term,year:year},function(err,hods){
+  
+        for(var q = 0;q<hods.length; q++){
+            
+          arr1.push(hods[q].amount)
+            }
+            //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+             number1=0;
+            for(var z in arr1) { number1 += arr1[z]; }
+  
+  
+            
+        if(term == 1){
+  
+    
+          Income.findByIdAndUpdate(id3,{$set:{firstTermIncome:number1}},function(err,kocs){
+       
+          
+          })
+        }else if(term == 2){
+        
+          Income.findByIdAndUpdate(id3,{$set:{secondTermIncome:number1}},function(err,kocs){
+        
+              
+              })
+            }else{
+              Income.findByIdAndUpdate(id3,{$set:{thirdTermIncome:number1}},function(err,kocs){
+              
+                  
+                  })
+            }
+  
+  
+  
+            res.redirect('/clerk/adminDashExp')
+  
+  
+      })
+    })
+  
+  
+  
+  
+  
+    })
+  
+  
+  })
+  
+  
+  
+  })
+  
+  
+  
+  
+  router.get('/adminDashExp',isLoggedIn,function(req,res){
+  
+    let arrX = []
+    let totalX
+    var term = req.user.term
+    var m = moment()
+    var year = m.format('YYYY')
+    var fees
+    var arr1=[]
+    var number1
+  
+  
+    Expenses.find({ term:term,year:year},function(err,hods){
+  
+      if(hods.length == 0){
+  
+        res.redirect('/clerk/passRate')
+      }
+  else
+  Income.find({  year:year},function(err,docs){
+     var incX = docs[0]._id
+  for(var q = 0;q<hods.length; q++){
+            
+    arrX.push(hods[q].amount)
+    }
+    //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+     totalX=0;
+    for(var z in arrX) { totalX += arrX[z]; }
+    
+    
+    if(term == 1){
+    
+    
+    Income.findByIdAndUpdate(incX,{$set:{firstTermExpense:totalX}},function(err,kocs){
+  
+    
+    })
+    }else if(term == 2){
+    
+    Income.findByIdAndUpdate(incX,{$set:{secondTermExpense:totalX}},function(err,kocs){
+  
+      
+      })
+    }else{
+      Income.findByIdAndUpdate(incX,{$set:{thirdTermExpense:totalX}},function(err,kocs){
+        
+          
+          })
+    }
+    res.redirect('/clerk/passRate')
+  })
+    })
+  
+  
+  })
+  
+  
+  
+  
+  
+  
+  
+  //Exam Pass Rate
+  
+  router.get('/passRate',isLoggedIn, function(req,res){
+    var totalStudents, students, passRate
+    var m = moment()
+    var year = m.format('YYYY')
+    var term = req.user.term
+    
+  
+  
+    Pass.find({ year:year,type:'Final Exam'},function(err,docs){
+  
+      TestX.find({ term:term,year:year,type:'Final Exam'},function(err,hods){
+  
+    
+      if(docs.length == 0 && hods.length == 0){
+  
+        var pass = Pass();
+        pass.firstTerm = 0;
+        pass.secondTerm= 0;
+        pass.thirdTerm = 0
+        pass.year = year
+  
+  
+        pass.save()
+        .then(pas =>{
+  
+          res.redirect('/clerk/passRateX')
+        })
+  
+      }
+      else
+  
+      
+    Pass.find({ year:year},function(err,docs){
+   var idX = docs[0]._id;
+      TestX.find({term:term,year:year,type:'Final Exam'},function(err,hods){
+  
+        TestX.find({term:term,year:year, result:'pass', type:'Final Exam'},function(err,lods){
+  
+        totalStudents = hods.length;
+        students = lods.length
+        //console.log(students,totalStudents,'%%%%%%%')
+        let pRate = students / totalStudents * 100
+        passRate = Math.round(pRate)
+        passRate.toFixed(2)
+  
+        if(term == 1){
+   
+     
+          Pass.findByIdAndUpdate(idX,{$set:{firstTerm:passRate}},function(err,kocs){
+       
+          
+          })
+        }else if(term == 2){
+        
+          Pass.findByIdAndUpdate(idX,{$set:{secondTerm:passRate}},function(err,kocs){
+        
+              
+              })
+            }else{
+              Pass.findByIdAndUpdate(idX,{$set:{thirdTerm:passRate}},function(err,kocs){
+              
+                  
+                  })
+                }
+  
+  res.redirect('/clerk/passRateX')
+              })
+      })
+  
+    })
+  
+    })
+    })
+  
+  })
+  
+  
+  
+  
+  //Class Test
+  
+  router.get('/passRateX',isLoggedIn, function(req,res){
+    var totalStudents, students, passRate;
+    var m = moment()
+    var year = m.format('YYYY')
+    var term = req.user.term
+    
+  
+    PassX.find({year:year,type3:'class'},function(err,docs){
+  
+      TestX.find({term:term,year:year,type:'class'},function(err,hods){
+  
+    
+      if(docs.length == 0 && hods.length == 0){
+  
+        var pass = PassX();
+        pass.firstTerm = 0;
+        pass.secondTerm= 0;
+        pass.thirdTerm = 0
+        pass.year = year
+    
+  
+        pass.save()
+        .then(pas =>{
+  
+          res.redirect('/clerk/adminGender')
+        })
+  
+      }
+      else
+  
+      
+    PassX.find({year:year},function(err,docs){
+   var idX = docs[0]._id;
+   console.log('class testX',idX)
+      TestX.find({term:term,year:year, type3:'class'},function(err,hods){
+  
+        TestX.find({term:term,year:year, result:'pass', type3:'class'},function(err,lods){
+  
+        totalStudents = hods.length;
+        students = lods.length
+     
+        let pRate = students / totalStudents * 100
+        passRate = Math.round(pRate)
+        passRate.toFixed(2)
+        console.log('pass Rate68', passRate)
+  
+        if(term == 1){
+   
+     
+          PassX.findByIdAndUpdate(idX,{$set:{firstTerm:passRate}},function(err,kocs){
+       
+          
+          })
+        }else if(term == 2){
+        
+          PassX.findByIdAndUpdate(idX,{$set:{secondTerm:passRate}},function(err,kocs){
+        
+              
+              })
+            }else{
+              PassX.findByIdAndUpdate(idX,{$set:{thirdTerm:passRate}},function(err,kocs){
+              
+                  
+                  })
+                }
+  
+  res.redirect('/clerk/adminGender')
+              })
+      })
+  
+    })
+  
+    })
+    })
+  
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //student gender
+  
+  
+  router.get('/adminGender',isLoggedIn,function(req,res){
+    var term = req.user.term
+    var m = moment()
+    var year = m.format('YYYY')
+    var male, female
+    var fees
+    var arr1=[]
+    var number1
+    var totalStudents, students, passRate
+  
+  
+  
+    Gender.find({},function(err,docs){
+  
+      User.find({role:'student'},function(err,hods){
+  
+  
+      
+  
+      if(docs.length == 0  && hods.length == 0){
+  
+        
+  
+        var gen = Gender();
+              gen.male = 0;
+              gen.female = 0;
+  
+              gen.save()
+      .then(genX =>{
+  
+        //res.redirect('/clerk/dashX')
+        res.redirect('/clerk/pollCheck')
+  
+      })
+  
+      }
+      else
+      Gender.find({},function(err,docs){
+  
+        var id3 = docs[0]._id
+        console.log('id3',id3)
+        User.find({role:'student',gender:'male'},function(err,hods){
+  
+        User.find({role:'student', gender:'female'},function(err,pods){
+  
+         male = hods.length;
+         female = pods.length
+            
+         console.log('male',male)
+         console.log('female',female)
+      
+      
+  
+        Gender.findByIdAndUpdate(id3,{$set:{male:male, female:female}},function(err,docs){
+              
+                  
+        })
+  
+      
+  
+        //res.redirect('clerk/dashX')
+        res.redirect('/clerk/pollCheck')
+  
+         
+  
+  
+      })
+      })
+    })
+  
+  
+  
+  
+  
+  
+    })
+  
+  
+  })
+  
+  
+  
+  })
+  
+  
+  //dashboard
+  /*
+  router.get('/dash',isLoggedIn,adminX, function(req,res){
+    var pro = req.user
+    const arr = []
+    var arr2 = []
+  const m = moment();
+  var term = req.user.term
+  var year = m.format('YYYY')
+   var id =req.user._id
+  
+   Recepient.find({recepientId:id,statusCheck:'not viewed'},function(err,rocs){
+    let lgt = rocs.length
+    var gt = lgt > 0
+  
+        console.log(req.user._id)
+        console.log(req.user.email)
+          Note.find({recId:req.user._id},function(err,docs){
+           // console.log(docs,'docs')
+         for(var i = 0;i<docs.length;i++){
+  
+         
+           let date = docs[i].date
+           let id = docs[i]._id
+           let timeX = moment(date)
+           let timeX2 =timeX.fromNow()
+           console.log(timeX2,'timex2')
+  
+           Note.findByIdAndUpdate(id,{$set:{status4:timeX2}},function(err,locs){
+  
+           
+           
+          // Format relative time using negative value (-1).
+  
+            
+          })
+        }
+  
+        Note.find({recId:req.user._id,status1:'new'},function(err,flocs){
+          var les 
+       
+          Note.find({recId:req.user._id,status:'not viewed'},function(err,jocs){
+           les = jocs.length > 0
+        
+          for(var i = flocs.length - 1; i>=0; i--){
+      
+            arr.push(flocs[i])
+          }
+       
+  
+          TestX.find({year:year,term:term},function(err,qocs) {
+            for(var i = 0;i<qocs.length;i++){
+              //size = docs.length
+      
+                
+               if(arr2.length > 0 && arr2.find(value => value.subject == qocs[i].subject)){
+                      console.log('true')
+                     arr2.find(value => value.subject == qocs[i].subject).percentage += qocs[i].percentage;
+                     arr2.find(value => value.subject == qocs[i].subject).size++;
+                    }else{
+                      arr2.push(qocs[i])
+                      let subject = qocs[i].subject
+                      
+                        //element.size = 0
+                        if(arr2.find(value => value.subject == subject)){
+                   
+                         
+                               arr2.find(value => value.subject == subject).size++;
+                 
+                        }
+                        //element.size = element.size + 1
+                          
+                     
+                          }
+        
+            
+            }
+            let result = arr2.map(function(element){
+              element.percentage  = element.percentage / element.size
+         
+              let num = Math.round(element.percentage)
+              num.toFixed(2)
+              element.percentage =num
+              console.log(element.mark,'mark')
+              if(element.percentage < 50){
+                element.color = "progress-bar bg-danger"
+              }else{
+                element.color = "progress-bar bg-success"
+              }
+            })
+         
+          res.render('dashboard/index',{pro:pro,list:arr,listX:arr2, les:les,gt:gt })
+          })
+        })
+        })
+        })
+  
+      })
+  
+  
+   
+  })*/
+  
+  
+   //notifications & messages
+  
+   router.post('/dashChartXX3',isLoggedIn,function(req,res){
+                       
+    var term = req.user.term
+  
+   
+    var m = moment()
+    var year = m.format('YYYY')
+    var arr = []
+    var id = req.user._id
+  
+    
+  
+  
+  
+    TestX.find({year:year,term:term},function(err,docs) {
+      for(var i = 0;i<docs.length;i++){
+     
+    
+          
+         if(arr.length > 0 && arr.find(value => value.class1 == docs[i].class1)){
+                
+               arr.find(value => value.class1 == docs[i].class1).percentage += docs[i].percentage;
+               arr.find(value => value.class1 == docs[i].class1).size++
+               //console.log(arr,i)
+              
+              }else{
+                arr.push(docs[i])
+                let class1= docs[i].class1
+                
+                  //element.size = 0
+                  if(arr.find(value => value.class1 == class1)){
+             
+                   
+                         arr.find(value => value.class1 == class1).size++;
+           
+                  }
+                  //element.size = element.size + 1
+                    
+               
+                    }
+          
+          }
+          let result = arr.map(function(element){
+            console.log(element.percentage,element.size,element.subject,'mark0')
+            element.percentage = element.percentage / element.size
+            console.log(element.percentage,element.size,'markX')
+  
+            let num = Math.round(element.percentage)
+              num.toFixed(2)
+              element.percentage =num
+           
+          })
+     // console.log(arr,'arr')
+      res.send(arr)
+    })
+  
+  })
+  
 
 
 
@@ -273,10 +1274,10 @@ router.get('/pollCheck',isLoggedIn,function(req,res){
   var m = moment()
   var year = m.format('YYYY')
   var month = m.format('MMMM')
-  var companyId = req.user.companyId
 
 
-User.find({companyId:companyId,role:"student"},function(err,docs){
+
+User.find({role:"student"},function(err,docs){
 for(var i = 0; i<docs.length;i++){
 if(docs[i].pollUrl === "null"){
 i++;
@@ -628,7 +1629,7 @@ router.get('/stats',isLoggedIn, function(req,res){
           })
         
     }
-    res.redirect('/clerk/adminMonthInc')
+    res.redirect('/clerk/adminMonthInc2')
   })
   })
     })
@@ -644,7 +1645,7 @@ router.get('/stats',isLoggedIn, function(req,res){
 
 //Monthly Income Stats
 
-router.get('/adminMonthInc', isLoggedIn,  function(req,res){
+router.get('/adminMonthInc2', isLoggedIn,  function(req,res){
   var term = req.user.term
   var m = moment()
   var year = m.format('YYYY')
@@ -879,9 +1880,109 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
 */
 
   
-  router.get('/dashX',isLoggedIn,function(req,res){
+ /* router.get('/dashX',isLoggedIn,function(req,res){
     var pro = req.user
       res.render('dashboard/clerk',{pro:pro})
+  })*/
+  router.get('/dashX',isLoggedIn, function(req,res){
+    var pro = req.user
+    const arr = []
+    var arr2 = []
+  const m = moment();
+  var term = req.user.term
+  var year = m.format('YYYY')
+   var id =req.user._id
+  
+   Recepient.find({recepientId:id,statusCheck:'not viewed'},function(err,rocs){
+    let lgt = rocs.length
+    var gt = lgt > 0
+  
+        console.log(req.user._id)
+        console.log(req.user.email)
+          Note.find({recId:req.user._id},function(err,docs){
+           // console.log(docs,'docs')
+         for(var i = 0;i<docs.length;i++){
+  
+         
+           let date = docs[i].date
+           let id = docs[i]._id
+           let timeX = moment(date)
+           let timeX2 =timeX.fromNow()
+           console.log(timeX2,'timex2')
+  
+           Note.findByIdAndUpdate(id,{$set:{status4:timeX2}},function(err,locs){
+  
+           
+           
+          // Format relative time using negative value (-1).
+  
+            
+          })
+        }
+  
+        Note.find({recId:req.user._id,status1:'new'},function(err,flocs){
+          var les 
+       
+          Note.find({recId:req.user._id,status:'not viewed'},function(err,jocs){
+           les = jocs.length > 0
+        
+          for(var i = flocs.length - 1; i>=0; i--){
+      
+            arr.push(flocs[i])
+          }
+       
+  
+          TestX.find({year:year,term:term},function(err,qocs) {
+            for(var i = 0;i<qocs.length;i++){
+              //size = docs.length
+      
+                
+               if(arr2.length > 0 && arr2.find(value => value.subject == qocs[i].subject)){
+                      console.log('true')
+                     arr2.find(value => value.subject == qocs[i].subject).percentage += qocs[i].percentage;
+                     arr2.find(value => value.subject == qocs[i].subject).size++;
+                    }else{
+                      arr2.push(qocs[i])
+                      let subject = qocs[i].subject
+                      
+                        //element.size = 0
+                        if(arr2.find(value => value.subject == subject)){
+                   
+                         
+                               arr2.find(value => value.subject == subject).size++;
+                 
+                        }
+                        //element.size = element.size + 1
+                          
+                     
+                          }
+        
+            
+            }
+            let result = arr2.map(function(element){
+              element.percentage  = element.percentage / element.size
+         
+              let num = Math.round(element.percentage)
+              num.toFixed(2)
+              element.percentage =num
+              console.log(element.mark,'mark')
+              if(element.percentage < 50){
+                element.color = "progress-bar bg-danger"
+              }else{
+                element.color = "progress-bar bg-success"
+              }
+            })
+         
+          res.render('dashboard/clerkIndex',{pro:pro,list:arr,listX:arr2, les:les,gt:gt })
+          })
+        })
+        })
+        })
+  
+      })
+  
+  
+   
   })
   
 
@@ -1020,32 +2121,65 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            router.get('/msgX',isLoggedIn,function(req,res){
+            router.get('/msgUpdate',isLoggedIn,function(req,res){
+              var id = req.user._id
+              var arr = []
+            
+              Recepient.find({recepientId:id},function(err,docs){
+            //  
+              if(docs.length > 0){
+                for(var i = 0; i<docs.length;i++){
+                let msgId = docs[0].msgId
+                Message.find({msgId:msgId},function(err,tocs){
+                  if(tocs.length >= 1){
+                    arr.push(tocs[0])
+                  }
+                  let size = arr.length
+                  console.log(size,'size')
+                  User.findByIdAndUpdate(id,{$set:{inboxNo:size}},function(err,locs){
+              
+                  })
+                
+                })
+              }
+              }
+              
+              })
+              })
+              
+              router.get('/sentUpdate',isLoggedIn,function(req,res){
+                var id = req.user._id
+              
+                Message.find({senderId:id},function(err,docs){
+                  let size = docs.length
+                  User.findByIdAndUpdate(id,{$set:{sent:size}},function(err,nocs){
+              
+                  })
+                })
+              })
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+             router.get('/msgX',isLoggedIn,function(req,res){
               var id = req.user.id
               var list = []
               var num
-          Recepient.find({recepientId :id},function(err,nocs){
-          
-          for(var i = 0 ; i<nocs.length;i++){
-          
-          let recId = nocs[i].msgId
-          
+            Recepient.find({recepientId :id},function(err,nocs){
+            
+            for(var i = 0 ; i<nocs.length;i++){
+            
+            let recId = nocs[i].msgId
+            
               Message.find({status:'reply',msgId:recId},function(err,docs){
                 for(var i = 0; i<docs.length;i++){
                   let date = docs[i].date
@@ -1054,7 +2188,7 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                   let timeX2 =timeX.fromNow()
                   let timeX3 =timeX.format("LLL")
                   console.log(timeX2,'timex2')
-          
+            
             
                   Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
             
@@ -1065,107 +2199,109 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                    
                  })
                 }
-          
+            
               
               })
             }
             
-          res.redirect('/msg')
-          })
-          
-          })
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          router.get('/msg',isLoggedIn,function(req,res){
-          var id = req.user.id
-          const list2 =[]
-          const list = []
-          var num
-           
-          Recepient.find({recepientId :id, status:'active', statusXX:'null'},function(err,klocs){
-          
-          //var recFilter =Recepient.find({recepientId :id}).sort({"numDate":-1});
-          //recFilter.exec(function(err,klocs){
+            res.redirect('/clerk/msg')
+            })
+            
+            })
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            router.get('/msg',isLoggedIn,function(req,res){
+            var id = req.user.id
+            const list2 =[]
+            const list = []
+            var num = req.user.inboxNo
+            var sent = req.user.sent
+            var pro = req.user
+            
+            Recepient.find({recepientId :id, status:'active', statusXX:'null'},function(err,klocs){
+            
+            //var recFilter =Recepient.find({recepientId :id}).sort({"numDate":-1});
+            //recFilter.exec(function(err,klocs){
             for(var c = 0 ; c <klocs.length;c++){
-          
+            
             let recIdX = klocs[c].msgId
-          
+            
                   Message.find({status:'reply',msgId:recIdX},function(err,  docs){
-          
+            
                    // var bookFilter =Message.find({status:'reply',msgId:recIdX}).sort({"numDate":-1});
-          
-          
-          // bookFilter.exec(function(err,docs){
-          
-          console.log(docs.length,'mainstream')
-          
-          let x = docs.length - 1
-          for(var i = x ;i>=0; i--){
-          console.log(i,'b')
-          if(docs[i].senderId !=id){
-          //console.log(docs[i],'black skinhead')
-          
-          list.push(docs[i])
-          list.sort((x, y) =>  y.numDate - x.numDate)
-          console.log(list,'list yacho')
-          
-          
-          }
-          
-          num  = docs.length
-          }
-          })  
-          
-          //})
-          
-          }
-          res.render('clerkMess/inbox',{list:list, num:num})
-          })
-          
-          })
-          
-          
-          
-          
-          
-          //on click dashboard icon & msg redirect
-          router.post('/msg/:id',function(req,res){
+            
+            
+            // bookFilter.exec(function(err,docs){
+            
+            console.log(docs.length,'mainstream')
+            
+            let x = docs.length - 1
+            for(var i = x ;i>=0; i--){
+            console.log(i,'b')
+            if(docs[i].senderId !=id){
+            //console.log(docs[i],'black skinhead')
+            
+            list.push(docs[i])
+            list.sort((x, y) =>  y.numDate - x.numDate)
+            console.log(list,'list yacho')
+            
+            
+            }
+            
+            num  = docs.length
+            }
+            })  
+            
+            //})
+            
+            }
+            res.render('messagesClerk/inbox',{list:list, num:num,sent:sent,pro:pro})
+            })
+            
+            })
+            
+            
+            
+            
+            
+            //on click dashboard icon & msg redirect
+            router.post('/msg/:id',isLoggedIn,function(req,res){
             var m = moment()
             var date = m.toString()
-          
-          var id = req.params.id
+            
+            var id = req.params.id
             Recepient.find({recepientId:id},function(err,docs){
               for(var i = 0; i<docs.length; i++){
                 let nId = docs[i]._id
-          
+            
                 Recepient.findByIdAndUpdate(nId,{$set:{statusCheck:'viewed'}},function(err,locs){
-          
+            
                   
                 })
               }
-          
+            
               res.send('success')
             })
-          })
-          
-          
-          router.get('/sentXX',isLoggedIn,function(req,res){
-          var id = req.user.id
-          var list = []
-          var num
-          
-          
-          Message.find({senderId:id},function(err,docs){
+            })
+            
+            
+            router.get('/sentXX',isLoggedIn,function(req,res){
+            var id = req.user.id
+            var list = []
+            var num
+            
+            
+            Message.find({senderId:id},function(err,docs){
             for(var i = 0; i<docs.length;i++){
               let date = docs[i].date
               let Vid = docs[i]._id
@@ -1173,78 +2309,79 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
               let timeX2 =timeX.fromNow()
               let timeX3 =timeX.format("LLL")
               console.log(timeX2,'timex2')
-          
-          
+            
+            
               Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
-          
-          
+            
+            
+            
                
              })
             }
-          res.redirect('/sent')
-          })
-          
-          })
-          
-          
-          
-          
-          
-          router.get('/sent',isLoggedIn,function(req,res){
-          var id = req.user.id
-          const list2 =[]
-          const list = []
-          var num
-           
-          Message.find({senderId :id},function(err,docs){
-          
-          
-          
-          console.log(docs.length,'mainstream')
-          if(docs.length > 1){
-          
-          let x = docs.length - 1
-          for(var i = x ;i>=0; i--){
-          console.log(i,'b')
-          
-          //console.log(docs[i],'black skinhead')
-          
-          list.push(docs[i])
-          list.sort((x, y) =>  y.numDate - x.numDate)
-          console.log(list,'list yacho')
-          
-          
-          
-          
-          
-          num  = docs.length
-          }
-          
-          }else if(docs.length == 1){
-          
-          list.push(docs[0])
-          console.log(list,'list')
-          }else{
-          console.log('inquisition')
-          }
-          //})
-          
-          
-          res.render('clerkMess/sent',{list:list, num:num})
-          })
-          
-          })
-          
-          
-          
-          router.get('/archiveXX',isLoggedIn,function(req,res){
-          var id = req.user.id
-          var list = []
-          var num
-          
-          Recepient.find({recepientId :id, status:'active', statusXX:'yes', archive:'yes'},function(err,klocs){
-          
+            res.redirect('/clerk/sent')
+            })
+            
+            })
+            
+            
+            
+            
+            
+            router.get('/sent',isLoggedIn,function(req,res){
+            var id = req.user.id
+            const list2 =[]
+            const list = []
+            var num = req.user.inboxNo
+            var sent = req.user.sent
+            var pro = req.user
+            Message.find({senderId :id},function(err,docs){
+            
+            
+            
+            console.log(docs.length,'mainstream')
+            if(docs.length > 1){
+            
+            let x = docs.length - 1
+            for(var i = x ;i>=0; i--){
+            console.log(i,'b')
+            
+            //console.log(docs[i],'black skinhead')
+            
+            list.push(docs[i])
+            list.sort((x, y) =>  y.numDate - x.numDate)
+            console.log(list,'list yacho')
+            
+            
+            
+            
+            
+            num  = docs.length
+            }
+            
+            }else if(docs.length == 1){
+            
+            list.push(docs[0])
+            console.log(list,'list')
+            }else{
+            console.log('inquisition')
+            }
+            //})
+            
+            
+            res.render('messagesClerk/sent',{list:list, num:num,sent:sent,pro:pro})
+            })
+            
+            })
+            
+            
+            
+            router.get('/archiveXX',isLoggedIn,function(req,res){
+            var id = req.user.id
+            var list = []
+            var num
+            
+            Recepient.find({recepientId :id, status:'active', statusXX:'yes', archive:'yes'},function(err,klocs){
+            
             for(var c = 0 ; c <klocs.length;c++){
             
               let recIdX = klocs[c].msgId
@@ -1257,240 +2394,246 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
               let timeX2 =timeX.fromNow()
               let timeX3 =timeX.format("LLL")
               console.log(timeX2,'timex2')
-          
-          
+            
+            
               Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
+            
               
               
              // Format relative time using negative value (-1).
-          
+            
                
              })
             }
-          })
-          }
-          res.redirect('/archive')
-          
-          })
-          
-          })
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          router.get('/archive',isLoggedIn,function(req,res){
-          var id = req.user.id
-          const list2 =[]
-          const list = []
-          var num
-          
-          Recepient.find({recepientId :id, status:'active', statusXX:'yes', archive:'yes'},function(err,klocs){
-          
-          for(var c = 0 ; c <klocs.length;c++){
-          
-            let recIdX = klocs[c].msgId
-          
-                  Message.find({msgId:recIdX},function(err,  docs){
-          
-          console.log(docs.length,'mainstream')
-          if(docs.length > 1){
-          
-          let x = docs.length - 1
-          for(var i = x ;i>=0; i--){
-          console.log(i,'b')
-          
-          //console.log(docs[i],'black skinhead')
-          
-          list.push(docs[i])
-          list.sort((x, y) =>  y.numDate - x.numDate)
-          console.log(list,'list yacho')
-          
-          
-          
-          
-          
-          num  = docs.length
-          }
-          
-          }else{
-          
-          list.push(docs[0])
-          console.log(list,'list')
-          }
-          //})
-          })
-          }      
-          
-          res.render('clerkMess/sent',{list:list, num:num})
-                 
-          })
-          
-          })
-          
-          
-          
-          
-          router.post('/marked',isLoggedIn,function(req,res){
-          let code = req.body.code
-          console.log(code,'code')
-          let id = req.user.id
-          Recepient.find({ msgId:code, recepientId:id },function(err,docs){
-          let nId = docs[0]._id
-          if(docs[0].statusX == 'unmarked'){
-          Recepient.findByIdAndUpdate(nId,{$set:{statusX:'marked'}},function(err,nocs){
-          
-          })
-          }else{
-          Recepient.findByIdAndUpdate(nId,{$set:{statusX:'unmarked'}},function(err,nocs){
-          
-          })
-          
-          }
-          
-          })
-          })
-          
-          router.post('/archiveX',isLoggedIn,function(req,res){
-          
-          let id = req.user.id
-          Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
-          
-          for(var i = 0; i<docs.length;i++){
-          
-          
-          Recepient.findByIdAndUpdate(docs[i]._id,{$set:{archive:'yes',statusXX:'yes'}},function(err,nocs){
-          
-          })
-          
-          }
-          
-          res.send(docs)
-          })
-          })
-          
-          
-          
-          router.post('/readX',isLoggedIn,function(req,res){
-          
-          let id = req.user.id
-          Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
-          
-          for(var i = 0; i<docs.length;i++){
-          
-          
-          Recepient.findByIdAndUpdate(docs[i]._id,{$set:{read:'yes',statusXX:'yes'}},function(err,nocs){
-          
-          })
-          
-          }
-          
-          res.send(docs)
-          })
-          })
-          
-          
-          
-          
-          
-          
-          
-          
-          router.post('/delete',isLoggedIn,function(req,res){
-          
-          let id = req.user.id
-          Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
-          
-          for(var i = 0; i<docs.length;i++){
-          
-          
-          Recepient.findByIdAndUpdate(docs[i]._id,{$set:{status:'deleted',statusXX:'yes'}},function(err,nocs){
-          
-          })
-          
-          }
-          
-          res.send(docs)
-          })
-          })
-          
-          
-            router.get('/comp',isLoggedIn,  function(req,res){
-              res.render('clerkMess/compose')
             })
-          
-           
+            }
+            res.redirect('/clerk/archive')
+            
+            })
+            
+            })
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            router.get('/archive',isLoggedIn,function(req,res){
+            var id = req.user.id
+            const list2 =[]
+            const list = []
+            var num = req.user.inboxNo
+            var sent = req.user.sent
+            var pro = req.user
+            
+            Recepient.find({recepientId :id, status:'active', statusXX:'yes', archive:'yes'},function(err,klocs){
+            
+            for(var c = 0 ; c <klocs.length;c++){
+            
+            let recIdX = klocs[c].msgId
+            
+                  Message.find({msgId:recIdX},function(err,  docs){
+            
+            console.log(docs.length,'mainstream')
+            if(docs.length > 1){
+            
+            let x = docs.length - 1
+            for(var i = x ;i>=0; i--){
+            console.log(i,'b')
+            
+            //console.log(docs[i],'black skinhead')
+            
+            list.push(docs[i])
+            list.sort((x, y) =>  y.numDate - x.numDate)
+            console.log(list,'list yacho')
+            
+            
+            
+            
+            
+            num  = docs.length
+            }
+            
+            }else{
+            
+            list.push(docs[0])
+            console.log(list,'list')
+            }
+            //})
+            })
+            }      
+            
+            res.render('messagesClerk/sent',{list:list, num:num,sent:sent,pro:pro})
+                 
+            })
+            
+            })
+            
+            
+            
+            
+            router.post('/marked',isLoggedIn,function(req,res){
+            let code = req.body.code
+            console.log(code,'code')
+            let id = req.user.id
+            Recepient.find({ msgId:code, recepientId:id },function(err,docs){
+            let nId = docs[0]._id
+            if(docs[0].statusX == 'unmarked'){
+            Recepient.findByIdAndUpdate(nId,{$set:{statusX:'marked'}},function(err,nocs){
+            
+            })
+            }else{
+            Recepient.findByIdAndUpdate(nId,{$set:{statusX:'unmarked'}},function(err,nocs){
+            
+            })
+            
+            }
+            
+            })
+            })
+            
+            router.post('/archiveX',isLoggedIn,function(req,res){
+            
+            let id = req.user.id
+            Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
+            
+            for(var i = 0; i<docs.length;i++){
+            
+            
+            Recepient.findByIdAndUpdate(docs[i]._id,{$set:{archive:'yes',statusXX:'yes'}},function(err,nocs){
+            
+            })
+            
+            }
+            
+            res.send(docs)
+            })
+            })
+            
+            
+            
+            router.post('/readX',isLoggedIn,function(req,res){
+            
+            let id = req.user.id
+            Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
+            
+            for(var i = 0; i<docs.length;i++){
+            
+            
+            Recepient.findByIdAndUpdate(docs[i]._id,{$set:{read:'yes',statusXX:'yes'}},function(err,nocs){
+            
+            })
+            
+            }
+            
+            res.send(docs)
+            })
+            })
+            
+            
+            
+            
+            
+            
+            
+            
+            router.post('/delete',isLoggedIn,function(req,res){
+            
+            let id = req.user.id
+            Recepient.find({ statusX:'marked', recepientId:id },function(err,docs){
+            
+            for(var i = 0; i<docs.length;i++){
+            
+            
+            Recepient.findByIdAndUpdate(docs[i]._id,{$set:{status:'deleted',statusXX:'yes'}},function(err,nocs){
+            
+            })
+            
+            }
+            
+            res.send(docs)
+            })
+            })
+            
+            
+            router.get('/compose',isLoggedIn,  function(req,res){
+              var num = req.user.inboxNo
+              var pro = req.user
+              var sent = req.user.sent
+              res.render('messagesClerk/compose',{num:num,sent:sent,pro:pro})
+            })
+            
+            
             router.post('/userX',isLoggedIn,function(req,res){
-              var id =req.user.id
+              var id =req.user._id
               var arr = []
+              
               User.find({},function(err,docs){
                 console.log(docs.length,'length')
                 for(var i = 0; i< docs.length;i++){
-          if(docs[i]._id != id){
-          console.log(docs[i]._id,'success')
-          arr.push(docs[i])
-          }else
-          console.log(docs[i]._id,'failed')
-          
+            if(docs[i]._id != id){
+            console.log(docs[i]._id,'success')
+            arr.push(docs[i])
+            }else
+            console.log(docs[i]._id,'failed')
+            
                 }
                 res.send(arr)
               })
             })
-          
-          
-          
-          router.post('/dataX',isLoggedIn,function(req,res){
-          var m = moment()
-          var year = m.format('YYYY')
-          var numDate = m.valueOf()
-          var date = m.toString()
-          var senderId = req.user._id
-          var senderName = req.user.fullname
-          var senderPhoto = req.user.photo
-          var senderEmail = req.user.email
-          
-          var uid = req.user._id
-          
-          
-          
-          console.log(req.body['code[]'])
-          let code = req.body['code[]']
-          var sub = req.body.code1
-          let msg = req.body.code2
-          
-          
-          
-          var ms = new Message()
-          
-          ms.senderId = senderId
-          ms.senderName = senderName
-          ms.senderPhoto = senderPhoto
-          ms.senderEmail = senderEmail
-          ms.msgId = 'null'
-          ms.msg = msg
-          ms.status = 'reply'
-          ms.status4 = 'null'
-          ms.status5 = 'null'
-          
-          ms.type = 'original'
-          ms.subject = sub
-          ms.numDate = numDate
-          ms.date = date
-          
-          ms.save().then(ms=>{
-          
+            
+            
+            
+            router.post('/dataX',isLoggedIn,function(req,res){
+            var m = moment()
+            var year = m.format('YYYY')
+            var numDate = m.valueOf()
+            var date = m.toString()
+            var senderId = req.user._id
+            var senderName = req.user.fullname
+            var senderPhoto = req.user.photo
+            var senderEmail = req.user.email
+            
+            var uid = req.user._id
+            
+            
+            
+            console.log(req.body['code[]'])
+            let code = req.body['code[]']
+            var sub = req.body.code1
+            let msg = req.body.code2
+            
+            
+            
+            var ms = new Message()
+            
+            ms.senderId = senderId
+            ms.senderName = senderName
+            ms.senderPhoto = senderPhoto
+            ms.senderEmail = senderEmail
+            ms.msgId = 'null'
+            ms.msg = msg
+            ms.status = 'reply'
+            ms.status4 = 'null'
+            ms.status5 = 'null'
+            
+            ms.type = 'original'
+            ms.subject = sub
+            ms.numDate = numDate
+            ms.date = date
+            
+            ms.save().then(ms=>{
+            
             Message.findByIdAndUpdate(ms._id,{$set:{msgId:ms._id}},function(err,nocs){
-          
+            
             })
             for(var i = 0;i<code.length - 1;i++){
               User.findById(code[i],function(err,doc){
@@ -1502,10 +2645,10 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
               Recepient.find({msgId:ms._id,recepientId:recepientId},function(err,tocs){
                 let size = tocs.length
              
-           
+            
                 if(tocs.length == 0){
                   let rec = new Recepient()
-          
+            
                 
                  
                   rec.msgId = msgId
@@ -1520,204 +2663,208 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                   rec.archive = 'null'
                   rec.recepientEmail = recepientEmail
                   rec.save()
-          
+            
                 }
                
-          
+            
               })
             })
-          }
-          res.redirect('/sentX')
-          })
-          
-          
-          
-          
-          
-          })
-          
-          router.get('/reply/:id', isLoggedIn, function(req,res){
-          var id = req.params.id
-          var uid = req.user._id
-          console.log(id,'id')
-          var arr = []
-          Message.find({msgId:id,status:'sent'},function(err,tocs){
-          arr.push(tocs[0].senderEmail)
-          let sub = tocs[0].subject
-          Message.find({msgId:id,status:'reply',recepientId:uid},function(err,docs){
-          Recepient.find({msgId:id},function(err,nocs){
-          for(var i = 0; i<nocs.length;i++){
-          console.log(nocs[i].recepientEmail,'email')
-          arr.push(nocs[i].recepientEmail)
-          
-          
-          let date = nocs[i].date
-          let Vid = nocs[i]._id
-          let timeX = moment(date)
-          let timeX2 =timeX.fromNow()
-          let timeX3 =timeX.format("LLL")
-          console.log(timeX2,'timex2')
-          
-          
-          Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
-          
-          
-          // Format relative time using negative value (-1).
-          
-          
-          })
-          
-          }
-          console.log(arr,'arr')
-          
-          res.render('messages/reply',{list:docs,id:id, arr:arr, subject:sub})
-          })
-          
-          })
-          })
-          })
-          
-          
-          
-          router.post('/reply/:id', isLoggedIn, function(req,res){
-          var m = moment()
-          var year = m.format('YYYY')
-          var numDate = m.valueOf()
-          var id = req.params.id
-          var senderId = req.user._id
-          var senderName = req.user.fullname
-          var senderEmail = req.user.email
-          var sub = req.body.compose_subject
-          let msg = 'vocal tone'
-          
-          Message.findById({msgId:id, status:'sent'},function(err,docs){
-          
-          
-          
-          
-          
-          
-          var ms = new Message()
-          
-          ms.senderId = senderId
-          ms.senderName = senderName
-          ms.senderEmail = senderEmail
-          ms.msgId = id
-          ms.msg = msg
-          ms.status = 'reply'
-          ms.status4 = 'null'
-          ms.status5 = 'null'
-          ms.type = 'reply'
-          ms.numDate = numDate
-          ms.subject = sub
-          ms.date = date
-          
-          ms.save().then(ms=>{
-          console.log(ms._id,'msgId')
-          
-          
-          
-          let date = ms.date
-          let Vid = ms._id
-          let timeX = moment(date)
-          let timeX2 =timeX.fromNow()
-          let timeX3 =timeX.format("LLL")
-          console.log(timeX2,'timex2')
-          
-          
-          Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
-          
-          
-          // Format relative time using negative value (-1).
-          
-          
-          })
-          
-          })
-          
-          
-          
-          })
-          
-          
-          
-          
-          
-          })
-          
-          
-          
-          
-          router.post('/replyX/:id',isLoggedIn,function(req,res){
-          console.log(req.body.code1,'code1')
-          console.log(req.body['compose_to[]'],'compose_to')
-          let code = req.body.code1
-          var sub = req.body.code1
-          let id = req.params.id
-          var arr = []
-          Message.find({msgId:id,status:'sent'},function(err,tocs){
-          console.log(tocs)
-          arr.push(tocs[0].senderId)
-          
-          Recepient.find({msgId:id},function(err,nocs){
-          for(var i = 0; i<nocs.length;i++){
-          console.log(nocs[i].recepientId,'email')
-          arr.push(nocs[i].recepientId)
-          
-          }
-          
-          
-          res.send(arr)
-          })
-          
-          })
-          
-          })
-          
-          
-          router.post('/replyX2/:id',isLoggedIn,function(req,res){
-          var m = moment()
-          var year = m.format('YYYY')
-          var numDate = m.valueOf()
-          var date = m.toString()
-          var msgId = req.params.id
-          var senderId = req.user._id
-          var senderName = req.user.fullname
-          var senderPhoto = req.user.photo
-          var senderEmail = req.user.email
-          
-          var uid = req.user._id
-          
-          
-          
-          console.log(req.body['code[]'])
-          let code = req.body['code[]']
-          var sub = req.body.code1
-          let msg = req.body.code2
-          
-          
-          
-          var ms = new Message()
-          
-          ms.senderId = senderId
-          ms.senderName = senderName
-          ms.senderPhoto = senderPhoto
-          ms.senderEmail = senderEmail
-          ms.msgId = msgId
-          ms.msg = msg
-          ms.status = 'reply'
-          ms.status4 = 'null'
-          ms.status5 = 'null'
-          ms.type = 'reply'
-          ms.numDate = numDate
-          ms.subject = sub
-          ms.date = date
-          
-          ms.save().then(ms=>{
-          
-          
+            }
+            res.send(code)
+            })
+            
+            
+            
+            
+            
+            })
+            
+            router.get('/reply/:id', isLoggedIn, function(req,res){
+            var id = req.params.id
+            var uid = req.user._id
+            console.log(id,'id')
+            var arr = []
+            
+            var num = req.user.inboxNumber
+            var sent = req.user.sent
+            Message.find({msgId:id},function(err,tocs){
+            console.log(tocs,'tocs')
+            arr.push(tocs[0].senderEmail)
+            let sub = tocs[0].subject
+            Message.find({msgId:id,status:'reply',},function(err,docs){
+            Recepient.find({msgId:id,},function(err,nocs){
+            for(var i = 0; i<nocs.length;i++){
+            console.log(nocs[i].recepientEmail,'email')
+            arr.push(nocs[i].recepientEmail)
+            
+            
+            let date = nocs[i].date
+            let Vid = nocs[i]._id
+            let timeX = moment(date)
+            let timeX2 =timeX.fromNow()
+            let timeX3 =timeX.format("LLL")
+            console.log(timeX2,'timex2')
+            
+            
+            Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
+            
+            
+            
+            // Format relative time using negative value (-1).
+            
+            
+            })
+            
+            }
+            console.log(arr,'arr')
+            
+            res.render('messagesClerk/reply',{list:docs,id:id, arr:arr, subject:sub,num:num,sent:sent})
+            })
+            
+            })
+            })
+            })
+            
+            
+            
+            router.post('/reply/:id', isLoggedIn, function(req,res){
+            var m = moment()
+            var year = m.format('YYYY')
+            var numDate = m.valueOf()
+            var id = req.params.id
+            var senderId = req.user._id
+            var senderName = req.user.fullname
+            var senderEmail = req.user.email
+            var sub = req.body.compose_subject
+            let msg = 'vocal tone'
+            
+            Message.findById({msgId:id},function(err,docs){
+            
+            
+            
+            
+            
+            
+            var ms = new Message()
+            
+            ms.senderId = senderId
+            ms.senderName = senderName
+            ms.senderEmail = senderEmail
+            ms.msgId = id
+            ms.msg = msg
+            ms.status = 'reply'
+            ms.status4 = 'null'
+            ms.status5 = 'null'
+            ms.type = 'reply'
+            ms.numDate = numDate
+            ms.subject = sub
+            ms.date = date
+            
+            ms.save().then(ms=>{
+            console.log(ms._id,'msgId')
+            
+            
+            
+            let date = ms.date
+            let Vid = ms._id
+            let timeX = moment(date)
+            let timeX2 =timeX.fromNow()
+            let timeX3 =timeX.format("LLL")
+            console.log(timeX2,'timex2')
+            
+            
+            Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
+            
+            
+            
+            // Format relative time using negative value (-1).
+            
+            
+            })
+            
+            })
+            
+            
+            
+            })
+            
+            
+            
+            
+            
+            })
+            
+            
+            
+            
+            router.post('/replyX/:id',isLoggedIn,function(req,res){
+            console.log(req.body.code1,'code1')
+            console.log(req.body['compose_to[]'],'compose_to')
+            let code = req.body.code1
+            var sub = req.body.code1
+            let id = req.params.id
+            var arr = []
+            Message.find({msgId:id},function(err,tocs){
+            console.log(tocs)
+            arr.push(tocs[0].senderId)
+            
+            Recepient.find({msgId:id},function(err,nocs){
+            for(var i = 0; i<nocs.length;i++){
+            console.log(nocs[i].recepientId,'email')
+            arr.push(nocs[i].recepientId)
+            
+            }
+            
+            
+            res.send(arr)
+            })
+            
+            })
+            
+            })
+            
+            
+            router.post('/replyX2/:id',isLoggedIn,function(req,res){
+            var m = moment()
+            var year = m.format('YYYY')
+            var numDate = m.valueOf()
+            var date = m.toString()
+            var msgId = req.params.id
+            var senderId = req.user._id
+            var senderName = req.user.fullname
+            var senderPhoto = req.user.photo
+            var senderEmail = req.user.email
+            
+            var uid = req.user._id
+            
+            
+            
+            console.log(req.body['code[]'])
+            let code = req.body['code[]']
+            var sub = req.body.code1
+            let msg = req.body.code2
+            
+            
+            
+            var ms = new Message()
+            
+            ms.senderId = senderId
+            ms.senderName = senderName
+            ms.senderPhoto = senderPhoto
+            ms.senderEmail = senderEmail
+            ms.msgId = msgId
+            ms.msg = msg
+            ms.status = 'reply'
+            ms.status4 = 'null'
+            ms.status5 = 'null'
+            ms.type = 'reply'
+            ms.numDate = numDate
+            ms.subject = sub
+            ms.date = date
+            
+            ms.save().then(ms=>{
+            
+            
             for(var i = 0;i<code.length - 1;i++){
               User.findById(code[i],function(err,doc){
              
@@ -1728,10 +2875,10 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
               Recepient.find({msgId:msgId,recepientId:recepientId},function(err,tocs){
                 let size = tocs.length
              
-           
+            
                 if(tocs.length == 0){
                   let rec = new Recepient()
-          
+            
                 
                  
                   rec.msgId = msgId
@@ -1740,6 +2887,7 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                   rec.numDate = numDate
                   rec.status = 'active'
                   rec.statusX = 'unmarked'
+                  rec.statusXX = 'null'
                   rec.read = 'null'
                   rec.statusCheck = 'not viewed'
                   rec.archive = 'null'
@@ -1747,86 +2895,86 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                   rec.save()
                 }else{
                   Recepient.findByIdAndUpdate(tocs[0]._id,{$set:{statusCheck:"not viewed"}},function(err,locs){
-          
-          
-          
+            
+            
+            
                     // Format relative time using negative value (-1).
                     
                      
                     })
-          
+            
                 }
                
-          
+            
               })
             })
-          }
-          
-          let date = ms.date
-          let Vid = ms._id
-          let timeX = moment(date)
-          let timeX2 =timeX.fromNow()
-          let timeX3 =timeX.format("LLL")
-          console.log(timeX2,'timex2')
-          
-          
-          Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
-          
-          
-          // Format relative time using negative value (-1).
-          
-          
-          })
-          
-          })
-          
-          
-          })
-          
-          
-          
-          router.post('/replyX3/:id',isLoggedIn,function(req,res){
-          var m = moment()
-          var year = m.format('YYYY')
-          var numDate = m.valueOf()
-          var date = m.toString()
-          var msgId = req.params.id
-          var senderId = req.user._id
-          var senderName = req.user.fullname
-          var senderPhoto = req.user.photo
-          var senderEmail = req.user.email
-          
-          var uid = req.user._id
-          
-          
-          
-          console.log(req.body['code[]'])
-          let code = req.body['code[]']
-          var sub = req.body.code1
-          let msg = req.body.code2
-          
-          
-          
-          var ms = new Message()
-          
-          ms.senderId = senderId
-          ms.senderName = senderName
-          ms.senderPhoto = senderPhoto
-          ms.senderEmail = senderEmail
-          ms.msgId = msgId
-          ms.msg = msg
-          ms.status = 'reply'
-          ms.status4 = 'null'
-          ms.status5 = 'null'
-          ms.type = 'reply'
-          ms.numDate = numDate
-          ms.subject = sub
-          ms.date = date
-          
-          ms.save().then(ms=>{
-          
-          
+            }
+            
+            let date = ms.date
+            let Vid = ms._id
+            let timeX = moment(date)
+            let timeX2 =timeX.fromNow()
+            let timeX3 =timeX.format("LLL")
+            console.log(timeX2,'timex2')
+            
+            
+            Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
+            
+            
+            
+            // Format relative time using negative value (-1).
+            
+            
+            })
+            res.send(code)
+            })
+            
+            
+            })
+            
+            
+            
+            router.post('/replyX3/:id',isLoggedIn,function(req,res){
+            var m = moment()
+            var year = m.format('YYYY')
+            var numDate = m.valueOf()
+            var date = m.toString()
+            var msgId = req.params.id
+            var senderId = req.user._id
+            var senderName = req.user.fullname
+            var senderPhoto = req.user.photo
+            var senderEmail = req.user.email
+            
+            var uid = req.user._id
+            
+            
+            
+            console.log(req.body['code[]'])
+            let code = req.body['code[]']
+            var sub = req.body.code1
+            let msg = req.body.code2
+            
+            
+            
+            var ms = new Message()
+            
+            ms.senderId = senderId
+            ms.senderName = senderName
+            ms.senderPhoto = senderPhoto
+            ms.senderEmail = senderEmail
+            ms.msgId = msgId
+            ms.msg = msg
+            ms.status = 'reply'
+            ms.status4 = 'null'
+            ms.status5 = 'null'
+            ms.type = 'reply'
+            ms.numDate = numDate
+            ms.subject = sub
+            ms.date = date
+            
+            ms.save().then(ms=>{
+            
+            
             for(var i = 0;i<code.length - 1;i++){
               User.findById(code[i],function(err,doc){
              
@@ -1837,10 +2985,10 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
               Recepient.find({msgId:msgId,recepientId:recepientId},function(err,tocs){
                 let size = tocs.length
              
-           
+            
                 if(tocs.length == 0){
                   let rec = new Recepient()
-          
+            
                 
                  
                   rec.msgId = msgId
@@ -1849,51 +2997,73 @@ User.find({companyId:companyId,role:"student"},function(err,docs){
                   rec.numDate = numDate
                   rec.status = 'active'
                   rec.statusX = 'unmarked'
+                  rec.statusXX = 'null'
                   rec.statusCheck = 'not viewed'
                   rec.read = 'null'
                   rec.archive = 'null'
                   rec.recepientEmail = recepientEmail
                   rec.save()
-          
+            
                 } else{
-          
+            
                 Recepient.findByIdAndUpdate(tocs[0]._id,{$set:{statusCheck:"not viewed"}},function(err,locs){
-          
-          
-          
+            
+            
+            
                   // Format relative time using negative value (-1).
                   
                    
                   })
                 }
                
-          
+            
               })
             })
-          }
-          
-          let date = ms.date
-          let Vid = ms._id
-          let timeX = moment(date)
-          let timeX2 =timeX.fromNow()
-          let timeX3 =timeX.format("LLL")
-          console.log(timeX2,'timex2')
-          
-          
-          Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
-          
-          
-          
-          // Format relative time using negative value (-1).
-          
-          
-          })
-          
-          
-          })
-          })
-          
-          
+            }
+            
+            let date = ms.date
+            let Vid = ms._id
+            let timeX = moment(date)
+            let timeX2 =timeX.fromNow()
+            let timeX3 =timeX.format("LLL")
+            console.log(timeX2,'timex2')
+            
+            
+            Message.findByIdAndUpdate(Vid,{$set:{status4:timeX2,status5:timeX3}},function(err,locs){
+            
+            
+            
+            // Format relative time using negative value (-1).
+            
+            
+            })
+            res.send(code)
+            
+            })
+            })
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+             
           
           
           
@@ -1947,6 +3117,49 @@ for(var i = 0; i<docs.length;i++){
 })
 
 
+router.get('/analytics',isLoggedIn,function(req,res){
+  var pro = req.user
+  Subject.find({},function(err,docs){
+    Class1.find({},function(err,locs){
+
+ 
+    res.render('clerkAdmin/classAn',{listX:docs,arr1:locs,pro:pro})
+  })
+})
+})
+
+
+
+router.get('/appraisal',isLoggedIn,function(req,res){
+  var pro = req.user
+  User.find({role:'teacher'},function(err,docs){
+    res.render('clerkAdmin/list5',{listX:docs,pro:pro})
+  })
+ 
+})
+router.get('/teacherAnalytics/:id',isLoggedIn,function(req,res){
+  console.log(req.params.id,'iiiiii')
+  var pro = req.user
+  User.findById(req.params.id,function(err,voc){
+    if(voc){
+
+
+   
+   let uid = voc.uid
+   let fullname = voc.fullname
+  
+  Class1.find({},function(err,locs){
+    TeacherSub.find({teacherId:uid},function(err,docs){
+
+
+      res.render('clerkAdmin/teacherAn',{arr1:locs,listX:docs,fullname:fullname,uid:uid,pro:pro})
+    })
+  })
+}
+  })
+
+  })
+
 
 
 router.get('/viewSurname',isLoggedIn,function(req,res){
@@ -1999,6 +3212,15 @@ router.post('/profile',isLoggedIn,upload.single('file'),function(req,res){
 
   
  
+})
+
+
+router.get('/profileNew',isLoggedIn,function(req,res){
+  var pro = req.user
+  User.find({role:"student"},function(err,docs){
+res.render('acc2/profile2',{listX:docs,pro:pro})
+
+})
 })
 
      
@@ -5673,6 +6895,7 @@ else{
     var month = m.format('MMMM')
     var year = m.format('YYYY')
     var date = m.format('L')
+    var dateValue =m.valueOf()
     var term = req.user.term
     var studentName= req.body.clientName
     var studentEmail = req.body.clientEmail
@@ -5793,8 +7016,42 @@ receipt.invoiceAmountDue= 0;
 
 receipt.save()
   .then(user =>{
-   
-   
+          
+    InvoiceFile.findById(id,function(err,doc){
+
+      //console.log(doc,'try docc')
+      let amountDue = doc.amountDue 
+      let invoiceNumber = doc.invoiceNumber
+      InvoiceSubBatch.find({invoNumber:invoiceNumber},function(err,tocs){
+        for(var i = 0;i<tocs.length;i++){
+          console.log(tocs[i],'tocsi')
+       
+          let code = tocs[i].code
+    Product.find({code:code},function(err,focs){
+      console.log(focs,'focs')
+      if(focs[0].account == "Product Sales"){
+
+        console.log('true')
+      
+            let subQty = focs[0].qty
+      let idN = focs[0]._id
+       
+      let  rqty =  focs[0].qty
+      console.log(rqty,subQty,'tryy')
+      let rnQty = rqty - subQty
+    // let newQuantity = rnty * focs[0].unitCases
+      Product.findByIdAndUpdate(idN,{$set:{qty:rnQty}},function(err,vocs){
+
+      })
+
+     
+    }
+    })
+  }
+  
+})
+  })
+
  
 
   })
@@ -5851,8 +7108,41 @@ receipt.save()
       
       receipt.save()
         .then(user =>{
-         
-         
+              
+          InvoiceFile.findById(id,function(err,doc){
+
+            //console.log(doc,'try docc')
+            let amountDue = doc.amountDue 
+            let invoiceNumber = doc.invoiceNumber
+            InvoiceSubBatch.find({invoNumber:invoiceNumber},function(err,tocs){
+              for(var i = 0;i<tocs.length;i++){
+                console.log(tocs[i],'tocsi')
+                let code = tocs[i].code
+             
+          Product.find({code:code},function(err,focs){
+            console.log(focs,'focs')
+            if(focs[0].account == "Product Sales"){
+      
+              console.log('true')
+                
+                  let subQty = focs[0].qty
+            let idN = focs[0]._id
+             
+            let  rqty =  focs[0].qty
+            console.log(rqty,subQty,'tryy')
+            let rnQty = rqty - subQty
+          // let newQuantity = rnty * focs[0].unitCases
+            Product.findByIdAndUpdate(idN,{$set:{qty:rnQty}},function(err,vocs){
+      
+            })
+      
+           
+          }
+          })
+        }
+        
+      })
+        })
        
       
         })
@@ -5934,8 +7224,41 @@ receipt.save()
       
       receipt.save()
         .then(user =>{
-         
-         
+             
+          InvoiceFile.findById(id,function(err,doc){
+
+            //console.log(doc,'try docc')
+            let amountDue = doc.amountDue 
+            let invoiceNumber = doc.invoiceNumber
+            InvoiceSubBatch.find({invoNumber:invoiceNumber},function(err,tocs){
+              for(var i = 0;i<tocs.length;i++){
+                console.log(tocs[i],'tocsi')
+                let code = tocs[i].code
+                let subQty = tocs[i].qty
+          Product.find({code:code},function(err,focs){
+            console.log(focs,'focs')
+            if(focs[0].account == "Product Sales"){
+      
+              console.log('true')
+               
+             
+            let idN = focs[0]._id
+             
+            let  rqty =  focs[0].qty
+            console.log(rqty,subQty,'tryy')
+            let rnQty = rqty - subQty
+          // let newQuantity = rnty * focs[0].unitCases
+            Product.findByIdAndUpdate(idN,{$set:{qty:rnQty}},function(err,vocs){
+      
+            })
+      
+           
+          }
+          })
+        }
+        
+      })
+        })
        
       
         })
@@ -5991,7 +7314,40 @@ receipt.save()
               .then(user =>{
                
                
-             
+                InvoiceFile.findById(id,function(err,doc){
+
+                  //console.log(doc,'try docc')
+                  let amountDue = doc.amountDue 
+                  let invoiceNumber = doc.invoiceNumber
+                  InvoiceSubBatch.find({invoNumber:invoiceNumber},function(err,tocs){
+                    for(var i = 0;i<tocs.length;i++){
+                      console.log(tocs[i],'tocsi')
+                   
+                      let code = tocs[i].code
+                Product.find({code:code},function(err,focs){
+                  console.log(focs,'focs')
+                  if(focs[0].account == "Product Sales"){
+            
+                    console.log('true')
+                        
+                        let subQty = focs[0].qty
+                  let idN = focs[0]._id
+                   
+                  let  rqty =  focs[0].qty
+                  console.log(rqty,subQty,'tryy')
+                  let rnQty = rqty - subQty
+                // let newQuantity = rnty * focs[0].unitCases
+                  Product.findByIdAndUpdate(idN,{$set:{qty:rnQty}},function(err,vocs){
+            
+                  })
+            
+                 
+                }
+                })
+              }
+              
+            })
+              })
             
               })
             
@@ -6194,13 +7550,14 @@ router.get('/receiptGeneration',isLoggedIn,function(req,res){
   //console.log(form)
 await Axios({
     method: "POST",
-    url: 'http://localhost:8500/clerk/uploadReceipt',
+    //url: 'http://localhost:9500/clerk/uploadReceipt',
+    url: 'https://portal.steuritinternationalschool.org/clerk/uploadReceipt',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
     data: form
   });
-
+  //res.redirect('/clerk/invoice')
   res.redirect('/clerk/genEmailReceipt')
   
  
@@ -6252,7 +7609,8 @@ if(docs.length>0){
 
 
 }
-  res.redirect('/clerk/genEmailReceipt')
+ // res.redirect('/clerk/genEmailReceipt')
+ res.redirect('/clerk/invoice')
 })
 
   })
@@ -7846,12 +9204,121 @@ var grade = req.user.invoiceGrade
  */
 
 
-  router.get('/profileNew',function(req,res){
-    User.find({role:"student"},function(err,docs){
-  res.render('acc2/profile2',{listX:docs})
+ 
 
+
+router.get('/exp',isLoggedIn,function(req,res){
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  var pro = req.user
+  res.render('acc2/expenses',{successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg,pro:pro,})
 })
-  })
+
+
+
+
+  
+router.post('/exp',isLoggedIn,function(req,res){
+  
+   
+  var pro = req.user
+    var term = req.user.term
+  var id = req.user._id
+  var invoNumber = req.user.invoNumber
+  var m2 = moment()
+  var year = m2.format('YYYY')
+  var month = m2.format('MMMM')
+  //var date = req.body.invoice_date
+  var dueDate = req.body.invoice_due_date
+  var date = m2.format('L')
+  
+
+  
+  let c = -1
+  //var notes = req.query.notes
+ 
+
+ar = req.body['code[]']
+ar1 = req.body['quantity[]']
+ar2=req.body['price[]']
+ar3=req.body['description[]']
+console.log(ar,ar1,ar2,'000000')
+
+req.check('invoice_due_date','Enter Due Date').notEmpty();
+req.check('invoice_date', 'Enter Date').notEmpty();
+
+
+
+
+
+
+
+var errors = req.validationErrors();
+   
+if (errors) {
+
+  req.session.errors = errors;
+  req.session.success = false;
+ 
+         
+          
+  req.flash('danger', req.session.errors[0].msg);
+           
+            
+  res.redirect('/clerk/exp');
+}
+
+
+else{
+
+ar = ar.filter(v=>v!='')
+ar1 = ar1.filter(v=>v!='')
+ar2 = ar2.filter(v=>v!='')
+ar3 = ar3.filter(v=>v!='')
+
+for(var i = 0; i<ar.length;i++){
+console.log(ar[i])
+let code = ar[i]
+let description = ar3[i]
+let price = ar2[i]
+let quantity = ar1[i]
+let total = quantity * price
+
+
+var book = new Expenses();
+book.item = code
+book.category = description
+book.price = price
+book.qty = quantity
+book.date = date
+book.totalExpense = total
+book.month = month
+book.year = year
+book.term = term
+
+
+
+
+    
+     
+      book.save()
+        .then(title =>{
+//let client = title.clientName
+
+           
+          })
+        }
+
+//res.redirect('/clerk/invoiceSingleProcess')
+req.flash('success', "Expenses Successfully Captured");
+           
+            
+res.redirect('/clerk/exp');
+      }
+})
+
+
+
 
   router.get('/studentInvoice', isLoggedIn,function(req,res){
     var pro = req.user
@@ -8392,7 +9859,8 @@ pdfX = pdf
   //console.log(form)
 await Axios({
     method: "POST",
-    url: 'https://portal.steuritinternationalschool.org/clerk/wafaX',
+  url: 'https://portal.steuritinternationalschool.org/clerk/wafaX',
+    //url: 'http://localhost:9500/clerk//wafaX',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
@@ -8404,9 +9872,9 @@ await Axios({
   
   /*process.exit()*/
 
-  res.redirect('/clerk/invoiceSingleCode')
+  //res.redirect('/clerk/invoiceSingleCode')
     
- // res.redirect('/clerk/genEmailInvoice');
+ res.redirect('/clerk/genEmailInvoice');
   
   }catch(e) {
   
@@ -8443,11 +9911,11 @@ if(docs.length>0){
   })
 
 }
-  //res.redirect('/clerk/genEmailInvoice')
+  res.redirect('/clerk/genEmailInvoice')
 
-  req.flash('success', 'Invoice Generation Successful');
+  //req.flash('success', 'Invoice Generation Successful');
 
-  res.redirect('/clerk/invoiceSingleCode')
+  //res.redirect('/clerk/invoiceSingleCode')
 })
   //res.redirect('http://localhost:8500/clerk/dashX')
 
@@ -10536,7 +12004,7 @@ router.get('/addStudent',isLoggedIn,  function(req,res){
 //adding lessons to timetable
 router.get('/idEdit',isLoggedIn,function(req,res){
   var pro = req.user
-  res.render('acc2/idNum',{pro:pro})
+  res.render('clerkRecords/idNum',{pro:pro})
   
   })
   
@@ -10554,7 +12022,7 @@ router.get('/idEdit',isLoggedIn,function(req,res){
    
       req.session.errors = errors;
       req.session.success = false;
-      res.render('acc2/idNum',{errors:req.session.errors,pro:pro})
+      res.render('clerkRecords/idNum',{errors:req.session.errors,pro:pro})
    
     
    }
@@ -11816,7 +13284,10140 @@ router.get('/updateTerm',function(req,res){
     }
   })
 })
+
+
+router.get('/stockBatch',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('acc2/batchTruck',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+  router.post('/stockBatch',isLoggedIn,  function(req,res){
+  var id =req.user._id
+    var code = req.body.code
+    var date = req.body.date
+    var time  = req.body.time
+    var m2 = moment()
+    var mformat = m2.format('L')
+    var pro = req.user
+
+    
+    
+
+    req.check('code','Enter Truck Code').notEmpty();
+    req.check('date','Enter Date').notEmpty();
+    req.check('time','Enter Time').notEmpty();
   
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+      //res.render('product/batchTruck',{ errors:req.session.errors,pro:pro})
+
+      
+  
+
+
+  req.flash('danger', req.session.errors[0].msg);
+       
+        
+  res.redirect('/clerk/stockBatch');
+    
+    }
+    
+    else 
+    
+    Truck.findOne({'code':code})
+    .then(grower =>{
+    if(grower){
+
+      req.flash('danger', 'Truck Code already in use');
+ 
+      res.redirect('/clerk/stockBatch');
+    }else{
+
+      var truck = new Truck()
+      truck.code = code
+      truck.time = time
+      truck.mformat = mformat
+
+      truck.save()
+          .then(pro =>{
+
+      User.findByIdAndUpdate(id,{$set:{truckCode:code,truckId:pro._id}}, function(err,coc){
+          
+        
+      })
+res.redirect('/clerk/addStock2')
+
+    })
+
+    }
+    
+    })
+    
+    
+    })
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+router.get('/addStock2',isLoggedIn,function(req,res){
+  var pro = req.user
+  var code = req.user.truckCode
+  if(code == 'null'){
+    res.redirect('/clerk/stockBatch')
+  }else
+  
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+ res.render('acc2/stock2',{pro:pro,code:code,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+ //res.render('barcode/stock',{pro:pro,code:code,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+})
+
+
+
+
+router.post('/addStock2',isLoggedIn, function(req,res){
+  var pro = req.user
+  var truckId = req.user.truckId
+  //var barcodeNumber = req.body.barcodeNumber;
+  var name = req.body.name;
+  var m = moment()
+  var year = m.format('YYYY')
+  var dateValue = m.valueOf()
+  var date = m.toString()
+  var numDate = m.valueOf()
+var month = m.format('MMMM')
+var code = req.user.truckCode
+var mformat = m.format("L")
+  var receiver = req.user.fullname
+  var qty = req.body.qty
+  var availableQty = req.body.availableQty
+  /*var unitCases = req.body.unitCases
+  var casesReceived = req.body.casesReceived
+
+var quantity  = casesReceived * unitCases*/
+
+  
+  req.check('name','Enter Product Name').notEmpty();
+  req.check('qty','Enter Qty Rcvd').notEmpty();
+ 
+  
+
+  
+  
+  var errors = req.validationErrors();
+   
+  if (errors) {
+
+    req.session.errors = errors;
+    req.session.success = false;
+   // res.render('product/stock',{ errors:req.session.errors,pro:pro})
+   req.flash('danger', req.session.errors[0].msg);
+       
+        
+   res.redirect('/clerk/addStock2');
+  
+  }
+  else
+
+ {
+
+  Product.findOne({'item':name})
+  .then(hoc=>{
+
+    if(hoc){
+  var book = new StockV();
+  book.name = name
+  book.mformat = mformat
+  book.code =  code
+  book.availableQty = availableQty
+  book.qty = qty
+  book.truckId = truckId
+
+  book.status = 'null'
+
+
+      
+       
+        book.save()
+          .then(pro =>{
+
+            StockV.find({mformat:mformat,code:code,status:'null'},(err, docs) => {
+              let size = docs.length - 1
+              console.log(docs[size],'fff')
+              res.send(docs[size])
+                      })
+        })
+       
+      
+      }
+    }) 
+
+      }
+})
+
+
+
+
+
+router.post('/addStock3',isLoggedIn, (req, res) => {
+  var pro = req.user
+  var code = req.user.truckCode
+  StockV.find({code:code,status:'null'},(err, docs) => {
+ 
+    res.send(docs)
+            })
+
+  }); 
+
+
+
+
+
+
+
+
+router.get('/verify',isLoggedIn, (req, res) => {
+  var pro = req.user
+  var m = moment()
+var year = m.format('YYYY')
+var dateValue = m.valueOf()
+var mformat = m.format("L")
+var date = m.toString()
+  Stock.find({mformat:mformat},(err, docs) => {
+      if (!err) {
+          res.render("product/listChange", {
+             list:docs,pro:pro
+            
+          });
+      }
+  });
+  }); 
+
+
+
+
+
+  
+  
+  router.post('/verify/:id',isLoggedIn,function(req,res){
+    var id = req.params.id
+    var quantity = req.body.code
+    var arr = []
+    var m = moment()
+    var year = m.format('YYYY')
+    var dateValue = m.valueOf()
+    var mformat = m.format("L")
+    var oldQty
+    let reg = /\d+\.*\d*/g;
+  
+    let result = quantity.match(reg)
+    let rcvdQuantity = Number(result)
+  /* Stock.find({barcodeNumber:barcodeNumber,mformat:mformat},function(err,joc){
+        if(arr.length > 0 && arr.find(value => value.barcodeNumber == joc[i].barcodeNumber)){
+          console.log('true')
+         arr.find(value => value.barcodeNumber == docs[i].barcodeNumber).quantity += docs[i].quantity;
+    }else{
+arr.push(joc[i])
+    }
+      })*/ 
+
+      console.log(rcvdQuantity,'rcvd')
+
+    Stock.findById(id,function(err,doc){
+      let barcodeNumber = doc.barcodeNumber
+     
+
+oldQty = doc.cases
+let quantity = doc.unitCases * rcvdQuantity
+
+    Stock.findByIdAndUpdate(id,{$set:{cases:rcvdQuantity, quantity:quantity}},function(err,locs){
+    
+    })
+
+
+    Stock.find({barcodeNumber:barcodeNumber,mformat:mformat},function(err,joc){
+      for(var i = 0;i<joc.length;i++){
+
+    
+      if(arr.length > 0 && arr.find(value => value.barcodeNumber == joc[i].barcodeNumber)){
+        console.log('true')
+       arr.find(value => value.barcodeNumber ==joc[i].barcodeNumber).cases += joc[i].cases;
+  }else{
+arr.push(joc[i])
+  }
+
+}
+
+
+  
+  Product.find({barcodeNumber:barcodeNumber},function(err,locs){
+    console.log(arr[0].unitCases,'arr')
+  let proId = locs[0]._id
+ 
+ // let opQuantity = arr[0].cases - oldQty
+  //let nqty  =opQuantity + rcvdQuantity
+    //let nqty = opQuantity + arr[0].quantity
+  //  let openingQty = nqty - arr[0].cases
+
+   
+let nqty2 = arr[0].cases * locs[0].unitCases
+    Product.findByIdAndUpdate(proId,{$set:{rcvdQuantity:arr[0].cases, cases:arr[0].cases,openingQuantity:0, quantity:nqty2}},function(err,koc){
+
+    })
+
+  })
+    })
+
+
+
+    /*Dispatch.find({barcodeNumber:barcodeNumber,mformat:mformat},function(err,noc){
+if(noc){
+for(var i = 0;i<noc.length;i++){
+Dispatch.findByIdAndRemove(noc[i]._id,function(err,poc){
+
+})
+}
+}
+})*/
+    })
+  
+  
+  })
+  
+  
+  router.post('/stock/update/:id',isLoggedIn,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+ 
+    var m = moment()
+    var year = m.format('YYYY')
+    var month = m.format('MMMM')
+    var dateValue = m.valueOf()
+    var mformat = m.format("L")
+    var date = m.toString()
+    var quan = req.body.code
+    StockV.findById(id,function(err,doc){
+    
+    
+     // if(doc.stockUpdate == "no"){
+    
+    
+      let reg = /\d+\.*\d*/g;
+    
+      let result = quan.match(reg)
+      let cases = Number(result)
+    
+     
+   StockV.findByIdAndUpdate(id,{$set:{qty:qty}},function(err,doc){
+  
+   })     
+        
+    
+    
+    
+    
+    
+   /* }else{
+      console.log('null')
+    
+      ShopStock.findByIdAndUpdate(id,{$set:{stockUpdate:'yes'}},function(err,loc){
+    
+      })
+    }*/
+    res.send(doc)
+  })
+    })
+
+
+
+
+//saveBatch3
+
+router.get('/saveBatch/:id',isLoggedIn, function(req,res){
+var pro = req.user
+var receiver = req.user.fullname
+var code = req.params.id
+var uid = req.user._id
+
+var m2 = moment()
+var wformat = m2.format('L')
+var year = m2.format('YYYY')
+var dateValue = m2.valueOf()
+var date = m2.toString()
+var numDate = m2.valueOf()
+var month = m2.format('MMMM')
+
+
+//var mformat = m.format("L")
+
+
+
+StockV.find({code:code,status:'null'},function(err,locs){
+
+for(var i=0;i<locs.length;i++){
+
+let quantity = locs[i].qty
+let date3 = locs[i].mformat
+let m = moment(date3)
+let year = m.format('YYYY')
+let dateValue = m.valueOf()
+let date = m.toString()
+let numDate = m.valueOf()
+let month = m.format('MMMM')
+let idN = locs[i]._id
+let item = locs[i].name
+
+
+StockV.findByIdAndUpdate(idN,{$set:{status:'saved'}},function(err,pocs){
+
+})
+
+
+console.log(item,'item')
+
+Product.findOne({'item':item})
+.then(hoc=>{
+
+if(hoc){
+var book = new Stock();
+
+book.name = hoc.item
+book.mformat = date3
+book.month = month
+book.year = year 
+book.stockUpdate = 'no'
+book.receiver = receiver;
+book.date  = date
+book.dateValue = dateValue
+book.quantity = quantity
+
+book.price = 0
+
+ 
+  book.save()
+    .then(pro =>{
+
+      Product.find({item:item},function(err,docs){
+       let nqty = pro.quantity + docs[0].qty
+        let id = docs[0]._id
+       Product.findByIdAndUpdate(id,{$set:{qty:nqty}},function(err,nocs){
+
+       })
+
+      })
+
+      
+
+console.log(i,'ccc')
+         /*  req.session.message = {
+        type:'success',
+        message:'Product added'
+      }  
+      res.render('product/stock',{message:req.session.message,pro:pro});*/
+    
+  
+  })
+
+ /* req.flash('success', 'Stock Received Successfully');
+  res.redirect('/rec/addStock')*/
+}  /* else{
+  req.flash('danger', 'Product Does Not Exist');
+
+  res.redirect('/rec/addStock');
+}*/
+}) 
+
+
+}
+
+User.find({role:'clerk'},function(err,ocs){
+
+for(var i = 0; i<ocs.length;i++){
+
+
+
+let id = ocs[i]._id
+var not = new NoteW();
+not.role = 'receiver'
+not.subject = 'Stock Received';
+not.message = code+" "+'Truck Code'+" "+"received"+" "+'on'+" "+wformat
+not.status = 'not viewed';
+not.link = 'http://'+req.headers.host+'/viewStockRcvd/'+code;
+not.status1 = 'new';
+not.user = receiver;
+not.type = 'receiving'
+not.status2 = 'new'
+not.status3 = 'new'
+not.status4 = 'null'
+not.date = m2
+not.dateViewed = 'null'
+not.recId = ocs[i]._id
+not.recRole = 'admin'
+not.senderPhoto = req.user.photo
+not.numDate = numDate
+not.customer = 'null'
+not.shop = 'null'
+
+
+
+
+not.save()
+.then(user =>{
+User.findByIdAndUpdate(uid,{$set:{truckCode:'null'}},function(err,doc){
+
+})
+})
+
+}
+})
+
+
+req.flash('success', 'Stock Received Successfully');
+res.redirect('/clerk/stockBatch')
+}) 
+})
+
+
+
+
+
+
+
+
+
+
+//Autocomplete for customer
+router.get('/autocomplete/',isLoggedIn, function(req, res, next) {
+var id = req.user._id
+
+var regex= new RegExp(req.query["term"],'i');
+
+var shopFilter =Shop.find({customer:regex},{'customer':1}).sort({"updated_at":-1}).sort({"created_at":-1}).limit(20);
+
+
+shopFilter.exec(function(err,data){
+
+
+console.log('data',data)
+
+var result=[];
+
+if(!err){
+ if(data && data.length && data.length>0){
+   data.forEach(shop=>{
+   let customer = shop.customer
+    User.findByIdAndUpdate(id,{$set:{autoCustomer:customer}},function(err,docs){
+
+    })
+ 
+
+      
+     let obj={
+       id:shop._id,
+       label: shop.customer
+
+   
+ 
+   
+     
+      
+
+       
+     };
+    
+     result.push(obj);
+  
+   
+   });
+
+ }
+
+ res.jsonp(result);
+
+}
+
+})
+
+});
+
+
+
+
+
+
+
+router.get('/nList',isLoggedIn,function(req,res){
+var id = req.user._id
+var m = moment()
+console.log(m.valueOf(),'crap')
+Note.find({recId:id},function(err,docs){
+if(!err){
+
+
+res.render('notList',{list:docs})
+
+}
+})
+})
+
+router.get('/notify/:id', isLoggedIn, function(req,res){
+var id = req.params.id
+var uid = req.user._id
+console.log(id,'id')
+var arr = []
+Note.find({recId:uid,_id:id},function(err,tocs){
+
+let subject = tocs[0].subject
+let message = tocs[0].message
+
+
+
+
+res.render('notView',{message:message, subject:subject})
+})
+
+})
+
+
+
+//autocomplete product
+router.get('/autocompleteProductStock/',isLoggedIn, function(req, res, next) {
+var id = req.user._id
+
+var regex= new RegExp(req.query["term"],'i');
+
+var productFilter =Product.find({item:regex},{'item':1}).sort({"updated_at":-1}).sort({"created_at":-1}).limit(20);
+
+
+productFilter.exec(function(err,data){
+
+
+console.log('data',data)
+
+var result=[];
+
+if(!err){
+ if(data && data.length && data.length>0){
+   data.forEach(pro=>{
+ 
+ 
+
+      
+     let obj={
+       id:pro._id,
+       label: pro.item
+
+   
+ 
+   
+     
+      
+
+       
+     };
+    
+     result.push(obj);
+  
+   
+   });
+
+ }
+
+ res.jsonp(result);
+
+}
+
+})
+
+});
+
+
+//this route autopopulates info of the customer
+router.post('/autoProductStock',isLoggedIn,function(req,res){
+  var code = req.body.code
+
+
+  
+ 
+  Product.find({item:code},function(err,docs){
+ if(docs == undefined){
+   res.redirect('/')
+ }else
+
+    res.send(docs[0])
+  })
+
+
+})
+
+
+router.get('/delete/:id',isLoggedIn, (req, res) => {
+  StockV.findByIdAndRemove(req.params.id, (err, doc) => {
+    if (!err) {
+        res.redirect('/rec/addStock2');
+    }
+    else { console.log('Error in deleting stock :' + err); }
+  });
+  });
+
+
+
+
+
+
+
+  router.get('/viewStockRcvd/',isLoggedIn, (req, res) => {
+    var pro = req.user
+    var arr = []
+    var id = req.params.id
+    Truck.find({},(err, docs) => {
+
+      for(var i = docs.length - 1; i>=0; i--){
+
+        arr.push(docs[i])
+      }
+        if (!err) {
+            res.render("acc2/truckListA", {
+               listX:arr,pro:pro
+              
+            });
+        }
+    });
+    });
+
+   
+
+   router.get('/viewStockRcvd/:id',isLoggedIn, (req, res) => {
+    var pro = req.user
+    var id = req.params.id
+    console.log(id,'333')
+    StockV.find({code:id},(err, docs) => {
+        if (!err) {
+            res.render("product/productList3", {
+               listX:docs,pro:pro
+              
+            });
+        }
+    });
+    });
+
+
+
+    router.get('/viewProducts',isLoggedIn, (req, res) => {
+      var pro = req.user
+      Product.find({account:"Product Sales"},(err, docs) => {
+          if (!err) {
+              res.render("acc2/listXX", {
+                 list:docs,pro:pro
+                
+              });
+          }
+      });
+      });
+
+
+      router.get('/viewServices',isLoggedIn, (req, res) => {
+        var pro = req.user
+        Product.find({account:"Services Income"},(err, docs) => {
+            if (!err) {
+                res.render("acc2/listXXX",
+                 {
+                   list:docs,pro:pro
+                  
+                });
+            }
+        });
+        });
+
+
+
+
+
+
+
+      router.get('/info', isLoggedIn,function(req,res){
+        var pro = req.user
+ 
+        res.render('acc2/addProduct',{pro:pro})
+      
+      })
+      
+      
+      
+      router.post('/info',isLoggedIn, function(req,res){
+        var pro = req.user
+        var name = req.body.name
+        var code = req.body.code
+        var account = req.body.account
+        var cost = req.body.cost
+        var price = req.body.price
+        var type = req.body.type
+        
+        
+              req.check('name','Enter Product Name').notEmpty();
+                  
+                     req.check('code','Enter Code').notEmpty();
+                     req.check('account','Enter Account').notEmpty();
+                 
+                     req.check('cost', 'Enter Cost').notEmpty();
+                     req.check('price', 'Enter Price').notEmpty();
+                     req.check('type', 'Enter Type').notEmpty();
+                  
+                     var errors = req.validationErrors();
+        
+              
+                   
+                 if (errors) {
+                  
+                           req.session.errors = errors;
+                           req.session.success = false;
+                           req.flash('danger', req.session.errors[0].msg);
+       
+        
+                         res.redirect('/clerk/info');
+                       }
+      
+                       else
+                       {
+                        Product.findOne({'item':name})
+                        .then(bk =>{
+                            if(bk){ 
+                          // req.session.errors = errors
+                            //req.success.user = false;
+                        
+                            req.flash('danger', "Product/Service Exists");
+       
+        
+                            res.redirect('/clerk/info');
+                            
+                      }
+                      
+                                    else  {   
+                   
+      
+              
+                    
+                
+             
+              
+                      var book = new Product();
+                        book.item =name
+                        book.type = type
+                        book.code = code
+                        book.account = account
+                        book.cogs = 'null'
+                        book.assetAccount = assetAccount
+                        book.accumulatedDepreciation = 0
+                        book.purchasedDescription = "No"
+                       
+          
+                        book.qty = 0
+                        book.cost = cost
+                        book.price = price
+                        book.grossPrice = 0
+                        book.amountsIncludeVat = "No"
+                        book.openingQuantity = 0
+                        book.rcvdQuantity = 0
+                        book.purchasedForResale = "No"
+                        book.status = "Active"
+                        book.quantity = 0
+                            
+                             
+                              book.save()
+                                .then(title =>{
+                                
+                                  req.flash('success', "Product/Service Added Successfully");
+       
+        
+                                  res.redirect('/clerk/info');
+                              
+                              })
+                               
+                              
+                            }
+                              })
+                            }
+                              
+                               });
+
+
+
+
+
+
+
+
+
+
+
+
+
+//folders
+
+
+router.get('/teachersFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+
+  User.find({role:"teacher"},function(err,docs){
+    res.render('adminClerk/folders2',{listX:docs,pro:pro})
+
+  })
+
+})
+router.get('/classFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+
+  Class1.find({},function(err,docs){
+    res.render('adminClerk/folders',{listX:docs,pro:pro})
+
+  })
+
+})
+
+router.get('/subjectFile/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+
+  User.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let uid = doc.uid
+    let teacherName = doc.fullname
+    TeacherSub.find({teacherId:uid},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.subjectName == docs[i].subjectName)){
+                console.log('true')
+               arr.find(value => value.subjectName == docs[i].subjectName).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileSubjects2',{listX:arr,pro:pro,id:id,teacherName:teacherName})
+
+    })
+  }
+  })
+})
+
+
+
+
+router.get('/teacherClass/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+
+  TeacherSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let subjectCode = doc.subjectCode
+    let uid = doc.teacherId
+    let subject = doc.subjectName
+    let teacherName = doc.teacherName
+    User.find({uid:uid},function(err,ocs){
+
+    
+    let id2 = ocs[0]._id
+    StudentSub.find({subjectCode:subjectCode},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.class1 == docs[i].class1)){
+                console.log('true')
+               arr.find(value => value.class1 == docs[i].class1).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileClass2',{listX:arr,pro:pro,id:id,id2:id2,subject:subject,teacherName:teacherName})
+
+    })
+  })
+}
+  })
+})
+
+
+router.get('/teacherClassAssignment/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var adminId = req.user._id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+  User.findByIdAndUpdate(adminId,{$set:{reportId:id}},function(err,pvocs){
+
+  })
+
+
+    res.render('adminClerk/fileAssgt22',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+})
+  })
+}
+})
+})
+
+
+
+
+router.get('/teacherReportsYear/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var year = req.params.id
+  var id = req.user.reportId
+  var adminId = req.user._id
+  console.log(year,id,"illest")
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+User.findByIdAndUpdate(adminId,{$set:{year:year}},function(err,klops){
+
+})
+
+
+
+    res.render('adminClerk/fileAssgtReports',{id:id,year:year,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+ 
+  })
+})
+  })
+}
+})
+})
+
+
+router.get('/teacherReports/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+
+//fileAssgtReportsYear
+    res.render('adminClerk/fileAssgtReportsYear',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+ 
+  })
+})
+  })
+}
+})
+})
+
+
+
+router.get('/monthlyReports/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var year = req.user.year
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+  Report2.find({subjectCode:subjectCode,year:year,type:"Monthly Assessment"},function(er,hocs){
+    res.render('adminClerk/filesMonthly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+
+})
+})
+  })
+}
+})
+})
+
+
+
+
+router.get('/termlyReports/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var year = req.user.year
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+  Report2.find({subjectCode:subjectCode,year:year,type:"Final Exam"},function(er,hocs){
+    res.render('adminClerk/filesTermly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+
+})
+})
+  })
+}
+})
+})
+
+
+router.get('/downloadMonthlyReport/:id',isLoggedIn,function(req,res){
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var mformat = m.format('L')
+  Report2.findById(req.params.id,function(err,doc){
+    var name = doc.filename;
+    //res.download( './public/uploads/'+name, name)
+ 
+    res.download( './reports2/'+year+'/'+month+'/'+name, name)
+  })  
+
+})
+
+
+router.get('/downloadTermlyReport/:id',isLoggedIn,function(req,res){
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var mformat = m.format('L')
+  Report2.findById(req.params.id,function(err,doc){
+    var name = doc.filename;
+    //res.download( './public/uploads/'+name, name)
+ 
+    res.download( './reportsExam2/'+year+'/'+month+'/'+name, name)
+  })  
+
+})
+
+
+router.get('/teacherMarks/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+
+    res.render('adminClerk/fileAssgt2',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+})
+  })
+}
+})
+})
+
+router.get('/teacherClassTest/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+  const arr=[]
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let studentSubId = doc._id
+    let subjectCode = doc.subjectCode
+    let subjectName = doc.subjectName
+    TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+      let teacherId =poc[0].teacherId
+      let teacherSubId = poc[0]._id
+      let teacherName = poc[0].teacherName
+      User.find({uid:teacherId},function(err,zocs){
+        let userId = zocs[0]._id
+        let class1 = zocs[0].class1
+     
+ 
+  
+ 
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,locs){
+      for(var i = locs.length - 1; i>=0; i--){
+      
+        arr.push(locs[i])
+      }
+   
+      res.render('adminClerk/assgtX1',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,id:id,
+        subjectName:subjectName,teacherName:teacherName,class1:class1})
+    })
+  })
+
+  
+})
+}
+})
+  
+  })
+  
+
+
+  
+router.post('/teacherClassTest/:id',isLoggedIn,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+var teacherId = req.user.uid
+var n = moment()
+var year = n.format('YYYY')
+
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let studentSubId = doc._id
+    let subjectCode = doc.subjectCode
+    let subjectName = doc.subjectName
+    TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+      let teacherId =poc[0].teacherId
+      let teacherSubId = poc[0]._id
+      let teacherName = poc[0].teacherName
+      User.find({uid:teacherId},function(err,zocs){
+        let userId = zocs[0]._id
+        let class1 = zocs[0].class1
+
+  Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err, docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgtX1", {
+          listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,id:id,
+        subjectName:subjectName,teacherName:teacherName,class1:class1
+          
+        });
+    
+});
+    
+  })
+    })
+  }
+  })
+})
+
+  router.get('/teacherClassAssignment2/:id',isLoggedIn,function(req,res){
+    var id = req.params.id
+    var term = req.user.term
+    var arr =[]
+    var m = moment()
+    var month = m.format('MMMM')
+    var year = m.format('YYYY')
+    var pro = req.user
+
+    StudentSub.findById(id,function(err,doc){
+         if(doc){
+
+        
+      let studentSubId = doc._id
+      let subjectCode = doc.subjectCode
+      let subject = doc.subjectName
+      TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+        let teacherId =poc[0].teacherId
+        let teacherSubId = poc[0]._id
+        User.find({uid:teacherId},function(err,zocs){
+          let userId = zocs[0]._id
+          let class1 = zocs[0].class1
+          let teacherName = zocs[0].fullname
+      
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,locs){
+        for(var i = locs.length - 1; i>=0; i--){
+      
+          arr.push(locs[i])
+        }
+        res.render('adminClerk/assgtX2',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+          class1:class1,teacherName:teacherName,subject:subject,id:id
+        })
+      })
+    
+    })
+    
+  })
+}
+  })
+    
+    })
+
+ 
+    router.post('/teacherClassAssignment2/:id',isLoggedIn,function(req,res){
+      var pro =req.user
+    var id = req.params.id
+      var date = req.body.date
+      var arr = []
+      var term = req.user.term
+
+    var n = moment()
+    var year = n.format('YYYY')
+      
+      var m = moment(date)
+    
+     
+    
+      console.log(date.split('-')[0])
+      var startDate = date.split('-')[0]
+      var endDate = date.split('-')[1]
+       var startValueA = moment(startDate)
+       var startValueB=startValueA.subtract(1,"days");
+       var startValue = moment(startValueB).valueOf()
+    
+       var endValueA = moment(endDate)
+       var endValueB = endValueA.add(1,"days");
+       var endValue= moment(endValueB).valueOf()
+      console.log(startValue,endValue,'output')
+    
+      StudentSub.findById(id,function(err,doc){
+        if(doc){
+    
+          let studentSubId = doc._id
+          let subjectCode = doc.subjectCode
+          let subject = doc.subjectName
+          TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+            let teacherId =poc[0].teacherId
+            let teacherSubId = poc[0]._id
+            User.find({uid:teacherId},function(err,zocs){
+              let userId = zocs[0]._id
+              let class1 = zocs[0].class1
+              let teacherName = zocs[0].fullname
+          
+          Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,docs){
+    console.log(docs,'777')
+        if(docs){
+    
+    
+        for(var i = 0;i<docs.length;i++){
+          let sdate = docs[i].dateValue
+          if(sdate >= startValue && sdate <= endValue){
+    arr.push(docs[i])
+    console.log(arr,'arr333')
+          }
+        }
+      }
+          
+        console.log(arr,'arr')
+            res.render("adminClerk/assgtX2", {
+              listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+              class1:class1,teacherName:teacherName,subject:subject,id:id
+              
+            });
+        
+    });
+        
+      })
+        })
+      }
+      })
+    })
+    
+
+    router.get('/teacherFinalExam/:id',isLoggedIn,function(req,res){
+      var id = req.params.id
+      var term = req.user.term
+      var m = moment()
+      var month = m.format('MMMM')
+      var year = m.format('YYYY')
+      var pro = req.user
+      
+      StudentSub.findById(id,function(err,doc){
+        if(doc){
+
+      
+        let class1 = doc.class1
+        let studentSubId = doc._id
+        let subjectCode = doc.subjectCode
+        let subject = doc.subjectName
+        TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+          let teacherId =poc[0].teacherId
+          let teacherSubId = poc[0]._id
+          let teacherName = poc[0].teacherName
+          User.find({uid:teacherId},function(err,zocs){
+            let userId = zocs[0]._id
+            let class1 = zocs[0].class1
+
+      
+       
+        Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,locs){
+          let arr=[]
+          for(var i = locs.length - 1; i>=0; i--){
+      
+            arr.push(locs[i])
+          }
+          res.render('adminClerk/assgtX3',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+          teacherName:teacherName,class1:class1,subject:subject,id:id})
+        
+      })
+      })
+      
+    })
+      }
+    })
+      
+      })
+
+
+      router.post('/teacherFinalExam/:id',isLoggedIn,function(req,res){
+        var pro =req.user
+      var id = req.params.id
+        var date = req.body.date
+        var arr = []
+        var term = req.user.term
+
+      var n = moment()
+      var year = n.format('YYYY')
+        
+        var m = moment(date)
+      
+       
+      
+        console.log(date.split('-')[0])
+        var startDate = date.split('-')[0]
+        var endDate = date.split('-')[1]
+         var startValueA = moment(startDate)
+         var startValueB=startValueA.subtract(1,"days");
+         var startValue = moment(startValueB).valueOf()
+      
+         var endValueA = moment(endDate)
+         var endValueB = endValueA.add(1,"days");
+         var endValue= moment(endValueB).valueOf()
+        console.log(startValue,endValue,'output')
+      
+        StudentSub.findById(id,function(err,doc){
+          if(doc){
+      
+            let studentSubId = doc._id
+            let subjectCode = doc.subjectCode
+            let subject = doc.subjectName
+            TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+              let teacherId =poc[0].teacherId
+              let teacherSubId = poc[0]._id
+              User.find({uid:teacherId,companyId:companyId},function(err,zocs){
+                let userId = zocs[0]._id
+                let class1 = zocs[0].class1
+                let teacherName = zocs[0].fullname
+            
+            Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,docs){
+      console.log(docs,'777')
+          if(docs){
+      
+      
+          for(var i = 0;i<docs.length;i++){
+            let sdate = docs[i].dateValue
+            if(sdate >= startValue && sdate <= endValue){
+      arr.push(docs[i])
+      console.log(arr,'arr333')
+            }
+          }
+        }
+            
+          console.log(arr,'arr')
+              res.render("adminClerk/assgtX3", {
+                listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+                teacherName:teacherName,class1:class1,subject:subject,id:id
+                
+              });
+          
+      });
+          
+        })
+          })
+        }
+        })
+      })
+      
+
+      router.get('/teacherViewTest/:id',isLoggedIn,function(req,res){
+        var id = req.params.id
+        var pro = req.user
+        var m = moment()
+        var month = m.format('MMMM')
+        var year = m.format('YYYY')
+      Test.findById(id,function(err,loc){
+        if(loc){
+
+      
+        let teacherId = loc.teacherId
+        let teacherName = loc.teacherName
+        let subjectCode = loc.subjectCode
+      let subject = loc.subject
+   
+     User.find({uid:teacherId},function(err,cok){
+       let user = cok[0]._id
+        
+       User.findById(user,function(err,doc){
+    let uid = doc.uid
+     let userId = doc._id
+     let class1 = doc.class1
+     TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+       let teacherSubId = locs[0]._id
+   
+       StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+         let studentSubId = tocs[0]._id
+       TestX.find({quizId:id},function(err,docs){
+        let arr=[]
+        for(var i = docs.length - 1; i>=0; i--){
+    
+          arr.push(docs[i])
+        }
+     
+      res.render('adminClerk/assgtList',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+      class1:class1})
+        })
+      })
+    })
+    })
+    })
+  }
+      })
+    })
+
+
+    router.post('/teacherViewTest/:id',isLoggedIn,function(req,res){
+      var pro =req.user
+    var id = req.params.id
+      var date = req.body.date
+      var arr = []
+      var term = req.user.term
+
+    var n = moment()
+    var year = n.format('YYYY')
+      
+      var m = moment(date)
+    
+     
+    
+      console.log(date.split('-')[0])
+      var startDate = date.split('-')[0]
+      var endDate = date.split('-')[1]
+       var startValueA = moment(startDate)
+       var startValueB=startValueA.subtract(1,"days");
+       var startValue = moment(startValueB).valueOf()
+    
+       var endValueA = moment(endDate)
+       var endValueB = endValueA.add(1,"days");
+       var endValue= moment(endValueB).valueOf()
+      console.log(startValue,endValue,'output')
+    
+      Test.findById(id,function(err,loc){
+        if(loc){
+
+      
+        let teacherId = loc.teacherId
+        let teacherName = loc.teacherName
+        let subjectCode = loc.subjectCode
+      let subject = loc.subject
+    
+        console.log(teacherId,'teacherId')
+     User.find({uid:teacherId},function(err,cok){
+       let user = cok[0]._id
+        
+       User.findById(user,function(err,doc){
+    let uid = doc.uid
+     let userId = doc._id
+     let class1 = doc.class1
+     TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+       let teacherSubId = locs[0]._id
+   
+       StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+         let studentSubId = tocs[0]._id
+         TestX.find({quizId:id},function(err,docs){
+    console.log(docs,'777')
+        if(docs){
+    
+    
+        for(var i = 0;i<docs.length;i++){
+          let sdate = docs[i].dateValue
+          if(sdate >= startValue && sdate <= endValue){
+    arr.push(docs[i])
+    console.log(arr,'arr333')
+          }
+        }
+      }
+          
+        console.log(arr,'arr')
+            res.render("adminClerk/assgtList", {
+              listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+              class1:class1
+              
+            });
+        
+    });
+        
+      })
+    })
+  })
+        })
+      }
+      })
+    })
+    
+
+    router.get('/teacherViewAssignments/:id',isLoggedIn,function(req,res){
+      var id = req.params.id
+      var pro = req.user
+
+    Test.findById(id,function(err,loc){
+      if(loc){
+
+   
+      let teacherId = loc.teacherId
+      let teacherName = loc.teacherName
+      let subjectCode = loc.subjectCode
+    let subject = loc.subject
+  
+      console.log(teacherId,'teacherId')
+   User.find({uid:teacherId},function(err,cok){
+     let user = cok[0]._id
+      
+     User.findById(user,function(err,doc){
+  let uid = doc.uid
+   let userId = doc._id
+   let class1 = doc.class1
+   TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+     let teacherSubId = locs[0]._id
+ 
+     StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+       let studentSubId = tocs[0]._id
+     TestX.find({quizId:id},function(err,docs){
+      let arr=[]
+      for(var i = docs.length - 1; i>=0; i--){
+  
+        arr.push(docs[i])
+      }
+   
+    res.render('adminClerk/assgtList2',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+    class1:class1})
+      })
+    })
+  })
+  })
+  })
+}
+    })
+  })
+
+
+  
+  router.post('/teacherViewAssignments/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+  
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+  
+    Test.findById(id,function(err,loc){
+      if(loc){
+
+    
+      let teacherId = loc.teacherId
+      let teacherName = loc.teacherName
+      let subjectCode = loc.subjectCode
+    let subject = loc.subject
+  
+      console.log(teacherId,'teacherId')
+   User.find({uid:teacherId},function(err,cok){
+     let user = cok[0]._id
+      
+     User.findById(user,function(err,doc){
+  let uid = doc.uid
+   let userId = doc._id
+   let class1 = doc.class1
+   TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+     let teacherSubId = locs[0]._id
+ 
+     StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+       let studentSubId = tocs[0]._id
+       TestX.find({quizId:id},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+          res.render("adminClerk/assgtList2", {
+            listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+            class1:class1
+            
+          });
+      
+  });
+      
+    })
+  })
+})
+      })
+    }
+    })
+  })
+  
+
+
+  
+  router.get('/teacherViewExam/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+    var m = moment()
+    var month = m.format('MMMM')
+    var year = m.format('YYYY')
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+    let teacherId = loc.teacherId
+    let teacherName = loc.teacherName
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+
+    console.log(teacherId,'teacherId')
+ User.find({uid:teacherId},function(err,cok){
+   let user = cok[0]._id
+    
+   User.findById(user,function(err,doc){
+let uid = doc.uid
+ let userId = doc._id
+ let class1 = doc.class1
+ TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+   let teacherSubId = locs[0]._id
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+  res.render('adminClerk/assgtList3',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+  class1:class1})
+    })
+  })
+})
+})
+})
+}
+  })
+})
+
+
+
+router.post('/teacherViewExam/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+  
+    let teacherId = loc.teacherId
+    let teacherName = loc.teacherName
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+
+    console.log(teacherId,'teacherId')
+ User.find({uid:teacherId},function(err,cok){
+   let user = cok[0]._id
+    
+   User.findById(user,function(err,doc){
+let uid = doc.uid
+ let userId = doc._id
+ let class1 = doc.class1
+ TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+   let teacherSubId = locs[0]._id
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+     TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgtList3", {
+          listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+          class1:class1
+          
+        });
+    
+});
+    
+  })
+})
+})
+    })
+  }
+  })
+})
+
+
+
+router.get('/classSubjects/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  Class1.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let name = doc.class1
+    StudentSub.find({class1:name},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.subjectName == docs[i].subjectName)){
+                console.log('true')
+               arr.find(value => value.subjectName == docs[i].subjectName).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileSubjects',{listX:arr,pro:pro,id:id,class1:name})
+
+    })
+  }
+  })
+})
+//staff List
+
+router.get('/classAssignment/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var userId = req.user._id
+  var id = req.params.id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+
+ 
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  Class1.find({class1:class1},function(err,nocs){
+    let classId = nocs[0]._id
+ 
+
+    res.render('adminClerk/fileAssgt',{studentSubId:id,pro:pro,classId:classId,class1:class1,subject:subject})
+  })
+}
+  })
+})
+
+
+router.get('/classTest/:id',isLoggedIn,adminX,function(req,res){
+var id = req.params.id
+var term = req.user.term
+var m = moment()
+var month = m.format('MMMM')
+var year = m.format('YYYY')
+
+var pro = req.user
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+
+  
+  let class1 = doc.class1
+  let id1 = doc._id
+  let subject = doc.subjectName
+  let subjectCode = doc.subjectCode
+  Class1.find({class1:class1},function(err,kocs){
+
+  let id2 = kocs[0]._id
+  Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,locs){
+    let arr=[]
+    for(var i = locs.length - 1; i>=0; i--){
+
+      arr.push(locs[i])
+    }
+    res.render('adminClerk/assgt1',{listX:arr,pro:pro,studentSubId:id,id1:id1,classId:id2,class1:class1,subject:subject,id:id})
+  })
+})
+}
+})
+
+
+
+})
+
+
+
+  
+router.post('/classTest/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+  
+    
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subject = doc.subjectName
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgt1", {
+          listX:arr,pro:pro,studentSubId:id,id1:id1,classId:id2,class1:class1,subject:subject
+          
+        });
+      })
+});
+    
+
+  }
+  })
+})
+
+
+router.get('/classAssgt/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+ 
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/assgt2',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+    })
+  })
+}
+  })
+   
+  
+  })
+
+  router.post('/classTest/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+  
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+    StudentSub.findById(id,function(err,doc){
+      if(doc){
+    
+      
+      let class1 = doc.class1
+      let id1 = doc._id
+      let subject = doc.subjectName
+      let subjectCode = doc.subjectCode
+      Class1.find({class1:class1},function(err,kocs){
+    
+      let id2 = kocs[0]._id
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+          res.render("adminClerk/assgt2", {
+            listX:arr,pro:pro,id1:id1,id2:id2,id:id
+            
+          });
+        })
+  });
+      
+  
+    }
+    })
+  })
+  
+
+
+
+  
+router.get('/finalExam/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+  
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/assgt3',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+    })
+  })
+
+}
+  })
+  
+  
+  
+  })
+
+
+
+  router.post('/finalExam/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+  
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+    StudentSub.findById(id,function(err,doc){
+      if(doc){
+    
+      
+      let class1 = doc.class1
+      let id1 = doc._id
+      let subject = doc.subjectName
+      let subjectCode = doc.subjectCode
+      Class1.find({class1:class1},function(err,kocs){
+    
+      let id2 = kocs[0]._id
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+      res.render('adminClerk/assgt3',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+        })
+  });
+      
+  
+    }
+    })
+  })
+  
+
+
+
+
+
+  router.get('/viewClassTest/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+    
+  Test.findById(id,function(err,loc){
+        if(loc){
+
+       
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+  let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+  
+ Class1.find({class1:class1},function(err,cok){
+   let classId = cok[0]._id
+    
+ 
+ 
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+ 
+  res.render('adminClerk/assgtListC1',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+  class1:class1})
+    })
+  })
+})
+}  
+})
+
+})
+
+
+
+
+
+router.post('/viewClassTest/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+  
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+    res.render('adminClerk/assgtListC1',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+  
+
+  router.get('/viewClassAssignments/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+
+  Test.findById(id,function(err,loc){
+   if(loc){
+
+ 
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+  let class1 = loc.class1
+
+  
+ Class1.find({class1:class1},function(err,cok){
+   let classId = cok[0]._id
+    
+ 
+ 
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+ 
+  res.render('adminClerk/assgtListC2',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+  class1:class1})
+    })
+  })
+})
+}
+})
+
+})
+
+
+router.post('/viewClassAssignments/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+  
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+ 
+    res.render('adminClerk/assgtListC2',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+  
+
+
+
+
+router.get('/viewExam/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var pro = req.user
+
+Test.findById(id,function(err,loc){
+ if(loc){
+
+
+  let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+
+
+Class1.find({class1:class1},function(err,cok){
+ let classId = cok[0]._id
+  
+
+
+
+ StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+   let studentSubId = tocs[0]._id
+ TestX.find({quizId:id},function(err,docs){
+  let arr=[]
+          for(var i = docs.length - 1; i>=0; i--){
+      
+            arr.push(docs[i])
+          }
+
+res.render('adminClerk/assgtListC3',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+class1:class1})
+  })
+})
+})
+}
+})
+
+})
+
+
+
+
+
+router.post('/viewExam/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+ 
+    res.render('adminClerk/assgtListC3',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+
+////learning material
+
+
+router.get('/teacherLearningMaterial/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+
+  StudentSub.findById(id,function(err,vocs){
+    if(vocs){
+    let class1 = vocs.class1
+    let subjectCode = vocs.subjectCode
+    let id2 = vocs._id    
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,doc){
+       if(doc){
+
+      
+    let  teacherSubId = doc[0]._id
+    let teacherName = doc[0].teacherName
+    let subject = doc[0].subjectName
+    
+    
+   
+
+    Learn.find({subjectCode:subjectCode,term:term,year:year,class1:class1},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/files2',{listX:arr,pro:pro,teacherSubId:teacherSubId,
+        subject:subject,id:id,class1:class1,id2:id2,teacherName:teacherName
+      })
+   
+    
+})
+
+      }
+
+  
+})
+    }
+})
+  
+  })
+
+
+
+  
+
+router.get('/teacherOnlineAssignmentFiles/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+
+  StudentSub.findById(id,function(err,vocs){
+    if(vocs){
+    let class1 = vocs.class1
+    let subjectCode = vocs.subjectCode
+    let id2 = vocs._id    
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,doc){
+       if(doc){
+
+      
+    let  teacherSubId = doc[0]._id
+    let teacherName = doc[0].teacherName
+    let subject = doc[0].subjectName
+    
+    
+   
+
+    Test.find({subjectCode:subjectCode,term:term,year:year,type2:'online assignment attached',class1:class1},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      
+      res.render('adminClerk/files3',{listX:arr,pro:pro,teacherSubId:teacherSubId,
+        subject:subject,id:id,class1:class1,id2:id2,teacherName:teacherName
+      })
+   
+    
+})
+
+      }
+
+  
+})
+    }
+})
+  
+  })
+
+
+
+/////////xxxxxxxxxxxxxxxx
+
+
+
+
+
+
+router.get('/teachersFiles',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+
+  User.find({role:"teacher"},function(err,docs){
+    res.render('adminClerk/folders2',{listX:docs,pro:pro})
+
+  })
+
+})
+router.get('/classFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+
+  Class1.find({},function(err,docs){
+    res.render('adminClerk/folders',{listX:docs,pro:pro})
+
+  })
+
+})
+
+router.get('/subjectFile/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+
+  User.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let uid = doc.uid
+    let teacherName = doc.fullname
+    TeacherSub.find({teacherId:uid},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.subjectName == docs[i].subjectName)){
+                console.log('true')
+               arr.find(value => value.subjectName == docs[i].subjectName).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileSubjects2',{listX:arr,pro:pro,id:id,teacherName:teacherName})
+
+    })
+  }
+  })
+})
+
+
+
+
+router.get('/teacherClass/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+
+  TeacherSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let subjectCode = doc.subjectCode
+    let uid = doc.teacherId
+    let subject = doc.subjectName
+    let teacherName = doc.teacherName
+    User.find({uid:uid},function(err,ocs){
+
+    
+    let id2 = ocs[0]._id
+    StudentSub.find({subjectCode:subjectCode},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.class1 == docs[i].class1)){
+                console.log('true')
+               arr.find(value => value.class1 == docs[i].class1).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileClass2',{listX:arr,pro:pro,id:id,id2:id2,subject:subject,teacherName:teacherName})
+
+    })
+  })
+}
+  })
+})
+
+
+router.get('/teacherClassAssignment/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var adminId = req.user._id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+  User.findByIdAndUpdate(adminId,{$set:{reportId:id}},function(err,pvocs){
+
+  })
+
+
+    res.render('adminClerk/fileAssgt22',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+})
+  })
+}
+})
+})
+
+
+
+
+router.get('/teacherReportsYear/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var year = req.params.id
+  var id = req.user.reportId
+  var adminId = req.user._id
+  console.log(year,id,"illest")
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+User.findByIdAndUpdate(adminId,{$set:{year:year}},function(err,klops){
+
+})
+
+
+
+    res.render('adminClerk/fileAssgtReports',{id:id,year:year,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+ 
+  })
+})
+  })
+}
+})
+})
+
+
+router.get('/teacherReports/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+
+//fileAssgtReportsYear
+    res.render('adminClerk/fileAssgtReportsYear',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+ 
+  })
+})
+  })
+}
+})
+})
+
+
+
+router.get('/monthlyReports/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var year = req.user.year
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+  Report2.find({subjectCode:subjectCode,year:year,type:"Monthly Assessment"},function(er,hocs){
+    res.render('adminClerk/filesMonthly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+
+})
+})
+  })
+}
+})
+})
+
+
+
+
+router.get('/termlyReports/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var year = req.user.year
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+  Report2.find({subjectCode:subjectCode,year:year,type:"Final Exam"},function(er,hocs){
+    res.render('adminClerk/filesTermly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+
+})
+})
+  })
+}
+})
+})
+
+
+router.get('/downloadMonthlyReport/:id',isLoggedIn,adminX,function(req,res){
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var mformat = m.format('L')
+  Report2.findById(req.params.id,function(err,doc){
+    var name = doc.filename;
+    //res.download( './public/uploads/'+name, name)
+ 
+    res.download( './reports2/'+year+'/'+month+'/'+name, name)
+  })  
+
+})
+
+
+router.get('/downloadTermlyReport/:id',isLoggedIn,adminX,function(req,res){
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var mformat = m.format('L')
+  Report2.findById(req.params.id,function(err,doc){
+    var name = doc.filename;
+    //res.download( './public/uploads/'+name, name)
+ 
+    res.download( './reportsExam2/'+year+'/'+month+'/'+name, name)
+  })  
+
+})
+
+
+router.get('/teacherMarks/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+  User.find({uid:teacherId},function(err,nocs){
+    let id2 = nocs[0]._id
+ User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+
+    res.render('adminClerk/fileAssgt2',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+  })
+})
+  })
+}
+})
+})
+
+router.get('/teacherClassTest/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+  const arr=[]
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let studentSubId = doc._id
+    let subjectCode = doc.subjectCode
+    let subjectName = doc.subjectName
+    TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+      let teacherId =poc[0].teacherId
+      let teacherSubId = poc[0]._id
+      let teacherName = poc[0].teacherName
+      User.find({uid:teacherId},function(err,zocs){
+        let userId = zocs[0]._id
+        let class1 = zocs[0].class1
+     
+ 
+  
+ 
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,locs){
+      for(var i = locs.length - 1; i>=0; i--){
+      
+        arr.push(locs[i])
+      }
+   
+      res.render('adminClerk/assgtX1',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,id:id,
+        subjectName:subjectName,teacherName:teacherName,class1:class1})
+    })
+  })
+
+  
+})
+}
+})
+  
+  })
+  
+
+
+  
+router.post('/teacherClassTest/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+var teacherId = req.user.uid
+var n = moment()
+var year = n.format('YYYY')
+
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let studentSubId = doc._id
+    let subjectCode = doc.subjectCode
+    let subjectName = doc.subjectName
+    TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+      let teacherId =poc[0].teacherId
+      let teacherSubId = poc[0]._id
+      let teacherName = poc[0].teacherName
+      User.find({uid:teacherId},function(err,zocs){
+        let userId = zocs[0]._id
+        let class1 = zocs[0].class1
+
+  Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err, docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgtX1", {
+          listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,id:id,
+        subjectName:subjectName,teacherName:teacherName,class1:class1
+          
+        });
+    
+});
+    
+  })
+    })
+  }
+  })
+})
+
+  router.get('/teacherClassAssignment2/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var term = req.user.term
+    var arr =[]
+    var m = moment()
+    var month = m.format('MMMM')
+    var year = m.format('YYYY')
+    var pro = req.user
+
+    StudentSub.findById(id,function(err,doc){
+         if(doc){
+
+        
+      let studentSubId = doc._id
+      let subjectCode = doc.subjectCode
+      let subject = doc.subjectName
+      TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+        let teacherId =poc[0].teacherId
+        let teacherSubId = poc[0]._id
+        User.find({uid:teacherId},function(err,zocs){
+          let userId = zocs[0]._id
+          let class1 = zocs[0].class1
+          let teacherName = zocs[0].fullname
+      
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,locs){
+        for(var i = locs.length - 1; i>=0; i--){
+      
+          arr.push(locs[i])
+        }
+        res.render('adminClerk/assgtX2',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+          class1:class1,teacherName:teacherName,subject:subject,id:id
+        })
+      })
+    
+    })
+    
+  })
+}
+  })
+    
+    })
+
+ 
+    router.post('/teacherClassAssignment2/:id',isLoggedIn,adminX,function(req,res){
+      var pro =req.user
+    var id = req.params.id
+      var date = req.body.date
+      var arr = []
+      var term = req.user.term
+
+    var n = moment()
+    var year = n.format('YYYY')
+      
+      var m = moment(date)
+    
+     
+    
+      console.log(date.split('-')[0])
+      var startDate = date.split('-')[0]
+      var endDate = date.split('-')[1]
+       var startValueA = moment(startDate)
+       var startValueB=startValueA.subtract(1,"days");
+       var startValue = moment(startValueB).valueOf()
+    
+       var endValueA = moment(endDate)
+       var endValueB = endValueA.add(1,"days");
+       var endValue= moment(endValueB).valueOf()
+      console.log(startValue,endValue,'output')
+    
+      StudentSub.findById(id,function(err,doc){
+        if(doc){
+    
+          let studentSubId = doc._id
+          let subjectCode = doc.subjectCode
+          let subject = doc.subjectName
+          TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+            let teacherId =poc[0].teacherId
+            let teacherSubId = poc[0]._id
+            User.find({uid:teacherId},function(err,zocs){
+              let userId = zocs[0]._id
+              let class1 = zocs[0].class1
+              let teacherName = zocs[0].fullname
+          
+          Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,docs){
+    console.log(docs,'777')
+        if(docs){
+    
+    
+        for(var i = 0;i<docs.length;i++){
+          let sdate = docs[i].dateValue
+          if(sdate >= startValue && sdate <= endValue){
+    arr.push(docs[i])
+    console.log(arr,'arr333')
+          }
+        }
+      }
+          
+        console.log(arr,'arr')
+            res.render("adminClerk/assgtX2", {
+              listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+              class1:class1,teacherName:teacherName,subject:subject,id:id
+              
+            });
+        
+    });
+        
+      })
+        })
+      }
+      })
+    })
+    
+
+    router.get('/teacherFinalExam/:id',isLoggedIn,adminX,function(req,res){
+      var id = req.params.id
+      var term = req.user.term
+      var m = moment()
+      var month = m.format('MMMM')
+      var year = m.format('YYYY')
+      var pro = req.user
+      
+      StudentSub.findById(id,function(err,doc){
+        if(doc){
+
+      
+        let class1 = doc.class1
+        let studentSubId = doc._id
+        let subjectCode = doc.subjectCode
+        let subject = doc.subjectName
+        TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+          let teacherId =poc[0].teacherId
+          let teacherSubId = poc[0]._id
+          let teacherName = poc[0].teacherName
+          User.find({uid:teacherId},function(err,zocs){
+            let userId = zocs[0]._id
+            let class1 = zocs[0].class1
+
+      
+       
+        Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,locs){
+          let arr=[]
+          for(var i = locs.length - 1; i>=0; i--){
+      
+            arr.push(locs[i])
+          }
+          res.render('adminClerk/assgtX3',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+          teacherName:teacherName,class1:class1,subject:subject,id:id})
+        
+      })
+      })
+      
+    })
+      }
+    })
+      
+      })
+
+
+      router.post('/teacherFinalExam/:id',isLoggedIn,adminX,function(req,res){
+        var pro =req.user
+      var id = req.params.id
+        var date = req.body.date
+        var arr = []
+        var term = req.user.term
+
+      var n = moment()
+      var year = n.format('YYYY')
+        
+        var m = moment(date)
+      
+       
+      
+        console.log(date.split('-')[0])
+        var startDate = date.split('-')[0]
+        var endDate = date.split('-')[1]
+         var startValueA = moment(startDate)
+         var startValueB=startValueA.subtract(1,"days");
+         var startValue = moment(startValueB).valueOf()
+      
+         var endValueA = moment(endDate)
+         var endValueB = endValueA.add(1,"days");
+         var endValue= moment(endValueB).valueOf()
+        console.log(startValue,endValue,'output')
+      
+        StudentSub.findById(id,function(err,doc){
+          if(doc){
+      
+            let studentSubId = doc._id
+            let subjectCode = doc.subjectCode
+            let subject = doc.subjectName
+            TeacherSub.find({subjectCode:subjectCode},function(err,poc){
+              let teacherId =poc[0].teacherId
+              let teacherSubId = poc[0]._id
+              User.find({uid:teacherId,companyId:companyId},function(err,zocs){
+                let userId = zocs[0]._id
+                let class1 = zocs[0].class1
+                let teacherName = zocs[0].fullname
+            
+            Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,docs){
+      console.log(docs,'777')
+          if(docs){
+      
+      
+          for(var i = 0;i<docs.length;i++){
+            let sdate = docs[i].dateValue
+            if(sdate >= startValue && sdate <= endValue){
+      arr.push(docs[i])
+      console.log(arr,'arr333')
+            }
+          }
+        }
+            
+          console.log(arr,'arr')
+              res.render("adminClerk/assgtX3", {
+                listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,
+                teacherName:teacherName,class1:class1,subject:subject,id:id
+                
+              });
+          
+      });
+          
+        })
+          })
+        }
+        })
+      })
+      
+
+      router.get('/teacherViewTest/:id',isLoggedIn,adminX,function(req,res){
+        var id = req.params.id
+        var pro = req.user
+        var m = moment()
+        var month = m.format('MMMM')
+        var year = m.format('YYYY')
+      Test.findById(id,function(err,loc){
+        if(loc){
+
+      
+        let teacherId = loc.teacherId
+        let teacherName = loc.teacherName
+        let subjectCode = loc.subjectCode
+      let subject = loc.subject
+   
+     User.find({uid:teacherId},function(err,cok){
+       let user = cok[0]._id
+        
+       User.findById(user,function(err,doc){
+    let uid = doc.uid
+     let userId = doc._id
+     let class1 = doc.class1
+     TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+       let teacherSubId = locs[0]._id
+   
+       StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+         let studentSubId = tocs[0]._id
+       TestX.find({quizId:id},function(err,docs){
+        let arr=[]
+        for(var i = docs.length - 1; i>=0; i--){
+    
+          arr.push(docs[i])
+        }
+     
+      res.render('adminClerk/assgtList',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+      class1:class1})
+        })
+      })
+    })
+    })
+    })
+  }
+      })
+    })
+
+
+    router.post('/teacherViewTest/:id',isLoggedIn,adminX,function(req,res){
+      var pro =req.user
+    var id = req.params.id
+      var date = req.body.date
+      var arr = []
+      var term = req.user.term
+
+    var n = moment()
+    var year = n.format('YYYY')
+      
+      var m = moment(date)
+    
+     
+    
+      console.log(date.split('-')[0])
+      var startDate = date.split('-')[0]
+      var endDate = date.split('-')[1]
+       var startValueA = moment(startDate)
+       var startValueB=startValueA.subtract(1,"days");
+       var startValue = moment(startValueB).valueOf()
+    
+       var endValueA = moment(endDate)
+       var endValueB = endValueA.add(1,"days");
+       var endValue= moment(endValueB).valueOf()
+      console.log(startValue,endValue,'output')
+    
+      Test.findById(id,function(err,loc){
+        if(loc){
+
+      
+        let teacherId = loc.teacherId
+        let teacherName = loc.teacherName
+        let subjectCode = loc.subjectCode
+      let subject = loc.subject
+    
+        console.log(teacherId,'teacherId')
+     User.find({uid:teacherId},function(err,cok){
+       let user = cok[0]._id
+        
+       User.findById(user,function(err,doc){
+    let uid = doc.uid
+     let userId = doc._id
+     let class1 = doc.class1
+     TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+       let teacherSubId = locs[0]._id
+   
+       StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+         let studentSubId = tocs[0]._id
+         TestX.find({quizId:id},function(err,docs){
+    console.log(docs,'777')
+        if(docs){
+    
+    
+        for(var i = 0;i<docs.length;i++){
+          let sdate = docs[i].dateValue
+          if(sdate >= startValue && sdate <= endValue){
+    arr.push(docs[i])
+    console.log(arr,'arr333')
+          }
+        }
+      }
+          
+        console.log(arr,'arr')
+            res.render("adminClerk/assgtList", {
+              listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+              class1:class1
+              
+            });
+        
+    });
+        
+      })
+    })
+  })
+        })
+      }
+      })
+    })
+    
+
+    router.get('/teacherViewAssignments/:id',isLoggedIn,adminX,function(req,res){
+      var id = req.params.id
+      var pro = req.user
+
+    Test.findById(id,function(err,loc){
+      if(loc){
+
+   
+      let teacherId = loc.teacherId
+      let teacherName = loc.teacherName
+      let subjectCode = loc.subjectCode
+    let subject = loc.subject
+  
+      console.log(teacherId,'teacherId')
+   User.find({uid:teacherId},function(err,cok){
+     let user = cok[0]._id
+      
+     User.findById(user,function(err,doc){
+  let uid = doc.uid
+   let userId = doc._id
+   let class1 = doc.class1
+   TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+     let teacherSubId = locs[0]._id
+ 
+     StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+       let studentSubId = tocs[0]._id
+     TestX.find({quizId:id},function(err,docs){
+      let arr=[]
+      for(var i = docs.length - 1; i>=0; i--){
+  
+        arr.push(docs[i])
+      }
+   
+    res.render('adminClerk/assgtList2',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+    class1:class1})
+      })
+    })
+  })
+  })
+  })
+}
+    })
+  })
+
+
+  
+  router.post('/teacherViewAssignments/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+  
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+  
+    Test.findById(id,function(err,loc){
+      if(loc){
+
+    
+      let teacherId = loc.teacherId
+      let teacherName = loc.teacherName
+      let subjectCode = loc.subjectCode
+    let subject = loc.subject
+  
+      console.log(teacherId,'teacherId')
+   User.find({uid:teacherId},function(err,cok){
+     let user = cok[0]._id
+      
+     User.findById(user,function(err,doc){
+  let uid = doc.uid
+   let userId = doc._id
+   let class1 = doc.class1
+   TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+     let teacherSubId = locs[0]._id
+ 
+     StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+       let studentSubId = tocs[0]._id
+       TestX.find({quizId:id},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+          res.render("adminClerk/assgtList2", {
+            listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+            class1:class1
+            
+          });
+      
+  });
+      
+    })
+  })
+})
+      })
+    }
+    })
+  })
+  
+
+
+  
+  router.get('/teacherViewExam/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+    var m = moment()
+    var month = m.format('MMMM')
+    var year = m.format('YYYY')
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+    let teacherId = loc.teacherId
+    let teacherName = loc.teacherName
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+
+    console.log(teacherId,'teacherId')
+ User.find({uid:teacherId},function(err,cok){
+   let user = cok[0]._id
+    
+   User.findById(user,function(err,doc){
+let uid = doc.uid
+ let userId = doc._id
+ let class1 = doc.class1
+ TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+   let teacherSubId = locs[0]._id
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+  res.render('adminClerk/assgtList3',{listX:arr,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+  class1:class1})
+    })
+  })
+})
+})
+})
+}
+  })
+})
+
+
+
+router.post('/teacherViewExam/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+  
+    let teacherId = loc.teacherId
+    let teacherName = loc.teacherName
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+
+    console.log(teacherId,'teacherId')
+ User.find({uid:teacherId},function(err,cok){
+   let user = cok[0]._id
+    
+   User.findById(user,function(err,doc){
+let uid = doc.uid
+ let userId = doc._id
+ let class1 = doc.class1
+ TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
+   let teacherSubId = locs[0]._id
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+     TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgtList3", {
+          listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
+          class1:class1
+          
+        });
+    
+});
+    
+  })
+})
+})
+    })
+  }
+  })
+})
+
+
+
+router.get('/classSubjects/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var arr = []
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  Class1.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let name = doc.class1
+    StudentSub.find({class1:name},function(err,docs){
+      for(var i = 0;i<docs.length;i++){
+        
+     
+          
+         if(arr.length > 0 && arr.find(value => value.subjectName == docs[i].subjectName)){
+                console.log('true')
+               arr.find(value => value.subjectName == docs[i].subjectName).year += docs[i].year;
+
+              }else{
+      arr.push(docs[i])
+  
+ 
+              }
+      
+          
+          }
+
+          res.render('adminClerk/fileSubjects',{listX:arr,pro:pro,id:id,class1:name})
+
+    })
+  }
+  })
+})
+//staff List
+
+router.get('/classAssignment/:id',isLoggedIn,adminX,function(req,res){
+  var pro = req.user
+  var userId = req.user._id
+  var id = req.params.id
+
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+
+ 
+  let class1 = doc.class1
+  let subjectCode = doc.subjectCode
+  let subject = doc.subjectName
+
+  Class1.find({class1:class1},function(err,nocs){
+    let classId = nocs[0]._id
+ 
+
+    res.render('adminClerk/fileAssgt',{studentSubId:id,pro:pro,classId:classId,class1:class1,subject:subject})
+  })
+}
+  })
+})
+
+
+router.get('/classTest/:id',isLoggedIn,adminX,function(req,res){
+var id = req.params.id
+var term = req.user.term
+var m = moment()
+var month = m.format('MMMM')
+var year = m.format('YYYY')
+
+var pro = req.user
+StudentSub.findById(id,function(err,doc){
+  if(doc){
+
+  
+  let class1 = doc.class1
+  let id1 = doc._id
+  let subject = doc.subjectName
+  let subjectCode = doc.subjectCode
+  Class1.find({class1:class1},function(err,kocs){
+
+  let id2 = kocs[0]._id
+  Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,locs){
+    let arr=[]
+    for(var i = locs.length - 1; i>=0; i--){
+
+      arr.push(locs[i])
+    }
+    res.render('adminClerk/assgt1',{listX:arr,pro:pro,studentSubId:id,id1:id1,classId:id2,class1:class1,subject:subject,id:id})
+  })
+})
+}
+})
+
+
+
+})
+
+
+
+  
+router.post('/classTest/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+  
+    
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subject = doc.subjectName
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Test'},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+        res.render("adminClerk/assgt1", {
+          listX:arr,pro:pro,studentSubId:id,id1:id1,classId:id2,class1:class1,subject:subject
+          
+        });
+      })
+});
+    
+
+  }
+  })
+})
+
+
+
+router.get('/classAssgt/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+ 
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+   
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/assgt2',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+    })
+  })
+}
+  })
+   
+  
+  })
+
+  router.post('/classTest/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+  
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+    StudentSub.findById(id,function(err,doc){
+      if(doc){
+    
+      
+      let class1 = doc.class1
+      let id1 = doc._id
+      let subject = doc.subjectName
+      let subjectCode = doc.subjectCode
+      Class1.find({class1:class1},function(err,kocs){
+    
+      let id2 = kocs[0]._id
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+          res.render("adminClerk/assgt2", {
+            listX:arr,pro:pro,id1:id1,id2:id2,id:id
+            
+          });
+        })
+  });
+      
+  
+    }
+    })
+  })
+  
+
+
+
+  
+router.get('/finalExam/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+  StudentSub.findById(id,function(err,doc){
+    if(doc){
+
+  
+    let class1 = doc.class1
+    let id1 = doc._id
+    let subjectCode = doc.subjectCode
+    Class1.find({class1:class1},function(err,kocs){
+  
+    let id2 = kocs[0]._id
+    Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/assgt3',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+    })
+  })
+
+}
+  })
+  
+  
+  
+  })
+
+
+
+  router.post('/finalExam/:id',isLoggedIn,adminX,function(req,res){
+    var pro =req.user
+  var id = req.params.id
+    var date = req.body.date
+    var arr = []
+    var term = req.user.term
+  
+  var n = moment()
+  var year = n.format('YYYY')
+    
+    var m = moment(date)
+
+   
+  
+    console.log(date.split('-')[0])
+    var startDate = date.split('-')[0]
+    var endDate = date.split('-')[1]
+     var startValueA = moment(startDate)
+     var startValueB=startValueA.subtract(1,"days");
+     var startValue = moment(startValueB).valueOf()
+  
+     var endValueA = moment(endDate)
+     var endValueB = endValueA.add(1,"days");
+     var endValue= moment(endValueB).valueOf()
+    console.log(startValue,endValue,'output')
+    StudentSub.findById(id,function(err,doc){
+      if(doc){
+    
+      
+      let class1 = doc.class1
+      let id1 = doc._id
+      let subject = doc.subjectName
+      let subjectCode = doc.subjectCode
+      Class1.find({class1:class1},function(err,kocs){
+    
+      let id2 = kocs[0]._id
+      Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Final Exam'},function(err,docs){
+  console.log(docs,'777')
+      if(docs){
+  
+  
+      for(var i = 0;i<docs.length;i++){
+        let sdate = docs[i].dateValue
+        if(sdate >= startValue && sdate <= endValue){
+  arr.push(docs[i])
+  console.log(arr,'arr333')
+        }
+      }
+    }
+        
+      console.log(arr,'arr')
+      res.render('adminClerk/assgt3',{listX:arr,pro:pro,id1:id1,id2:id2,id:id})
+        })
+  });
+      
+  
+    }
+    })
+  })
+  
+
+
+
+
+
+  router.get('/viewClassTest/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+    
+  Test.findById(id,function(err,loc){
+        if(loc){
+
+       
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+  let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+  
+ Class1.find({class1:class1},function(err,cok){
+   let classId = cok[0]._id
+    
+ 
+ 
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+ 
+  res.render('adminClerk/assgtListC1',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+  class1:class1})
+    })
+  })
+})
+}  
+})
+
+})
+
+
+
+
+
+router.post('/viewClassTest/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+  
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+    res.render('adminClerk/assgtListC1',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+  
+
+  router.get('/viewClassAssignments/:id',isLoggedIn,adminX,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+
+  Test.findById(id,function(err,loc){
+   if(loc){
+
+ 
+    let subjectCode = loc.subjectCode
+  let subject = loc.subject
+  let class1 = loc.class1
+
+  
+ Class1.find({class1:class1},function(err,cok){
+   let classId = cok[0]._id
+    
+ 
+ 
+
+   StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+     let studentSubId = tocs[0]._id
+   TestX.find({quizId:id},function(err,docs){
+    let arr=[]
+    for(var i = docs.length - 1; i>=0; i--){
+
+      arr.push(docs[i])
+    }
+ 
+  res.render('adminClerk/assgtListC2',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+  class1:class1})
+    })
+  })
+})
+}
+})
+
+})
+
+
+router.post('/viewClassAssignments/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+  
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+ 
+    res.render('adminClerk/assgtListC2',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+  
+
+
+
+
+router.get('/viewExam/:id',isLoggedIn,adminX,function(req,res){
+  var id = req.params.id
+  var pro = req.user
+
+Test.findById(id,function(err,loc){
+ if(loc){
+
+
+  let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+
+
+Class1.find({class1:class1},function(err,cok){
+ let classId = cok[0]._id
+  
+
+
+
+ StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+   let studentSubId = tocs[0]._id
+ TestX.find({quizId:id},function(err,docs){
+  let arr=[]
+          for(var i = docs.length - 1; i>=0; i--){
+      
+            arr.push(docs[i])
+          }
+
+res.render('adminClerk/assgtListC3',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+class1:class1})
+  })
+})
+})
+}
+})
+
+})
+
+
+
+
+
+router.post('/viewExam/:id',isLoggedIn,adminX,function(req,res){
+  var pro =req.user
+var id = req.params.id
+  var date = req.body.date
+  var arr = []
+  var term = req.user.term
+
+var n = moment()
+var year = n.format('YYYY')
+  
+  var m = moment(date)
+
+ 
+
+  console.log(date.split('-')[0])
+  var startDate = date.split('-')[0]
+  var endDate = date.split('-')[1]
+   var startValueA = moment(startDate)
+   var startValueB=startValueA.subtract(1,"days");
+   var startValue = moment(startValueB).valueOf()
+
+   var endValueA = moment(endDate)
+   var endValueB = endValueA.add(1,"days");
+   var endValue= moment(endValueB).valueOf()
+  console.log(startValue,endValue,'output')
+
+  Test.findById(id,function(err,loc){
+    if(loc){
+
+   
+let subjectCode = loc.subjectCode
+let subject = loc.subject
+let class1 = loc.class1
+console.log(subjectCode,subject,'yaita')
+
+Class1.find({class1:class1},function(err,cok){
+let classId = cok[0]._id
+
+
+
+
+StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
+ let studentSubId = tocs[0]._id
+TestX.find({quizId:id},function(err,docs){
+console.log(docs,'777')
+    if(docs){
+
+
+    for(var i = 0;i<docs.length;i++){
+      let sdate = docs[i].dateValue
+      if(sdate >= startValue && sdate <= endValue){
+arr.push(docs[i])
+console.log(arr,'arr333')
+      }
+    }
+  }
+      
+    console.log(arr,'arr')
+ 
+    res.render('adminClerk/assgtListC3',{listX:arr,studentSubId:studentSubId,pro:pro,id:id,subject:subject,classId:classId,
+      class1:class1})
+    
+
+    
+ 
+})
+})
+    })
+  }
+  })
+})
+
+
+
+////learning material
+
+
+router.get('/teacherLearningMaterial/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+
+  StudentSub.findById(id,function(err,vocs){
+    if(vocs){
+    let class1 = vocs.class1
+    let subjectCode = vocs.subjectCode
+    let id2 = vocs._id    
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,doc){
+       if(doc){
+
+      
+    let  teacherSubId = doc[0]._id
+    let teacherName = doc[0].teacherName
+    let subject = doc[0].subjectName
+    
+    
+   
+
+    Learn.find({subjectCode:subjectCode,term:term,year:year,class1:class1},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      res.render('adminClerk/files2',{listX:arr,pro:pro,teacherSubId:teacherSubId,
+        subject:subject,id:id,class1:class1,id2:id2,teacherName:teacherName
+      })
+   
+    
+})
+
+      }
+
+  
+})
+    }
+})
+  
+  })
+
+
+
+  
+
+router.get('/teacherOnlineAssignmentFiles/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var term = req.user.term
+  var m = moment()
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+  var pro = req.user
+
+
+  StudentSub.findById(id,function(err,vocs){
+    if(vocs){
+    let class1 = vocs.class1
+    let subjectCode = vocs.subjectCode
+    let id2 = vocs._id    
+
+  TeacherSub.find({subjectCode:subjectCode},function(err,doc){
+       if(doc){
+
+      
+    let  teacherSubId = doc[0]._id
+    let teacherName = doc[0].teacherName
+    let subject = doc[0].subjectName
+    
+    
+   
+
+    Test.find({subjectCode:subjectCode,term:term,year:year,type2:'online assignment attached',class1:class1},function(err,locs){
+      let arr=[]
+      for(var i = locs.length - 1; i>=0; i--){
+  
+        arr.push(locs[i])
+      }
+      
+      res.render('adminClerk/files3',{listX:arr,pro:pro,teacherSubId:teacherSubId,
+        subject:subject,id:id,class1:class1,id2:id2,teacherName:teacherName
+      })
+   
+    
+})
+
+      }
+
+  
+})
+    }
+})
+  
+  })
+
+///////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+router.get('/studentList',isLoggedIn,records,(req, res) => {
+  var pro = req.user
+  
+   User.find({role:"student"},(err, docs) => {
+       if (!err) {
+           res.render("clerkRecords/list", {
+               listX: docs, pro:pro
+               
+           });
+       }
+       else {
+           console.log('Error in retrieving Student list :' + err);
+       }
+   });
+ });
+
+ router.get('/studentProfile/:id',isLoggedIn,records,function(req,res){
+   var id = req.params.id
+   var pro = req.user
+   User.findById(id,function(err,doc){
+     
+  
+   //var pro = req.user
+   res.render('clerkRecords/overview2',{doc:doc,id:id,pro:pro})
+   
+ })
+   })
+
+   router.get('/studentSubjects/:id',isLoggedIn,records,function(req,res){
+     var id = req.params.id
+     console.log(id,'idd')
+     var pro = req.user
+     User.findById(id,function(err,doc){
+       let uid = doc.uid
+   
+       StudentSub.find({studentId:uid},function(err,locs){
+         res.render('clerkRecords/subjects3',{listX:locs,pro:pro,doc:doc,id:id})
+       })
+     })
+    
+   })
+   
+
+
+   router.get('/teacherSubjects/:id',isLoggedIn,records,function(req,res){
+     var id = req.params.id
+     console.log(id,'idd')
+     var pro = req.user
+     User.findById(id,function(err,doc){
+       let uid = doc.uid
+   
+       TeacherSub.find({studentId:uid},function(err,locs){
+         res.render('clerkRecords/subjects4',{listX:locs,pro:pro,doc:doc,id:id})
+       })
+     })
+    
+   })
+   
+   
+   router.get('/teacherProfile/:id',isLoggedIn,records,function(req,res){
+     var id = req.params.id
+     User.findById(id,function(err,doc){
+       pro = req.user
+    
+     //var pro = req.user
+     res.render('clerkRecords/overview3',{pro:pro,id:id,doc:doc})
+     
+   })
+     })
+ 
+
+    //view profile
+    router.get('/prof/:id',isLoggedIn,records,function(req,res){
+     var pro = req.user
+     User.findById(req.params.id, (err, doc) => {
+       if (!err) {
+       
+           res.render("clerkRecords/overviewStudent", {
+              
+               doc: doc,pro:pro
+             
+               
+           });
+         
+       }
+   });
+   
+   
+   
+   })
+   
+
+   router.post('/prof',isLoggedIn,records,upload.single('file'),function(req,res){
+
+     var pro = req.user
+     var id = req.body.id
+     console.log(id)
+   
+     if(!req.file){
+      req.session.message = {
+        type:'errors',
+        message:'Select Picture'
+      }     
+        res.render('clerkRecords/overviewStudent', {
+        message:req.session.message, pro:pro 
+         }) 
+      
+     } else
+     var imageFile = req.file.filename;
+    
+    console.log(imageFile)
+    console.log(id)
+     User.findByIdAndUpdate(id,{$set:{photo:imageFile}},function(err,data){ 
+     
+     
+       
+     
+     
+     })
+    
+     res.redirect('/clerk/prof/'+id)
+   
+        //res.render('uploads/index',{title:'Upload File',records:data, success:success})
+   
+   
+      
+   
+     
+    
+   })
+
+
+   router.get('/studentReport',isLoggedIn,records,function(req,res){
+
+     
+     const output = `
+  
+
+
+     
+     
+  
+
+     
+     `;
+     var nodemailer = require('nodemailer');
+     var os = require("os");
+     var hostname = os.hostname();
+     
+     var originalFile = 'studentReport.html';
+     var baseDir = './views/';
+     var recipient = 'kratosmusasa@gmail.com';
+     
+     var Styliner = require('styliner');
+     
+     
+     var uncDrive = '\\\\' + hostname + '\\DevTC';
+     var uncPath = baseDir.replace(/.*DevTC/gi, uncDrive);
+     
+     
+     // prependUNCPath is a function called by Styliner for every
+     // link that is found in the HTML.
+     function prependUNCPath(path, type) {
+         return uncPath + path;
+     }
+     
+     // See http://styliner.slaks.net/#about for Styliner options
+     var options = { url : prependUNCPath, noCSS : true };
+     var styliner = new Styliner(baseDir, options);
+    
+     const transporter = nodemailer.createTransport({
+       service: 'gmail',
+       auth: {
+           user: "cashreq00@gmail.com",
+           pass: "itzgkkqtmchvciik",
+       },
+     });
+     
+     // Step 2
+
+/*
+     // send mail with defined transport object
+     const mailOptions = {
+         from: '"Admin" <cashreq00@gmail.com>', // sender address
+         to: 'kratosmusasa@gmail.com', // list of receivers
+         subject: "Account Verification ✔", // Subject line
+       
+         html:source,
+          // html body
+     };
+
+   transporter.sendMail(mailOptions, (error, info) => {
+         if (error) {
+           console.log(error)
+      
+  
+   
+         }
+         else {
+             console.log('Mail sent : %s', info.response);
+     
+          
+          
+         }*/
+         var fs = require('fs')
+
+// Do the reading of the original index.html, and kick everything off.
+fs.readFile(originalFile, 'utf8', function (err, data) {
+   if (err) {
+       return console.log(err);
+   }
+
+   styliner.processHTML(data)
+   .then(function (source)
+        {
+
+       sendEmail(source);
+
+       fs.writeFile("studentReport.html", source, function (err) {
+           if (err) {
+               return console.log(err);
+           }
+
+           console.log("The file was saved!");
+       });
+
+     }
+
+   );
+
+});
+       })
+     
+//adding student grades/levels
+/*router.get('/addlevel',isLoggedIn,records, function(req,res){
+ var pro = req.user
+ res.render('students/levels',{pro:pro})
+})
+
+
+
+router.post('/addlevel',isLoggedIn,records,  function(req,res){
+ var grade = req.body.grade;
+
+var pro = req.user
+   
+   req.check('grade','Enter Form Level').notEmpty();
+ 
+   
+   var errors = req.validationErrors();
+        
+   if (errors) {
+   
+     req.session.errors = errors;
+     req.session.success = false;
+     res.render('students/levels',{ errors:req.session.errors,pro:pro})
+   
+ }
+ else{
+   
+     Level.findOne({'grade':grade})
+     .then(clax =>{
+         if(clax){ 
+
+        req.session.message = {
+         type:'errors',
+          message:'Grade/Level  already exists'
+        }     
+           res.render('students/levels', {
+              message:req.session.message ,pro:pro
+           })
+         }else
+ 
+   var level = new Level();
+ 
+ 
+   level.grade = grade;
+   level.levelX = 'normal'
+  
+ 
+ 
+   level.save()
+     .then(clas =>{
+      
+Level.find({},function(err,focs){
+for(var i=0; i<focs.length;i++){
+
+ for(var x = 0;x<focs.length;x++){
+
+if(focs[i].grade>focs[x].grade){
+ let id =focs[x]._id
+ Level.findByIdAndUpdate(focs[i]._id,{$set:{levelX:'last'}},function(err,pocs){
+
+   Level.findByIdAndUpdate(id,{$set:{levelX:'normal'}},function(err,locs){
+
+    
+
+   })
+  
+
+ })
+
+
+
+}
+   
+
+ }
+}
+
+
+})
+
+       req.session.message = {
+         type:'success',
+         message:'Grade/Level added'
+       }  
+       res.render('students/levels',{message:req.session.message,pro:pro});
+   
+ 
+   })
+ 
+     .catch(err => console.log(err))
+   
+ 
+   })
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ })
+
+*/
+
+
+
+
+/*
+router.get('/classUpdate',isLoggedIn,records,function(req,res){
+ Class1.find(function(err,docs){
+   for(var i = 0;i<docs.length;i++){
+     let class1 = docs[i].class1
+     let id = docs[i]._id
+     User.find({class1:class1},function(err,nocs){
+for(var c = 0; c<3;c++){
+ if(c == 0){
+   console.log(id,'cc')
+   Class1.findByIdAndUpdate(id,{$set:{pic1:nocs[c].photo}},function(err,locs){
+
+   })
+ }else if(c == 1){
+   console.log(id,'kk')
+   Class1.findByIdAndUpdate(id,{$set:{pic2:nocs[c].photo}},function(err,locs){
+
+   })
+ }else if(c == 2){
+   console.log(id,'yy')
+   Class1.findByIdAndUpdate(id,{$set:{pic3:nocs[c].photo}},function(err,locs){
+
+   })
+ }
+}
+     })
+   }
+ })
+})
+
+*/
+
+
+
+
+  //adding student classes
+  /*
+  router.get('/addClass',isLoggedIn,records, function(req,res){
+   var pro = req.user
+   var arr=[]
+   
+   Level.find({},function(err,docs){
+     arr = docs
+     if(docs.length == 0){
+       res.redirect('/records/addLevel')
+     }else
+     res.render('students/classX',{pro:pro,arr1:arr})
+   })
+   
+ })
+ 
+ 
+ 
+ router.post('/addClass',isLoggedIn, records, function(req,res){
+   var class1 = req.body.class1;
+ var pro = req.user
+ var arr = []
+
+     req.check('class1','Enter Class Name').notEmpty();
+     req.check('grade','Enter Form Level').notEmpty();
+   
+     
+     var errors = req.validationErrors();
+          
+     if (errors) {
+       Level.find({},function(err,docs){
+         arr = docs
+       req.session.errors = errors;
+       req.session.success = false;
+       res.render('students/classX',{ errors:req.session.errors,pro:pro, arr1:arr})
+       })
+     
+   }
+   else{
+     
+       Class1.findOne({'class1':class1})
+       .then(clax =>{
+           if(clax){ 
+             Level.find({},function(err,docs){
+               arr = docs
+          req.session.message = {
+           type:'errors',
+            message:'Class already exists'
+          }     
+             res.render('students/classX', {
+                message:req.session.message ,pro:pro, arr1:arr
+             })
+           })
+           }else
+   
+     var clas = new Class1();
+   
+     clas.class1 = req.body.class1;
+     clas.numberOfStudents = 0;
+     clas.level = 0;
+     clas.paid = 0;
+     clas.pic1 = 'propic.jpg'
+     clas.pic2 = 'propic.jpg'
+     clas.pic3 = 'propic.jpg'
+     clas.avgMark =0
+     clas.unpaid = 0;
+     clas.male = 0;
+     clas.female = 0;
+     clas.grade = req.body.grade;
+   
+   
+   
+     clas.save()
+       .then(clas =>{
+         Level.find({companyId:companyId},function(err,docs){
+           arr = docs
+         req.session.message = {
+           type:'success',
+           message:'Class added'
+         }  
+         res.render('students/classX',{message:req.session.message,pro:pro, arr1:arr});
+       })
+   
+     })
+   
+       .catch(err => console.log(err))
+     
+     
+     })
+   }
+   
+   
+   
+   
+   
+   
+   })
+ 
+ */
+ 
+ 
+ 
+ //class list
+router.get('/classList',isLoggedIn,records, (req, res) => {
+var pro = req.user
+
+ Class1.find({},(err, docs) => {
+     if (!err) {
+         res.render("clerkRecords/list22", {
+            listX:docs, pro:pro
+           
+         });
+     }
+ });
+});
+
+ 
+router.get('/class/:id',isLoggedIn,records,function(req,res,next){
+ var id = req.params.id
+ var pro = req.user
+Class1.findById(id,function(err,doc){
+let class1 = doc.class1
+User.find({class1:class1},function(err,docs){
+res.render('clerkRecords/classStudents',{listX:docs,pro:pro})
+
+})
+})
+ //var successMsg = req.flash('success')[0]
+
+ 
+})
+//////////////////////level
+
+//////////////////////
+
+router.get('/levelBatch',isLoggedIn,  function(req,res){
+ var pro = req.user
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+ res.render('clerkRecords/levelBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+ })
+
+
+
+
+ router.post('/levelBatch',isLoggedIn,  function(req,res){
+ var id =req.user._id
+   var code = req.body.code
+   var date = req.body.date
+   var time  = req.body.time
+   var m2 = moment()
+   var mformat = m2.format('L')
+   var pro = req.user
+
+   
+   
+
+   req.check('code','Enter  Code').notEmpty();
+   req.check('date','Enter Date').notEmpty();
+   req.check('time','Enter Time').notEmpty();
+ 
+   
+   var errors = req.validationErrors();
+    
+   if (errors) {
+     req.session.errors = errors;
+     req.session.success = false;
+     res.render('clerkRecords/levelBatch',{ errors:req.session.errors,pro:pro})
+
+     
+ 
+
+
+ req.flash('danger', req.session.errors[0].msg);
+      
+       
+ res.redirect('/clerk/levelBatch');
+   
+   }
+   
+   else 
+   
+   CodeLevel.findOne({'code':code})
+   .then(grower =>{
+   if(grower){
+
+     req.flash('danger', 'Code already in use');
+
+     res.redirect('/records/levelBatch');
+   }else{
+
+     var truck = new CodeLevel()
+     truck.code = code
+     truck.time = time
+     truck.mformat = mformat
+
+     truck.save()
+         .then(pro =>{
+
+     User.findByIdAndUpdate(id,{$set:{paymentId:code,pollUrl:pro._id}}, function(err,coc){
+         
+       
+     })
+res.redirect('/clerk/addLevel')
+
+   })
+
+   }
+   
+   })
+   
+   
+   })
+ 
+
+
+
+
+
+
+
+//////////////////// add classes X
+
+router.get('/addLevel',isLoggedIn, function(req,res){
+
+ var pro = req.user
+ var code = req.user.paymentId
+ if(code == 'null'){
+   res.redirect('/records/levelBatch')
+ }else
+ /*var successMsg = req.flash('success')[0];
+ res.render('admin/stock2',{pro:pro,successMsg: successMsg, noMessages: !successMsg,code:code})*/
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+res.render('clerkRecords/level',{pro:pro,code:code,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+   
+ 
+
+ })
+ 
+router.post('/addLevel',isLoggedIn, function(req,res){
+ var m = moment()
+ var pro = req.user
+ var year = m.format('YYYY')
+
+ var grade = req.body.grade
+
+ var code = req.body.code
+ var status = "null"
+ console.log(grade,code,'squarebob')
+ req.check('grade','Enter Grade').notEmpty();
+
+
+
+ 
+
+ 
+ 
+ var errors = req.validationErrors();
+  
+ if (errors) {
+
+   req.session.errors = errors;
+   req.session.success = false;
+  // res.render('product/stock',{ errors:req.session.errors,pro:pro})
+  req.flash('success', req.session.errors[0].msg);
+      
+       
+  res.redirect('/clerk/levelV');
+ 
+ }
+ else
+
+{
+
+ LevelV.findOne({'grade':grade,'status':status})
+ .then(hoc=>{
+
+   if(!hoc){
+ var book = new LevelV();
+
+ book.grade = grade
+ book.code = code
+
+ book.status = 'null'
+
+
+
+
+     
+      
+       book.save()
+         .then(pro =>{
+
+          LevelV.find({grade:grade,code:code,status:'null'},(err, docs) => {
+             let size = docs.length - 1
+             console.log(docs[size],'fff')
+             res.send(docs[size])
+                     })
+       })
+      
+     
+     }
+   }) 
+
+     }
+})
+
+
+
+
+
+router.post('/loadLevelV',isLoggedIn, (req, res) => {
+ var pro = req.user
+ var m2 = moment()
+var wformat = m2.format('L')
+var year = m2.format('YYYY')
+ var code = req.user.paymentId
+
+
+LevelV.find({code:code,status:'null'},(err, docs) => {
+
+   res.send(docs)
+           })
+
+ }); 
+
+ router.post('/levelV/update/:id',isLoggedIn,function(req,res){
+   var id = req.params.id
+   console.log(id,'emblem')
+   var pro = req.user
+ 
+   var m = moment()
+   var year = m.format('YYYY')
+   var month = m.format('MMMM')
+   var dateValue = m.valueOf()
+   var mformat = m.format("L")
+   var date = m.toString()
+   var grade = req.body.code
+   LevelV.findById(id,function(err,doc){
+   
+   
+   
+    
+LevelV.findByIdAndUpdate(id,{$set:{grade:grade}},function(err,doc){
+ 
+  })     
+       
+   
+   
+   
+   
+   
+  /* }else{
+     console.log('null')
+   
+     ShopStock.findByIdAndUpdate(id,{$set:{stockUpdate:'yes'}},function(err,loc){
+   
+     })
+   }*/
+   res.send(doc)
+ })
+   })
+
+
+
+
+
+
+router.get('/saveLevelV/:id',isLoggedIn, function(req,res){
+ var pro = req.user
+var receiver = req.user.fullname
+var code = req.params.id
+var uid = req.user._id
+
+var m2 = moment()
+var wformat = m2.format('L')
+var year = m2.format('YYYY')
+var dateValue = m2.valueOf()
+var date = m2.toString()
+var numDate = m2.valueOf()
+var month = m2.format('MMMM')
+
+
+//var mformat = m.format("L")
+
+
+
+LevelV.find({code:code},function(err,locs){
+
+for(var i=0;i<locs.length;i++){
+
+let grade = locs[i].grade
+
+
+
+let idN = locs[i]._id
+
+
+ LevelV.findByIdAndUpdate(idN,{$set:{status:'saved'}},function(err,pocs){
+
+ })
+ 
+
+ 
+
+ Level.findOne({'grade':grade})
+ .then(hoc=>{
+
+   if(!hoc){
+     var clas = new Level();
+   
+     clas.levelX = "null";
+     clas.name = 'null'
+     clas.grade = grade;
+ 
+   
+
+     
+      
+     clas.save()
+         .then(pro =>{
+
+           User.findByIdAndUpdate(uid,{$set:{paymentId:'null'}},function(err,doc){
+
+   
+             Level.find({},function(err,focs){
+               for(var i=0; i<focs.length;i++){
+               
+                 for(var x = 0;x<focs.length;x++){
+               
+               if(focs[i].grade>focs[x].grade){
+                 let id =focs[x]._id
+                 Level.findByIdAndUpdate(focs[i]._id,{$set:{levelX:'last'}},function(err,pocs){
+               
+                   Level.findByIdAndUpdate(id,{$set:{levelX:'normal'}},function(err,locs){
+               
+                    
+               
+                   })
+                  
+               
+                 })
+               
+               
+               
+               }
+                   
+               
+                 }
+               }
+               
+               
+               })
+
+
+
+
+           })
+
+
+              /*  req.session.message = {
+             type:'success',
+             message:'Product added'
+           }  
+           res.render('product/stock',{message:req.session.message,pro:pro});*/
+         
+       
+       })
+
+      /* req.flash('success', 'Stock Received Successfully');
+       res.redirect('/rec/addStock')*/
+     }  /* else{
+       req.flash('danger', 'Product Does Not Exist');
+     
+       res.redirect('/rec/addStock');
+     }*/
+   }) 
+
+    
+}
+
+
+
+req.flash('success', 'Classes Successfully Added');
+res.redirect('/clerk/levelBatch')
+}) 
+})
+
+
+router.get('/levelBatchDelete/:id',isLoggedIn, (req, res) => {
+ LevelV.findByIdAndRemove(req.params.id, (err, doc) => {
+   if (!err) {
+       res.redirect('/records/levelV');
+   }
+   else { console.log('Error in deleting stock :' + err); }
+ });
+ });
+
+
+//////////////////////
+
+router.get('/classBatch',isLoggedIn,  function(req,res){
+ var pro = req.user
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+ res.render('clerkRecords/classBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+ })
+
+
+
+
+ router.post('/classBatch',isLoggedIn,  function(req,res){
+ var id =req.user._id
+   var code = req.body.code
+   var date = req.body.date
+   var time  = req.body.time
+   var m2 = moment()
+   var mformat = m2.format('L')
+   var pro = req.user
+
+   
+   
+
+   req.check('code','Enter  Code').notEmpty();
+   req.check('date','Enter Date').notEmpty();
+   req.check('time','Enter Time').notEmpty();
+ 
+   
+   var errors = req.validationErrors();
+    
+   if (errors) {
+     req.session.errors = errors;
+     req.session.success = false;
+     res.render('clerkRecords/classBatch',{ errors:req.session.errors,pro:pro})
+
+     
+ 
+
+
+ req.flash('danger', req.session.errors[0].msg);
+      
+       
+ res.redirect('/clerk/classBatch');
+   
+   }
+   
+   else 
+   
+   CodeV.findOne({'code':code})
+   .then(grower =>{
+   if(grower){
+
+     req.flash('danger', 'Code already in use');
+
+     res.redirect('/clerk/classBatch');
+   }else{
+
+     var truck = new CodeV()
+     truck.code = code
+     truck.time = time
+     truck.mformat = mformat
+
+     truck.save()
+         .then(pro =>{
+
+     User.findByIdAndUpdate(id,{$set:{paymentId:code,pollUrl:pro._id}}, function(err,coc){
+         
+       
+     })
+res.redirect('/clerk/addClass')
+
+   })
+
+   }
+   
+   })
+   
+   
+   })
+ 
+
+
+
+
+
+
+
+//////////////////// add classes X
+
+router.get('/addClass',isLoggedIn, function(req,res){
+
+ var pro = req.user
+ var code = req.user.paymentId
+ if(code == 'null'){
+   res.redirect('/records/classBatch')
+ }else
+ /*var successMsg = req.flash('success')[0];
+ res.render('admin/stock2',{pro:pro,successMsg: successMsg, noMessages: !successMsg,code:code})*/
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+res.render('clerkRecords/stock2',{pro:pro,code:code,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+   
+ 
+
+ })
+ 
+router.post('/addClass',isLoggedIn, function(req,res){
+ var m = moment()
+ var pro = req.user
+ var year = m.format('YYYY')
+
+ var grade = req.body.grade
+ var class1 = req.body.class1
+ var code = req.body.code
+
+ console.log(grade,class1,code,'squarebob')
+ req.check('grade','Enter Grade').notEmpty();
+ req.check('class1','Enter Class').notEmpty();
+
+
+ 
+
+ 
+ 
+ var errors = req.validationErrors();
+  
+ if (errors) {
+
+   req.session.errors = errors;
+   req.session.success = false;
+  // res.render('product/stock',{ errors:req.session.errors,pro:pro})
+  req.flash('success', req.session.errors[0].msg);
+      
+       
+  res.redirect('/clerk/classesV');
+ 
+ }
+ else
+
+{
+
+ ClassV.findOne({'class1':class1,'code':code})
+ .then(hoc=>{
+
+   if(!hoc){
+ var book = new ClassV();
+
+ book.grade = grade
+ book.code = code
+ book.class1 = class1
+ book.status = 'null'
+
+
+
+
+     
+      
+       book.save()
+         .then(pro =>{
+
+           ClassV.find({class1:class1,grade:grade,code:code},(err, docs) => {
+             let size = docs.length - 1
+             console.log(docs[size],'fff')
+             res.send(docs[size])
+                     })
+       })
+      
+     
+     }
+   }) 
+
+     }
+})
+
+
+
+
+
+router.post('/loadClassesV',isLoggedIn, (req, res) => {
+ var pro = req.user
+ var m2 = moment()
+var wformat = m2.format('L')
+var year = m2.format('YYYY')
+ var code = req.user.paymentId
+
+
+ ClassV.find({code:code,status:'null'},(err, docs) => {
+
+   res.send(docs)
+           })
+
+ }); 
+
+ router.post('/classesV/update/:id',isLoggedIn,function(req,res){
+   var id = req.params.id
+   console.log(id,'emblem')
+   var pro = req.user
+ 
+   var m = moment()
+   var year = m.format('YYYY')
+   var month = m.format('MMMM')
+   var dateValue = m.valueOf()
+   var mformat = m.format("L")
+   var date = m.toString()
+   var class1 = req.body.code
+   ClassV.findById(id,function(err,doc){
+   
+   
+   
+    
+ ClassV.findByIdAndUpdate(id,{$set:{class1:class1}},function(err,doc){
+ 
+  })     
+       
+   
+   
+   
+   
+   
+  /* }else{
+     console.log('null')
+   
+     ShopStock.findByIdAndUpdate(id,{$set:{stockUpdate:'yes'}},function(err,loc){
+   
+     })
+   }*/
+   res.send(doc)
+ })
+   })
+
+
+
+
+
+
+router.get('/saveClassesV/:id',isLoggedIn, function(req,res){
+ var pro = req.user
+var receiver = req.user.fullname
+var code = req.params.id
+var uid = req.user._id
+
+var m2 = moment()
+var wformat = m2.format('L')
+var year = m2.format('YYYY')
+var dateValue = m2.valueOf()
+var date = m2.toString()
+var numDate = m2.valueOf()
+var month = m2.format('MMMM')
+
+
+//var mformat = m.format("L")
+
+
+
+ClassV.find({code:code},function(err,locs){
+
+for(var i=0;i<locs.length;i++){
+
+let grade = locs[i].grade
+let class1 = locs[i].class1
+
+
+let idN = locs[i]._id
+
+
+ ClassV.findByIdAndUpdate(idN,{$set:{status:'saved'}},function(err,pocs){
+
+ })
+ 
+
+ 
+
+ Class1.findOne({'class1':class1})
+ .then(hoc=>{
+
+   if(!hoc){
+     var clas = new Class1();
+   
+     clas.class1 = class1;
+     clas.className = class1
+     clas.numberOfStudents = 0;
+     clas.level = 0;
+     clas.paid = 0;
+     clas.pic1 = 'propic.jpg'
+     clas.pic2 = 'propic.jpg'
+     clas.pic3 = 'propic.jpg'
+     clas.avgMark =0
+     clas.unpaid = 0;
+     clas.male = 0;
+     clas.female = 0;
+     clas.grade = grade;
+ 
+   
+
+     
+      
+     clas.save()
+         .then(pro =>{
+
+           User.findByIdAndUpdate(uid,{$set:{paymentId:'null'}},function(err,doc){
+
+           })
+
+console.log(i,'ccc')
+              /*  req.session.message = {
+             type:'success',
+             message:'Product added'
+           }  
+           res.render('product/stock',{message:req.session.message,pro:pro});*/
+         
+       
+       })
+
+      /* req.flash('success', 'Stock Received Successfully');
+       res.redirect('/rec/addStock')*/
+     }  /* else{
+       req.flash('danger', 'Product Does Not Exist');
+     
+       res.redirect('/rec/addStock');
+     }*/
+   }) 
+
+    
+}
+
+
+
+req.flash('success', 'Classes Successfully Added');
+res.redirect('/clerk/addClass')
+}) 
+})
+
+
+router.get('/classBatchDelete/:id',isLoggedIn, (req, res) => {
+ ClassV.findByIdAndRemove(req.params.id, (err, doc) => {
+   if (!err) {
+       res.redirect('/clerk/classesV');
+   }
+   else { console.log('Error in deleting stock :' + err); }
+ });
+ });
+
+//add teachers
+router.get('/addTeacher',isLoggedIn,records,  function(req,res){
+ var pro = req.user
+ var actualCount = req.user.actualCount
+ var count = req.user.count
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+  var idNum = req.user.idNumber
+  idNum++
+  var prefix = req.user.prefix
+  var uid = prefix+idNum
+  
+
+
+ // if(actualCount < count){
+    title = "Add Teachers"
+    readonly = ""
+   /* Dept.find({},function(err,docs){
+      var arr1 = docs;
+  
+    if(docs.length == 0){
+     res.redirect('/dept')
+   }
+  else*/
+   
+     res.render('clerkRecords/admit', { pro:pro,uid:uid,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg});
+   //  })
+  
+ // }
+
+})
+
+router.get('/addTeacherX',isLoggedIn,records,function(req,res){
+var pro = req.user
+
+var title = ''
+var readonly = ''
+
+
+
+res.render('clerkRecords/admit',{pro:pro})
+})
+
+router.post('/addTeacher',isLoggedIn,records, function(req,res){
+var m = moment()
+                var year = m.format('YYYY')
+                var pro = req.user
+              var uid = req.body.uid;
+              var name = req.body.name;
+              var teacher = 'teacher'
+              //var dept = req.body.dept
+              var surname = req.body.surname;
+              var role = 'teacher';
+              var mobile = req.body.mobile;
+              var expdate = req.user.expdate
+              var expStr = req.user.expStr
+              var gender = req.body.gender;
+              var dob = req.body.dob;
+              var class1 = 'null';
+              var fullname = name +" "+ surname 
+              var grade = 0
+              var id = req.user._id;
+              var email = req.body.email
+              var password = req.body.password;
+              var term = req.user.term;
+              var address = req.body.address
+              var prefix = req.user.prefix
+              var idNum=req.user.idNumber
+              idNum++
+              var uid1 = prefix+idNum
+              var file = req.body.file;
+              var companyId = req.user.companyId
+              var count = req.user.actualCount           
+              var idNumber = req.user.idNumber
+              
+              req.check('name','Enter Name').notEmpty();
+              req.check('surname','Enter Surname').notEmpty();
+              req.check('dob','Enter Date Of Birth').notEmpty();
+              req.check('email','Enter email').notEmpty().isEmail();
+              req.check('uid','Enter Teacher ID').notEmpty();
+              
+              req.check('gender','Enter Gender').notEmpty();
+              req.check('mobile', 'Enter Phone Number').notEmpty();
+              req.check('password', 'Password do not match').isLength({min: 4}).equals(req.body.confirmPassword);
+                  
+              
+                    
+                 
+              var errors = req.validationErrors();
+                  if (errors) {
+                   
+                  
+                    req.session.errors = errors;
+                    req.session.success = false;
+                    req.flash('danger', req.session.errors[0].msg);
+     
+      
+                    res.redirect('/clerk/addTeacher');
+                }
+                else
+              
+               {
+                  User.findOne({'fullname':fullname, 'role':teacher})
+                  .then(user =>{
+                      if(user){ 
+                    // req.session.errors = errors
+                      //req.success.user = false;
+                          
+    req.flash('danger', 'Email/User already in use');
+
+    res.redirect('/clerk/addTeacher');
+                }
+                
+                              else  {   
+             
+
+                
+                var user = new User();
+                user.uid = uid;
+                user.name = name;
+                user.fullname = fullname;
+                user.surname = surname;
+                user.role = role;
+                user.gender = gender;
+                user.dob = dob;
+                user.studentId = 'null'
+                user.grade = 0;
+                user.class1 = 'null';
+                user.mobile = mobile;
+                user.classLength = 0;
+                user.studentNum = 0;
+                user.uidNum = 0;
+                user.teacherId = 'null';
+                user.teacherName = 'null';
+                user.classNo = 0
+                user.examDate = 'null';
+                user.feeStatus = 'null';
+                user.feesUpdate = 'null';
+                user.term = term;
+                user.amount = 0;
+                user.receiptNumber = 0;
+                user.year = year;
+                user.balance = 0;
+                user.idNumber = 0
+                user.idNumX = 0
+                user.number = 0
+                user.schoolName = 'null'
+                user.balanceCarriedOver = 0;
+                user.status = 'owing';
+                user.paymentId = 'null';
+                user.prefix = prefix;
+                user.photo = "propic.jpg";
+                user.level = 0;
+                user.pollUrl ='null';
+                user.annual = 0;
+                user.fees = 0
+                user.type = 'null';
+                user.address = address;
+                user.email = email
+                user.category = 'null';
+                user.subject = 0;
+                user.subjects = 'null'
+                user.subjectCode = 'null'
+                user.dept = "null";
+                user.paynow = 0
+               
+                user.expdate=expdate;
+                user.expStr = expStr; 
+                user.status3 = "null"
+                user.pollUrl2 = "null"
+                user.levelX = 'null';
+                user.status4 = 'null';
+                user.recNumber = 0
+                user.suffix = 'null'
+                user.count=0
+                user.pollCount = 0
+                user.possibleMark = 0;
+                user.topic = 'null';
+                user.actualCount = 0  
+                user.startYear = year
+                user.currentYearCount = 0
+                user.stdYearCount = 0
+                user.admissionYear = year
+                user.icon = 'null'
+                user.subjectNo = 0
+                user.quizDuration = 0
+                user.inboxNo = 0
+                user.quizNo = 0
+                user.quizBatch = 0
+                user.quizId = 'null'
+                user.testId = 'null'
+                user.industry = 'null'
+                user.text = password
+                user.password = user.encryptPassword(password)
+
+                
+                 
+            
+                 
+        
+                user.save()
+                  .then(user =>{
+    /*                const CLIENT_URL = 'http://' + req.headers.host;
+    
+                    const output = `
+                    <h2>Please click on below link to activate your account</h2>
+                    <a href="${CLIENT_URL}/">click here to login</a>
+                    <h1> User credentials</h1>
+                    <p>userID:${uid}</p>
+                    <p>password:${password}</p>
+                    <p><b>NOTE: </b> The above activation link expires in 1 week.</p>
+                    `;
+              
+                   
+                    const transporter = nodemailer.createTransport({
+                      service: 'gmail',
+                      auth: {
+                          user: "cashreq00@gmail.com",
+                          pass: "itzgkkqtmchvciik",
+                      },
+                    });*/
+                    
+              
+                    // send mail with defined transport object
+                
+                })
+
+              
+              }
+              User.findByIdAndUpdate(id,{$set:{idNumber:idNum}},function(err,locs){
+                        
+                req.flash('success', 'Teacher Added Successfully');
+              res.redirect('/clerk/addTeacher')
+              })
+                  })
+                }
+            
+               
+              
+                  
+                  
+              
+               
+                
+
+                
+})
+
+
+
+
+
+
+//importing teachers details from excel
+ 
+router.get('/importTeacher',isLoggedIn,records, function(req,res){
+  var pro = req.user
+  var actualCount = req.user.actualCount
+  var count = req.user.count
+  var pro = req.user
+  var title, readonly ;
+  var prefix = req.user.prefix
+  var idNum=req.user.idNumber
+  idNum++
+ 
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  var uid = prefix+idNum
+ /* if(actualCount < count){*/
+   title = "Import Teachers"
+   readonly = ""
+  
+   // res.redirect('/records/dept')
+  
+ res.render('clerkRecords/teacher',{pro:pro,title:title,readonly:readonly,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+
+   })
+ /*else
+
+res.redirect('/records/importTeacherX')*/
+
+ 
+ 
+ 
+/*
+router.get('/importTeacherX',isLoggedIn,function(req,res){
+ var pro = req.user
+ res.render('imports/teacherX',{pro:pro})
+})*/
+
+
+
+  
+ router.post('/importTeacher',isLoggedIn,records, upload.single('file'),function(req,res){
+   var term = req.user.term;
+   var m = moment()
+   var year = m.format('YYYY')
+   var id =   req.user._id
+   var idNumber = req.user.idNumber
+   var pro = req.user
+   var count = req.user.actualCount
+   var expdate = req.user.expdate
+var expStr = req.user.expStr
+var prefix = req.user.prefix
+ 
+   
+ /*  if(!req.file){
+       req.session.message = {
+         type:'errors',
+         message:'Select File!'
+       }     
+         res.render('imports/students', {message:req.session.message,pro:pro}) */
+         if (!req.file || req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+           req.session.message = {
+               type:'errors',
+               message:'Upload Excel File'
+             }     
+               res.render('clerk/teacherX', {message:req.session.message,pro:pro
+                    
+                }) 
+ 
+ 
+ 
+       }
+         
+       else{
+
+       
+           const file = req.file.filename;
+   
+           
+                var wb =  xlsx.readFile('./public/uploads/' + file)
+        
+                var sheets = wb.Sheets;
+                var sheetNames = wb.SheetNames;
+    
+                var sheetName = wb.SheetNames[0];
+    var sheet = wb.Sheets[sheetName ];
+    
+       for (var i = 0; i < wb.SheetNames.length; ++i) {
+        var sheet = wb.Sheets[wb.SheetNames[i]];
+    
+        console.log(wb.SheetNames.length)
+        var data =xlsx.utils.sheet_to_json(sheet)
+            
+        var newData = data.map(async function (record){
+    
+       
+        
+     
+         
+      
+      
+     
+           let uid = record.uid;
+           let name = record.name;
+           let surname = record.surname;
+           let fullname = name +" "+surname
+           let role = 'teacher';
+           let address = record.address
+           let mobile = record.mobile;
+           let gender = record.gender;
+           let dob = record.dob;
+         let email = record.email
+       
+          let dept = record.dept
+          let num = record.num
+           let password = record.password;
+           let term = req.user.term
+           let photo = record.photo
+           let companyId = req.user.companyId
+       req.body.uid=record.uid
+       req.body.name=record.name
+       req.body.surname=record.surname
+       req.body.address=record.address
+       req.body.mobile=record.mobile
+       req.body.gender=record.gender
+       req.body.dob=record.dob
+       req.body.email=record.email
+       req.body.dept=record.dept
+       req.body.password=record.password
+       req.body.photo = record.photo
+     
+
+       req.check('name','Enter Name').notEmpty();
+req.check('surname','Enter Surname').notEmpty();
+req.check('dob','Enter Date Of Birth').notEmpty();
+req.check('email','Enter email').notEmpty().isEmail();
+req.check('uid','Enter Teacher ID').notEmpty();
+req.check('address','Enter Address').notEmpty();
+req.check('gender','Enter Gender').notEmpty();
+req.check('photo','Enter Photo').notEmpty();
+req.check('mobile', 'Enter Phone Number').notEmpty();
+req.check('password', 'Password do not match').notEmpty();
+   
+
+var errors = req.validationErrors();
+ 
+if (errors) {
+ 
+ req.session.errors = errors;
+ req.session.success = false;
+ req.flash('danger', req.session.errors[0].msg);
+      
+       
+ res.redirect('/clerk/importTeacher');
+
+}
+
+else
+
+
+           {
+             User.findOne({'uid':uid})
+             .then(user =>{
+                 if(user){ 
+               // req.session.errors = errors
+                 //req.success.user = false;
+           
+           
+           
+                 req.flash('danger', 'User already in the system');
+ 
+                 //res.redirect('/records/import')
+               
+           }
+           else
+
+
+
+
+
+           var user = new User();
+           user.uid = uid;
+           user.name = name;
+           user.fullname = fullname;
+           user.surname = surname;
+           user.role = role;
+           user.gender = gender;
+           user.dob = dob;
+           user.studentId = 'null'
+           user.grade = 0;
+           user.class1 = 'null';
+           user.mobile = mobile;
+           user.classLength = 0;
+           user.studentNum = 0;
+           user.uidNum = 0;
+           user.teacherId = 'null';
+           user.teacherName = 'null';
+           user.classNo = 0
+           user.examDate = 'null';
+           user.feeStatus = 'null';
+           user.feesUpdate = 'null';
+           user.term = term;
+           user.amount = 0;
+           user.receiptNumber = 0;
+           user.year = year;
+           user.balance = 0;
+           user.idNumber = 0
+           user.idNumX = 0
+           user.number = 0
+           user.schoolName = 'null'
+           user.balanceCarriedOver = 0;
+           user.status = 'owing';
+           user.paymentId = 'null';
+           user.prefix = prefix;
+           user.photo = photo;
+           user.level = 'null';
+           user.pollUrl ='null';
+           user.annual = 0;
+           user.fees = 0
+           user.type = 'null';
+           user.address = address;
+           user.possibleMark = 0;
+           user.topic = 'null';
+           user.email = email
+           user.category = 'null';
+           user.subject = 0;
+           user.subjects = 'null'
+           user.subjectCode = 'null'
+           user.dept = dept;
+           user.paynow = 0
+        
+           user.expdate=expdate;
+           user.expStr = expStr; 
+           user.status3 = "null"
+           user.pollUrl2 = "null"
+           user.levelX = 'null';
+           user.status4 = 'null';
+           user.recNumber = 0
+           user.suffix = 'null'
+           user.count=0
+           user.pollCount = 0
+           user.actualCount = 0  
+           user.startYear = year
+           user.currentYearCount = 0
+           user.stdYearCount = 0
+           user.admissionYear = year
+           user.password = user.encryptPassword(password)   
+           user.icon = 'null'
+           user.subjectNo = 0
+           user.quizDuration = 0
+           user.inboxNo = 0
+           user.quizNo = 0
+           user.quizBatch = 0
+           user.quizId = 'null'
+           user.testId = 'null'
+           user.industry = 'null'
+           user.text = password
+          
+           user.save()
+             .then(user =>{
+              
+             
+                 
+             /*  req.session.message = {
+                 type:'success',
+                 message:'Account Registered'
+               }  
+               res.render('imports/teacherX',{message:req.session.message});*/
+             })
+
+           })
+         }
+                  
+                   // .catch(err => console.log(err))
+                 
+               
+                   
+                 
+                 
+        
+                 
+                 
+                 
+                   
+                   
+       
+                  
+       
+       
+            
+               })
+               
+               req.flash('success', 'File Successfully!');
+ 
+               res.redirect('/clerk/importTeacher')  
+     
+       }
+     }
+ 
+ })
+
+
+ /////////////////////////pt2
+
+ router.get('/updateChildren',isLoggedIn,function(req,res){
+ User.find({role:"parent"},function(err,docs){
+for(var i = 0; i < docs.length; i++){
+
+ let uid = docs[i].uid
+ let id = docs[i]._id
+
+ User.find({role:"student",parentId:uid},function(err,locs){
+   let num = locs.length
+
+
+   User.findByIdAndUpdate(id,{$set:{children:num}},function(err,vocs){
+
+   })
+ })
+
+}
+
+req.flash('success', 'Parents Successully Linked with Students');
+      
+       
+res.redirect('/clerk/dash');
+ })
+
+
+ })
+
+router.get('/updateParents',isLoggedIn,records,function(req,res){
+
+
+User.find({role:"student"},function(err,docs){
+
+ for(var i = 0; i< docs.length;i++){
+
+ let studentId = docs[i].uid
+ let id = docs[i]._id
+ console.log(studentId,id,"external")
+
+User.find({role:"parent"},function(err,locs){
+
+for(var n = 0 ; n<locs.length;n++){
+ let psId = locs[n].studentId
+ let pId = locs[n].uid
+
+ console.log(psId,pId,'parents')
+
+ if(studentId == psId){
+
+ 
+
+ User.findByIdAndUpdate(id,{$set:{parentId:pId}},function(err,vocs){
+
+ })
+}
+}
+
+
+})
+ }
+
+// req.flash('success', 'Students Successully Linked with Parents');
+      
+       
+ res.redirect('/clerk/updateChildren');
+})
+
+
+})
+ 
+router.get('/importParents',isLoggedIn,records, function(req,res){
+ var pro = req.user
+ var actualCount = req.user.actualCount
+ var count = req.user.count
+ var pro = req.user
+ var title, readonly ;
+ var prefix = req.user.prefix
+
+
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+
+
+res.render('clerkRecords/parents',{pro:pro,readonly:readonly,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+
+  })
+
+
+
+
+
+
+   
+ router.post('/importParents',isLoggedIn,records, uploadX.single('file'),function(req,res){
+   var term = req.user.term;
+   var m = moment()
+   var year = m.format('YYYY')
+   var id =   req.user._id
+   var idNumber = req.user.idNumber
+   var pro = req.user
+   var count = req.user.actualCount
+   var expdate = req.user.expdate
+var expStr = req.user.expStr
+var prefix = req.user.prefix
+ 
+   
+ /*  if(!req.file){
+       req.session.message = {
+         type:'errors',
+         message:'Select File!'
+       }     
+         res.render('imports/students', {message:req.session.message,pro:pro}) */
+         if (!req.file || req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+           req.session.message = {
+               type:'errors',
+               message:'Upload Excel File'
+             }     
+               res.render('clerkRecords/parents', {message:req.session.message,pro:pro
+                    
+                }) 
+ 
+ 
+ 
+       }
+         
+       else{
+
+       
+           const file = req.file.filename;
+   
+           
+                var wb =  xlsx.readFile('./public/uploads/' + file)
+        
+                var sheets = wb.Sheets;
+                var sheetNames = wb.SheetNames;
+    
+                var sheetName = wb.SheetNames[0];
+    var sheet = wb.Sheets[sheetName ];
+    
+       for (var i = 0; i < wb.SheetNames.length; ++i) {
+        var sheet = wb.Sheets[wb.SheetNames[i]];
+    
+        console.log(wb.SheetNames.length)
+        var data =xlsx.utils.sheet_to_json(sheet)
+            
+        var newData = data.map(async function (record){
+    
+       
+        
+     
+         
+      
+      
+     
+           let uid = record.uid;
+           let name = record.name;
+           let surname = record.surname;
+           let fullname = name +" "+surname
+           let role = 'parent';
+           let address = record.address
+           let mobile = record.mobile;
+           let gender = record.gender;
+           let dob = record.dob;
+         let email = record.email
+       let studentId = record.studentId
+
+          let num = record.num
+           let password = record.password;
+           let term = req.user.term
+           let photo = record.photo
+           let companyId = req.user.companyId
+       req.body.uid=record.uid
+       req.body.name=record.name
+       req.body.surname=record.surname
+       req.body.address=record.address
+       req.body.mobile=record.mobile
+       req.body.gender=record.gender
+       req.body.dob=record.dob
+       req.body.email=record.email
+       req.body.studentId = record.studentId
+       req.body.password=record.password
+       req.body.photo = record.photo
+     
+
+       req.check('name','Enter Name').notEmpty();
+req.check('surname','Enter Surname').notEmpty();
+req.check('dob','Enter Date Of Birth').notEmpty();
+req.check('email','Enter email').notEmpty().isEmail();
+req.check('uid','Enter Parent ID').notEmpty();
+req.check('address','Enter Address').notEmpty();
+req.check('gender','Enter Gender').notEmpty();
+req.check('photo','Enter Photo').notEmpty();
+req.check('mobile', 'Enter Phone Number').notEmpty();
+req.check('studentId', 'Enter Student ID').notEmpty();
+req.check('password', 'Password do not match').notEmpty();
+   
+
+var errors = req.validationErrors();
+ 
+if (errors) {
+ 
+ req.session.errors = errors;
+ req.session.success = false;
+ req.flash('danger', req.session.errors[0].msg);
+      
+       
+ res.redirect('/clerk/importTeacher');
+
+}
+
+
+
+        
+const token = jwt.sign({uid,name,surname,address,mobile,gender,fullname,prefix, dob, photo, term, year, email,role, password,expdate,expStr,studentId }, JWT_KEY, { expiresIn: '100000m' });
+const CLIENT_URL = 'http://' + req.headers.host;
+
+const output = `
+<h2>Please click on below link to activate your account</h2>
+<a href="${CLIENT_URL}/records/activateP/${token}">click here</a>
+<h1> User credentials</h1>
+<p>userID:${uid}</p>
+<p>password:${password}</p>
+<p><b>NOTE: </b> The above activation link expires in 1 week.</p>
+`;
+
+const transporter = nodemailer.createTransport({
+ service: 'gmail',
+                       port:465,
+                       secure:true,
+                       logger:true,
+                       debug:true,
+                       secureConnection:false,
+                       auth: {
+                           user: "kratosmusasa@gmail.com",
+                           pass: "znbmadplpvsxshkg",
+                       },
+                       tls:{
+                         rejectUnAuthorized:true
+                       }
+                     });
+
+
+// send mail with defined transport object
+const mailOptions = {
+   from: '"Admin" <kratosmusasa@gmail.com>', // sender address
+   to: record.email, // list of receivers
+   subject: "Account Verification ✔", // Subject line
+   html: output, // html body
+};
+
+await   transporter.sendMail(mailOptions, (error, info) => {
+   if (error) {
+     console.log(error)
+     req.flash('danger', 'Email not sent');
+
+     res.redirect('/clerk/importParents')
+
+
+   }
+   else {
+       console.log('Mail sent : %s', info.response);
+       idNumber++
+    
+       User.findByIdAndUpdate(id,{$set:{idNumber:idNumber}},function(err,locs){
+
+      
+       
+       req.flash('success', 'Email  sent');
+
+       res.redirect('/clerk/importParents')
+
+     })
+   }
+})
+ 
+
+
+        
+               })
+               
+               
+     
+       }
+     }
+ 
+ })
+ 
+
+   //parents List
+router.get('/parentsList',isLoggedIn,records,(req, res) => {
+ var pro = req.user
+ 
+ User.find({role:"parent"},(err, docs) => {
+     if (!err) {
+         res.render("clerkRecords/parentsList", {
+             listX: docs, pro:pro
+             
+         });
+     }
+     else {
+         console.log('Error in retrieving Teachers list :' + err);
+     }
+ });
+});
+
+
+
+     
+//updating parent
+router.get('/parent/:id',isLoggedIn,records, (req, res) => {
+ var pro = req.user   
+var arr1 = []
+  Class1.find({},function(err,docs){
+    arr1 = docs;
+ User.findById(req.params.id, (err, doc) => {
+     if (!err) {
+     
+         res.render("clerkRecords/updateParent", {
+            
+             user: doc, pro:pro,arr1:arr1
+           
+             
+         });
+       
+     }
+   })
+ });
+ });
+ 
+ router.post('/parent/:id',isLoggedIn, records,  (req, res) => {
+ var user = new User();
+ var idX = req.params.id
+ var id = req.body._id;
+ var name = req.body.name;
+ var surname = req.body.surname;
+ req.body.fullname = name +" "+ surname
+
+ var dob = req.body.dob
+ var pro = req.user
+ 
+    
+ req.check('name','Enter Name').notEmpty();
+ req.check('surname','Enter Surname').notEmpty();
+ req.check('email','Enter email').notEmpty().isEmail();
+
+ req.check('address','Enter Address').notEmpty();
+
+ req.check('uid','Enter Student ID').notEmpty();
+
+ req.check('mobile', 'Enter Phone Number').notEmpty()
+ 
+
+   
+ var errors = req.validationErrors();
+ 
+ 
+ 
+  if (errors) {
+ 
+   req.session.errors = errors;
+   req.session.success = false;
+   req.flash('danger', req.session.errors[0].msg);
+      
+       
+               res.redirect('/clerk/parent/'+idX);
+      
+      
+    
+   
+   }
+ 
+ else
+ {
+ 
+       User.findOneAndUpdate({_id:id},req.body,
+         { new: true }, (err, doc) => {
+            if (!err) {
+            
+             req.flash('success', 'User Updated Successfully!');
+ 
+                   res.redirect('/clerk/parentsList')  }
+            else {
+              console.log('error'+err)
+      
+            }
+          
+        })
+ 
+ 
+   
+ }
+ 
+ });
+ 
+ 
+router.get('/parentProfile/:id',isLoggedIn,records,function(req,res){
+ var id = req.params.id
+ var pro = req.user
+ User.findById(id,function(err,doc){
+   
+
+ //var pro = req.user
+ res.render('clerkRecords/overview4',{doc:doc,id:id,pro:pro})
+ 
+})
+ })
+
+
+
+ router.get('/parentChildren/:id',isLoggedIn,records,function(req,res){
+   var id = req.params.id
+   console.log(id,'idd')
+   var pro = req.user
+   User.findById(id,function(err,doc){
+     let uid = doc.uid
+ 
+     User.find({parentId:uid,role:"student"},function(err,locs){
+       res.render('clerkRecords/children',{listX:locs,pro:pro,doc:doc,id:id})
+     })
+   })
+  
+ })
+
+   //teacher List
+router.get('/teacherList',isLoggedIn,records,(req, res) => {
+ var pro = req.user
+ 
+ User.find({role:"teacher"},(err, docs) => {
+     if (!err) {
+         res.render("clerkRecords/list2", {
+             listX: docs, pro:pro
+             
+         });
+     }
+     else {
+         console.log('Error in retrieving Teachers list :' + err);
+     }
+ });
+});
+
+router.get('/staffList',isLoggedIn,(req, res) => {
+ var pro = req.user
+ 
+ User.find({role1:"staff"},(err, docs) => {
+     if (!err) {
+         res.render("admin/list3", {
+             listX: docs, pro:pro
+             
+         });
+     }
+     else {
+         console.log('Error in retrieving Student list :' + err);
+     }
+ });
+ });
+ 
+ router.get('/profile/:id',isLoggedIn,function(req,res){
+   var id = req.params.id
+   var pro = req.user
+   User.findById(id,function(err,doc){
+     
+  
+   //var pro = req.user
+   res.render('clerkRecords/overviewRecords',{doc:doc,id:id,pro:doc})
+   
+ })
+   })
+
+
+   
+
+ 
+router.get('/teacherSubjects/:id',isLoggedIn,function(req,res){
+ var id = req.params.id
+ console.log(id,'idd')
+ var pro = req.user
+
+ User.findById(id,function(err,doc){
+   let uid = doc.uid
+
+   TeacherSub.find({studentId:uid},function(err,locs){
+     res.render('clerkRecords/subjectsRecord',{listX:locs,pro:pro,doc:doc,id:id})
+   })
+ })
+
+})
+
+
+router.get('/teacherProfile/:id',isLoggedIn,function(req,res){
+ var id = req.params.id
+ User.findById(id,function(err,doc){
+   pro = req.user
+
+ //var pro = req.user
+ res.render('clerkRecords/overviewRecords',{pro:pro,id:id,doc:doc})
+ 
+})
+ })
+
+//user account activation route  (teachers)
+router.get('/activateP/:token',(req,res)=>{
+ const token = req.params.token;
+ 
+ let errors = [];
+ if (token) {
+     jwt.verify(token, JWT_KEY, (err, decodedToken) => {
+         if (err) {
+             
+             req.session.message = {
+                 type:'errors',
+                 message:'Incorrect or expired link! Please register again'
+               } 
+               res.render('users/login',{message:req.session.message});
+         }
+         else {
+             const {uid, name,surname,fullname,address, mobile,photo,gender,dob,role,term,year,expdate,expStr,studentId,  email,prefix,suffix, password,} = decodedToken;
+             User.findOne({ uid: uid }).then(user => {
+                 if (user) {
+                     //------------ User already exists ------------//
+                 
+                     req.session.message = {
+                         type:'errors',
+                         message:'User already registered! Please log in.'
+                       }  
+                       res.render('users/login',{message:req.session.message});
+              
+                     
+                 }
+                 else  {      
+
+                   var user = new User();
+                   user.uid = uid;
+                   user.name = name;
+                   user.fullname = fullname;
+                   user.surname = surname;
+                   user.role = role;
+                   user.gender = gender;
+                   user.dob = dob;
+                   user.studentId = 'null'
+                   user.grade = 0;
+                   user.class1 = 'null';
+                   user.mobile = mobile;
+                   user.classLength = 0;
+                   user.studentNum = 0;
+                   user.uidNum = 0;
+                   user.teacherId = 'null';
+                   user.teacherName = 'null';
+                   user.classNo = 0
+                   user.examDate = 'null';
+                   user.feeStatus = 'null';
+                   user.feesUpdate = 'null';
+                   user.term = term;
+                   user.amount = 0;
+                   user.receiptNumber = 0;
+                   user.year = year;
+                   user.balance = 0;
+                   user.idNumber = 0
+                   user.idNumX = 0
+                   user.number = 0
+                   user.schoolName = 'null'
+                   user.balanceCarriedOver = 0;
+                   user.status = 'owing';
+                   user.paymentId = 'null';
+                   user.prefix = prefix;
+                   user.photo = "propic.jpg";
+                   user.level = 0;
+                   user.portalBalance = 0
+                   user.pollUrl ='null';
+                   user.annual = 0;
+                   user.fees = 0
+                   user.type = 'null';
+                   user.address = address;
+                   user.email = email
+                   user.category = 'null';
+                   user.subject = 0;
+                   user.subjects = 'null'
+                   user.subjectCode = 'null'
+                   user.dept = 'null';
+                   user.paynow = 0
+       
+                   user.expdate=expdate;
+                   user.expStr = expStr; 
+                   user.status3 = "null"
+                   user.pollUrl2 = "null"
+                   user.levelX = 'null';
+                   user.status4 = 'null';
+                   user.recNumber = 0
+                   user.suffix = 'null'
+                   user.count=0
+                   user.pollCount = 0
+                   user.actualCount = 0 
+                   user.possibleMark = 0;
+                   user.topic = 'null';
+                   user.startYear = year
+                   user.currentYearCount = 0
+                   user.stdYearCount = 0
+                   user.admissionYear = year
+                   user.icon = 'null'
+                   user.subjectNo = 0
+                   user.quizDuration = 0
+                   user.inboxNo = 0
+                   user.quizNo = 0
+                   user.quizBatch = 0
+                   user.quizId = 'null'
+                   user.testId = 'null'
+                   user.industry = 'null'
+                   user.children = 0
+                   user.parentId = "null"
+                   user.text = password
+                   user.password = user.encryptPassword(password)   
+                  
+                   user.save()
+                     .then(user =>{
+                      
+                     
+                         
+                       req.session.message = {
+                         type:'success',
+                         message:'Account Registered'
+                       }  
+                       res.render('users/login',{message:req.session.message});
+                     })
+                     .catch(err => console.log(err))
+                   }
+                   
+                     })
+                    }
+             });
+           }
+ });
+
+
+
+//change id number 
+//adding lessons to timetable
+router.get('/idEdit',isLoggedIn,records,function(req,res){
+ var pro = req.user
+ res.render('clerkRecords/idNum',{pro:pro})
+ 
+ })
+ 
+ router.post('/idEdit',isLoggedIn, records,function(req,res){
+      var pro = req.user
+ var idNumber = req.body.idNumber;
+ var id = req.user._id
+
+ 
+   req.check('idNumber','Enter ID Number').notEmpty();
+  
+  
+   var errors = req.validationErrors();
+   if (errors) {
+  
+     req.session.errors = errors;
+     req.session.success = false;
+     res.render('clerkRecords/idNum',{errors:req.session.errors,pro:pro})
+  
+   
+  }
+  else
+ User.findByIdAndUpdate(id,{$set:{idNumber:idNumber}},function(err,docs){
+   req.flash('success', 'ID sequence changed successfully');
+   res.redirect('/clerk/addStudent')
+ })
+
+ })
+
+
+
+ router.get('/idEditX',isLoggedIn,records,function(req,res){
+   var pro = req.user
+   res.render('clerkRecords/idNumX',{pro:pro})
+   
+   })
+   
+   router.post('/idEditX',isLoggedIn, records,function(req,res){
+        var pro = req.user
+   var idNumber = req.body.idNumber;
+   var id = req.user._id
+  
+   
+     req.check('idNumber','Enter ID Number').notEmpty();
+    
+    
+     var errors = req.validationErrors();
+     if (errors) {
+    
+       req.session.errors = errors;
+       req.session.success = false;
+       res.render('clerkRecords/idNumX',{errors:req.session.errors,pro:pro})
+    
+     
+    }
+    else
+   User.findByIdAndUpdate(id,{$set:{idNumber:idNumber}},function(err,docs){
+     req.flash('success', 'ID sequence changed successfully');
+     res.redirect('/clerk/addTeacher')
+   })
+ 
+   })
+
+
+
+   router.get('/idEditStaff',isLoggedIn,records,function(req,res){
+     var pro = req.user
+     res.render('clerkRecords/idNumStaff',{pro:pro})
+     
+     })
+     
+     router.post('/idEditStaff',isLoggedIn, records,function(req,res){
+          var pro = req.user
+     var idNumber = req.body.idNumber;
+     var id = req.user._id
+   
+     
+       req.check('idNumber','Enter ID Number').notEmpty();
+      
+      
+       var errors = req.validationErrors();
+       if (errors) {
+      
+         req.session.errors = errors;
+         req.session.success = false;
+         res.render('clerkRecords/idNumStaff',{errors:req.session.errors,pro:pro})
+      
+       
+      }
+      else
+     User.findByIdAndUpdate(id,{$set:{idNumber:idNumber}},function(err,docs){
+       req.flash('success', 'ID sequence changed successfully');
+       res.redirect('/clerk/addStaff')
+     })
+   
+     })
+   
+     
+//activate/deactivate users
+
+
+ router.get('/usr/activate/:id',isLoggedIn,records,function(req,res){
+   var count = req.user.count
+   var actualCount = req.user.actualCount
+   var id = req.params.id
+
+   if(count <= actualCount){
+     res.redirect('/clerk/studentList')
+   }
+   else
+
+
+User.findByIdAndUpdate(id,{$set:{status3:"activated",status4:"deactivate"}},function(err,docs){
+
+})
+res.redirect('/clerk/studentList')
+
+
+ })
+
+
+ router.get('/usr/deactivate/:id',isLoggedIn,records,function(req,res){
+   var count = req.user.count
+   var actualCount = req.user.actualCount
+
+id = req.params.id
+
+User.findByIdAndUpdate(id,{$set:{status3:"deactivated",status4:"activate"}},function(err,docs){
+
+})
+res.redirect('/clerk/studentList')
+
+
+ })
+
+ //adding departments
+
+router.get('/dept',isLoggedIn,records, function(req,res){
+ var pro = req.user
+ res.render('clerkRecords/dept',{pro:pro})
+})
+
+router.post('/dept',isLoggedIn,  function(req,res){
+    var pro = req.user
+ var name = req.body.name;
+
+
+     req.check('name','Enter Name Of Department').notEmpty();
+
+   
+     
+     var errors = req.validationErrors();
+          
+     if (errors) {
+     
+       req.session.errors = errors;
+       req.session.success = false;
+       res.render('clerkRecords/dept',{ errors:req.session.errors,pro:pro})
+     
+   }
+   else{
+     
+       Dept.findOne({'name':name})
+       .then(dept =>{
+           if(dept){ 
+ 
+          req.session.message = {
+           type:'errors',
+            message:'Department already exists'
+          }     
+             res.render('clerkRecords/dept', {
+                message:req.session.message ,pro:pro
+             })
+           }else
+   
+     var dep = new Dept();
+   
+     dep.name = name;
+   
+    
+  
+   
+   
+     dep.save()
+       .then(dep =>{
+        
+         req.session.message = {
+           type:'success',
+           message:'Department added'
+         }  
+         res.render('clerkRecords/dept',{message:req.session.message,pro:pro});
+     
+   
+     })
+   
+       .catch(err => console.log(err))
+     
+     
+     })
+   }
+   
+   
+})
+
+
+//department List
+router.get('/deptList',isLoggedIn,records, (req, res) => {
+ var pro = req.user
+
+ Dept.find({},(err, docs) => {
+     if (!err) {
+         res.render("clerkRecords/deptlist", {
+            list:docs,pro:pro
+           
+         });
+     }
+ });
+});
+
+
+
+
+
+////////////////////////// files & folders
+
+
+router.get('/files',isLoggedIn,records,function(req,res){
+  var pro = req.user
+
+  Class1.find({},function(err,docs){
+    res.render('clerkAdminStudentRecords/folders',{listX:docs,pro:pro})
+
+  })
+
+})
+
+
+/////////
+router.get('/studentReportsYear/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+//var year = req.params.id
+var id = req.params.id
+console.log(id,'id')
+var adminId = req.user._id
+Class1.findById(id,function(err,doc){
+console.log(doc,'doc')
+let class1 = doc.class1
+
+
+User.findByIdAndUpdate(adminId,{$set:{reportClass:class1,classReportId:id}},function(err,tocs){
+
+
+
+
+
+
+  res.render('clerkAdminStudentRecords/fileAssgtReportsYear',{id:id,pro:pro,class1:class1})
+
+})
+})
+})
+
+
+
+
+
+
+router.get('/studentReportsMonth/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var year = req.params.id
+var id = req.user.reportId
+var adminId = req.user._id
+var class1 = req.user.reportClass
+var classReportId =req.user.classReportId
+console.log(classReportId,'classId')
+
+
+User.findByIdAndUpdate(adminId,{$set:{reportYear:year}},function(err,klocs){
+
+
+
+
+
+
+  res.render('clerkAdminStudentRecords/fileAssgtReportsMonth',{id:id,year:year,pro:pro,class1:class1,classReportId:classReportId})
+
+})
+
+})
+
+
+////
+router.get('/studentMonthlyReportFiles/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var month = req.params.id
+var class1 =  req.user.reportClass
+var year = req.user.reportYear
+var adminId = req.user._id
+var classId = req.user.classReportId
+
+User.findByIdAndUpdate(adminId,{$set:{reportMonth:month}},function(err,klocs){
+
+
+
+Report.find({year:year,month:month,type:"Monthly Assessment",class1:class1},function(er,hocs){
+res.render('clerkAdminStudentRecords/filesMonthly',{year:year,listX:hocs,pro:pro,class1:class1,classId:classId,month:month,year:year})
+})
+
+})
+
+
+})
+
+
+router.get('/studentDownloadMonthlyReport/:id',isLoggedIn,records,function(req,res){
+var fileId = req.params.id
+
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+  res.set('Content-disposition', `attachment; filename="${filename}"`);
+  res.set('Content-Type', contentType);
+  bucket.openDownloadStreamByName(filename).pipe(res);
+})
+
+})
+
+
+router.get('/openMonthlyReport/:id',(req,res)=>{
+var fileId = req.params.id
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+
+  const readStream = bucket.openDownloadStream(files[0]._id);
+      readStream.pipe(res);
+
+})
+//gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+//student examfiles
+router.get('/examFiles',isLoggedIn,records,function(req,res){
+var pro = req.user
+
+Class1.find({},function(err,docs){
+res.render('clerkAdminStudentExamRecords/folders',{listX:docs,pro:pro})
+
+})
+
+})
+
+
+/////////
+router.get('/studentExamReportsYear/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+//var year = req.params.id
+var id = req.params.id
+console.log(id,'id')
+var adminId = req.user._id
+Class1.findById(id,function(err,doc){
+console.log(doc,'doc')
+let class1 = doc.class1
+
+
+User.findByIdAndUpdate(adminId,{$set:{reportClass:class1,classReportId:id}},function(err,tocs){
+
+
+
+
+
+
+res.render('clerkAdminStudentExamRecords/fileAssgtReportsYear',{id:id,pro:pro,class1:class1})
+
+})
+})
+})
+
+
+
+
+
+
+router.get('/studentExamReportsMonth/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var year = req.params.id
+var id = req.user.reportId
+var adminId = req.user._id
+var class1 = req.user.reportClass
+var classReportId =req.user.classReportId
+console.log(classReportId,'classId')
+
+
+User.findByIdAndUpdate(adminId,{$set:{reportYear:year}},function(err,klocs){
+
+
+
+
+
+
+res.render('clerkAdminStudentExamRecords/fileAssgtReportsMonth',{id:id,year:year,pro:pro,class1:class1,classReportId:classReportId})
+
+})
+
+})
+
+
+////
+router.get('/studentTermlyReportFiles/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var term = req.params.id
+var class1 =  req.user.reportClass
+var year = req.user.reportYear
+var adminId = req.user._id
+var classId = req.user.classReportId
+
+//User.findByIdAndUpdate(adminId,{$set:{reportMonth:month}},function(err,klocs){
+
+
+
+Report.find({year:year,term:term,type:"Final Exam",class1:class1},function(er,hocs){
+res.render('clerkAdminStudentExamRecords/filesMonthly',{year:year,listX:hocs,pro:pro,class1:class1,classId:classId,year:year,term:term})
+})
+
+//})
+
+
+})
+
+
+
+
+router.get('/studentDownloadTermlyReport/:id',isLoggedIn,records,function(req,res){
+var fileId = req.params.id
+
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+  res.set('Content-disposition', `attachment; filename="${filename}"`);
+  res.set('Content-Type', contentType);
+  bucket.openDownloadStreamByName(filename).pipe(res);
+})
+
+})
+
+
+
+router.get('/openStudentTermlyReport/:id',(req,res)=>{
+var fileId = req.params.id
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+
+  const readStream = bucket.openDownloadStream(files[0]._id);
+      readStream.pipe(res);
+
+})
+//gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+//teacher reports
+
+
+router.get('/teachersRepo',isLoggedIn,records,function(req,res){
+var pro = req.user
+
+User.find({role:"teacher"},function(err,docs){
+res.render('clerkAdminRecords/folders2',{listX:docs,pro:pro})
+
+})
+
+})
+
+
+router.get('/subjectFile/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+var arr = []
+
+User.findById(id,function(err,doc){
+if(doc){
+
+
+let uid = doc.uid
+let teacherName = doc.fullname
+TeacherSub.find({teacherId:uid},function(err,docs){
+  for(var i = 0;i<docs.length;i++){
+    
+ 
+      
+     if(arr.length > 0 && arr.find(value => value.subjectName == docs[i].subjectName)){
+            console.log('true')
+           arr.find(value => value.subjectName == docs[i].subjectName).year += docs[i].year;
+
+          }else{
+  arr.push(docs[i])
+
+
+          }
+  
+      
+      }
+
+      res.render('clerkAdminRecords/fileSubjects2',{listX:arr,pro:pro,id:id,teacherName:teacherName})
+
+})
+}
+})
+})
+
+
+
+
+router.get('/teacherClass/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+var arr = []
+
+TeacherSub.findById(id,function(err,doc){
+if(doc){
+
+
+let subjectCode = doc.subjectCode
+let uid = doc.teacherId
+let subject = doc.subjectName
+let teacherName = doc.teacherName
+User.find({uid:uid},function(err,ocs){
+
+
+let id2 = ocs[0]._id
+StudentSub.find({subjectCode:subjectCode},function(err,docs){
+  for(var i = 0;i<docs.length;i++){
+    
+ 
+      
+     if(arr.length > 0 && arr.find(value => value.class1 == docs[i].class1)){
+            console.log('true')
+           arr.find(value => value.class1 == docs[i].class1).year += docs[i].year;
+
+          }else{
+  arr.push(docs[i])
+
+
+          }
+  
+      
+      }
+
+      res.render('clerkAdminRecords/fileClass2',{listX:arr,pro:pro,id:id,id2:id2,subject:subject,teacherName:teacherName})
+
+})
+})
+}
+})
+})
+
+
+router.get('/teacherClassAssignment/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+var adminId = req.user._id
+
+StudentSub.findById(id,function(err,doc){
+if(doc){
+let class1 = doc.class1
+let subjectCode = doc.subjectCode
+let subject = doc.subjectName
+
+TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+User.find({uid:teacherId},function(err,nocs){
+let id2 = nocs[0]._id
+User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+User.findByIdAndUpdate(adminId,{$set:{reportId:id}},function(err,pvocs){
+
+})
+
+
+res.render('clerkAdminRecords/fileAssgt22',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+})
+})
+})
+}
+})
+})
+
+
+
+
+router.get('/teacherReportsYear/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var year = req.params.id
+var id = req.user.reportId
+var adminId = req.user._id
+console.log(year,id,"illest")
+StudentSub.findById(id,function(err,doc){
+if(doc){
+let class1 = doc.class1
+let subjectCode = doc.subjectCode
+let subject = doc.subjectName
+
+TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+User.find({uid:teacherId},function(err,nocs){
+let id2 = nocs[0]._id
+User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+User.findByIdAndUpdate(adminId,{$set:{year:year}},function(err,klops){
+
+})
+
+
+
+res.render('clerkAdminRecords/fileAssgtReports',{id:id,year:year,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+
+})
+})
+})
+}
+})
+})
+
+
+router.get('/teacherReports/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+
+StudentSub.findById(id,function(err,doc){
+if(doc){
+let class1 = doc.class1
+let subjectCode = doc.subjectCode
+let subject = doc.subjectName
+
+TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+User.find({uid:teacherId},function(err,nocs){
+let id2 = nocs[0]._id
+User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+
+//fileAssgtReportsYear
+res.render('clerkAdminRecords/fileAssgtReportsYear',{id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+
+})
+})
+})
+}
+})
+})
+
+
+
+router.get('/monthlyReports/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+var year = req.user.year
+
+StudentSub.findById(id,function(err,doc){
+if(doc){
+let class1 = doc.class1
+let subjectCode = doc.subjectCode
+let subject = doc.subjectName
+
+TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+User.find({uid:teacherId},function(err,nocs){
+let id2 = nocs[0]._id
+User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+Report2.find({subjectCode:subjectCode,year:year,type:"Monthly Assessment"},function(er,hocs){
+res.render('clerkAdminRecords/filesMonthly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+})
+
+})
+})
+})
+}
+})
+})
+
+
+
+
+router.get('/termlyReports/:id',isLoggedIn,records,function(req,res){
+var pro = req.user
+var id = req.params.id
+var year = req.user.year
+StudentSub.findById(id,function(err,doc){
+if(doc){
+let class1 = doc.class1
+let subjectCode = doc.subjectCode
+let subject = doc.subjectName
+
+TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
+let teacherId = hocs[0].teacherId
+let id3 = hocs[0]._id
+let teacherName = hocs[0].teacherName
+User.find({uid:teacherId},function(err,nocs){
+let id2 = nocs[0]._id
+User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+
+
+Report2.find({subjectCode:subjectCode,year:year,type:"Final Exam"},function(er,hocs){
+res.render('clerkAdminRecords/filesTermly',{year:year,listX:hocs,id:id,pro:pro,id2:id2,id3:id3,teacherName:teacherName,subject:subject,class1:class1})
+})
+
+})
+})
+})
+}
+})
+})
+
+
+router.get('/downloadMonthlyReport/:id',isLoggedIn,records,function(req,res){
+var fileId = req.params.id
+
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+  res.set('Content-disposition', `attachment; filename="${filename}"`);
+  res.set('Content-Type', contentType);
+  bucket.openDownloadStreamByName(filename).pipe(res);
+})
+
+})
+
+
+router.get('/downloadTermlyReport/:id',isLoggedIn,records,function(req,res){
+var fileId = req.params.id
+
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+  res.set('Content-disposition', `attachment; filename="${filename}"`);
+  res.set('Content-Type', contentType);
+  bucket.openDownloadStreamByName(filename).pipe(res);
+}) 
+
+})
+
+
+router.get('/openTermlyReport/:id',(req,res)=>{
+var fileId = req.params.id
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+
+  const readStream = bucket.openDownloadStream(files[0]._id);
+      readStream.pipe(res);
+
+})
+//gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+
+
+router.get('/openMonthlyReports/:id',(req,res)=>{
+var fileId = req.params.id
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+
+    const readStream = bucket.openDownloadStream(files[0]._id);
+        readStream.pipe(res);
+
+  })
+ //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+router.get('/teacherSubList',isLoggedIn,records, (req, res) => {
+   var pro = req.user
+
+  TeacherSub.find({},(err, docs) => {
+      if (!err) {
+          res.render("clerkRecords/teacherSubList", {
+             list:docs, pro:pro
+            
+          });
+      }
+  });
+});    
+
+
+
+
+
+
+
+
+router.get('/category',isLoggedIn,records, function(req,res){
+  var pro = req.user
+  res.render('subject/category',{pro:pro})
+})
+
+router.post('/category',isLoggedIn,  function(req,res){
+     var pro = req.user
+  var name = req.body.name;
+
+ 
+      req.check('name','Enter Category').notEmpty();
+
+    
+      
+      var errors = req.validationErrors();
+           
+      if (errors) {
+      
+        req.session.errors = errors;
+        req.session.success = false;
+        res.render('subject/category',{ errors:req.session.errors,pro:pro})
+      
+    }
+    else{
+      
+        ExpCategory.findOne({'name':name})
+        .then(dept =>{
+            if(dept){ 
+  
+           req.session.message = {
+            type:'errors',
+             message:'Category already exists'
+           }     
+              res.render('subject/category', {
+                 message:req.session.message ,pro:pro
+              })
+            }else
+    
+      var dep = new ExpCategory();
+    
+      dep.name = name;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+         
+          req.session.message = {
+            type:'success',
+            message:'Category added'
+          }  
+          res.render('subject/category',{message:req.session.message,pro:pro});
+      
+    
+      })
+    
+        .catch(err => console.log(err))
+      
+      
+      })
+    }
+    
+    
+})
+
+//allo month batch
+router.get('/alloMonthBatchInc',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('incStat/alloMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloMonthBatchInc',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var month = req.body.month
+  var year = req.body.year
+  var pro = req.user
+
+    
+    
+
+  req.check('month','Enter  Month').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/clerk/alloMonthBatchInc');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+      Month.findOne({'month':month})
+      .then(lock=>{
+        if(lock){
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:month}},function(err,docs){
+
+})
+IncStatement.find({month:month,year:year},function(err,locs){
+  for(var i = 0; i<locs.length;i++){
+    let id = locs[i]._id
+    IncStatement.findByIdAndRemove(id,function(err,vocs){
+
+    })
+  }
+})
+
+ 
+res.redirect('/clerk/incCat');
+        
+          
+          
+          
+        }
+      })
+
+    
+
+    
+    }else{
+
+      req.flash('danger', 'Month/Year dont exist');
+ 
+      res.redirect('/clerk/alloMonthBatchInc');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+
+router.get('/incCat',isLoggedIn,function(req,res){
+  
+
+  var m = moment()
+  var year = req.user.hostelYear
+  var month = req.user.hostelMonth
+  var arrD = []
+  let number1
+  var arr16=[]
+  var id = req.user._id
+
+  /*ExpCategory.find(function(err,locs){
+    //if(locs){
+      for(var i = 0;i<locs.length;i++){
+
+      
+     let category = locs[i].name*/
+  
+  
+     InvoiceSubBatch.find({year:year,month:month},function(err,docs) {
+      if(docs){
+
+    
+      //.log(docs,'docs')
+      for(var i = 0;i<docs.length;i++){
+  //size = docs.length
+     
+          
+         if(arrD.length > 0 && arrD.find(value => value.item == docs[i].item)){
+                console.log('true')
+               arrD.find(value => value.item == docs[i].item).total += docs[i].total;
+               
+              }else{
+      arrD.push(docs[i])
+
+
+          }
+  
+      
+      }
+ 
+
+    
+    console.log(arrD,'arr')
+    for(var i = 0;i< arrD.length;i++){
+
+    
+
+      var dep = new IncStatement();
+    
+      dep.category = arrD[i].item;
+      dep.type = "Ancome";
+      dep.month = month;
+      dep.year = year;
+      dep.total = arrD[i].total;
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+
+        })
+
+      }
+    }
+
+
+    for(var q = 0;q<arrD.length; q++){
+      
+      arr16.push(arrD[q].total)
+        }
+        //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+         number1=0;
+        for(var z in arr16) { number1 += arr16[z]; }
+
+
+
+        var inc = new IncStatement();
+    
+        
+        inc.type = "Ancome3";
+        inc.month = month;
+        inc.year = year;
+        inc.style = "border: 1;"
+        inc.total = number1
+      
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        inc.save()
+          .then(dep =>{
+    
+          })
+
+
+    var dep = new IncStatement();
+    
+    dep.category= "Income";
+    dep.type = "Anc";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+      res.redirect('/clerk/expCat')
+    })
+      /*}
+     
+  })*/
+  })
+  
+
+
+
+
+
+  router.get('/expCat',isLoggedIn,function(req,res){
+  
+
+    var m = moment()
+    var year = req.user.hostelYear
+    var month = req.user.hostelMonth
+    var arrD = []
+    let number1
+    var arr16=[]
+    var id = req.user._id
+  
+    /*ExpCategory.find(function(err,locs){
+      //if(locs){
+        for(var i = 0;i<locs.length;i++){
+  
+        
+       let category = locs[i].name*/
+    
+    
+      Expenses.find({year:year,month:month},function(err,docs) {
+        if(docs){
+  
+      
+        //.log(docs,'docs')
+        for(var i = 0;i<docs.length;i++){
+    //size = docs.length
+       
+            
+           if(arrD.length > 0 && arrD.find(value => value.category == docs[i].category)){
+                  console.log('true')
+                 arrD.find(value => value.category == docs[i].category).totalExpense += docs[i].totalExpense;
+                 
+                }else{
+        arrD.push(docs[i])
+  
+  
+            }
+    
+        
+        }
+   
+  
+      
+      console.log(arrD,'arr')
+      for(var i = 0;i< arrD.length;i++){
+  
+      
+  
+        var dep = new IncStatement();
+      
+        dep.category = arrD[i].category;
+        dep.type = "Expense";
+        dep.month = month;
+        dep.year = year;
+        dep.totalExpense = arrD[i].totalExpense;
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        dep.save()
+          .then(dep =>{
+  
+          })
+  
+        }
+      }
+  
+  
+      for(var q = 0;q<arrD.length; q++){
+        
+        arr16.push(arrD[q].totalExpense)
+          }
+          //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+           number1=0;
+          for(var z in arr16) { number1 += arr16[z]; }
+  
+  
+  
+          var inc = new IncStatement();
+      
+          
+          inc.type = "Expense3";
+          inc.month = month;
+          inc.year = year;
+          inc.style = "border: 1;"
+          inc.totalExpense = number1
+        
+          //dep.category = arrD[i].category;
+        
+         
+       
+        
+        
+          inc.save()
+            .then(dep =>{
+      
+            })
+  
+  
+      var dep = new IncStatement();
+      
+      dep.category= "Expenses";
+      dep.style = "font-weight: bold"
+      dep.type = "Expens";
+      dep.month = month;
+      dep.year = year;
+    
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+  
+        })
+
+        res.redirect('/clerk/profitLoss')
+      })
+        /*}
+       
+    })*/
+    })
+
+
+
+
+
+
+
+router.get('/profitLoss',function(req,res){
+  var m = moment()
+  var year = req.user.hostelYear
+  var month = req.user.hostelMonth
+
+  IncStatement.find({month:month,year:year,type:"Ancome3"},function(err,mocs){
+    let income = mocs[0].total
+  IncStatement.find({month:month,year:year,type:"Expense3"},function(err,pocs){
+    let expenses = pocs[0].totalExpense
+
+    //let net = income - expenses
+    let net = mocs[0].total - pocs[0].totalExpense
+
+    
+    var dep = new IncStatement();
+      
+    dep.category= "Profit/Loss";
+    dep.type = "Net";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+    dep.total = net
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+  })
+  res.redirect('/clerk/euritIncome')
+  })
+})
+
+  router.get('/euritIncome',isLoggedIn,function(req,res){
+    //console.log(arrSingleUpdate,'arrSingleUpdate')
+    var m = moment()
+    let dateValue = m.valueOf()
+    var mformat = m.format('L')
+    var year = req.user.hostelYear
+    var month = req.user.hostelMonth
+    //var term = req.user.term
+  
+    //console.log(docs,'docs')
+    
+  IncStatement.find({month:month,year:year}).lean().sort({"type":1}).then(docs=>{
+    const compile = async function (templateName, docs){
+    const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
+    
+    const html = await fs.readFile(filePath, 'utf8')
+    
+    return hbs.compile(html)(docs)
+    
+    };
+    
+    
+    
+    
+    (async function(){
+    
+    try{
+    //const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+    "--disable-setuid-sandbox",
+    "--no-sandbox",
+    "--single-process",
+    "--no-zygote",
+    ],
+    executablePath:
+    process.env.NODE_ENV === "production"
+      ? process.env.PUPPETEER_EXECUTABLE_PATH
+      : puppeteer.executablePath(),
+    });
+    
+    const page = await browser.newPage()
+    
+    
+    
+    //const content = await compile('report3',arr[uid])
+    const content = await compile('euritIncome',docs)
+    
+    //const content = await compile('index',arr[code])
+    
+    await page.setContent(content, { waitUntil: 'networkidle2'});
+    //await page.setContent(content)
+    //create a pdf document
+    await page.emulateMediaType('screen')
+    await page.evaluate(() => matchMedia('screen').matches);
+    await page.setContent(content, { waitUntil: 'networkidle0'});
+    //console.log(await page.pdf(),'7777')
+    
+    await page.pdf({
+    //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
+    path:(`./public/incStatements/monthly/${year}/${month}/income_statement_${month}`+'.pdf'),
+    format:"A4",
+    /*width:'30cm',
+    height:'21cm',*/
+    //height: height + 'px',
+    printBackground:true
+    
+    })
+
+let filename = `income_statement_${month}`+'.pdf'
+
+    var repo = new IncFiles();
+   
+    repo.filename = filename;
+    repo.fileId = "null";
+    repo.month = month;
+    repo.year = year;
+    
+    console.log('done')
+    
+    repo.save().then(poll =>{
+
+    })
+
+
+
+
+    const file = await fs.readFile(`./public/incStatements/monthly/${year}/${month}/income_statement_${month}`+'.pdf');
+    const form = new FormData();
+    form.append("file", file,filename);
+   //const headers = form.getHeaders();
+    //Axios.defaults.headers.cookie = cookies;
+    //console.log(form)
+  await Axios({
+      method: "POST",
+    //url: 'https://portal.steuritinternationalschool.org/clerk/uploadMonthInc',
+      url: 'http://localhost:9500/clerk/uploadMonthInc',
+      headers: {
+        "Content-Type": "multipart/form-data"  
+      },
+      data: form
+    });
+    
+    
+    req.flash('success', 'Income Statement Generated Successfully');
+      
+   res.redirect('/clerk/alloMonthBatchInc');
+     
+    
+    }catch(e) {
+    
+    console.log(e)
+    
+    
+    }
+    
+    
+    }) ()
+    
+    
+  })
+    
+   
+    
+    })
+    
+    
+
+
+
+    router.post('/uploadMonthInc',upload.single('file'),(req,res,nxt)=>{
+      var fileId = req.file.id
+      console.log(fileId,'fileId')
+      var filename = req.file.filename
+      console.log(filename,'filename')
+      IncFiles.find({filename:filename},function(err,docs){
+  if(docs.length>0){
+  
+  
+  
+    //console.log(docs,'docs')
+    let id = docs[0]._id
+    IncFiles.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+  
+    })
+  
+  }
+    res.redirect('/clerk/alloMonthBatchInc')
+  
+  
+  })
+  
+    })
+  
+
+
+
+///annual
+
+router.get('/alloYearBatchInc',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('incStat/alloYearBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloYearBatchInc',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var month = req.body.month
+  var year = req.body.year
+  var pro = req.user
+
+    
+    
+
+  req.check('month','Enter  Month').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/clerk/alloYearBatchInc');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+      Month.findOne({'month':month})
+      .then(lock=>{
+        if(lock){
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:month}},function(err,docs){
+
+})
+
+ 
+res.redirect('/clerk/incYearCat');
+        
+          
+          
+          
+        }
+      })
+
+    
+
+    
+    }else{
+
+      req.flash('danger', 'Month/Year dont exist');
+ 
+      res.redirect('/clerk/alloYearBatchInc');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+
+router.get('/incYearCat',isLoggedIn,function(req,res){
+  
+
+  var m = moment()
+  var year = req.user.hostelYear
+  var month = req.user.hostelMonth
+  var arrD = []
+  let number1
+  var arr16=[]
+  var id = req.user._id
+
+  /*ExpCategory.find(function(err,locs){
+    //if(locs){
+      for(var i = 0;i<locs.length;i++){
+
+      
+     let category = locs[i].name*/
+  
+  
+     InvoiceSubBatch.find({year:year,month:month},function(err,docs) {
+      if(docs){
+
+    
+      //.log(docs,'docs')
+      for(var i = 0;i<docs.length;i++){
+  //size = docs.length
+     
+          
+         if(arrD.length > 0 && arrD.find(value => value.item == docs[i].item)){
+                console.log('true')
+               arrD.find(value => value.item == docs[i].item).total += docs[i].total;
+               
+              }else{
+      arrD.push(docs[i])
+
+
+          }
+  
+      
+      }
+ 
+
+    
+    console.log(arrD,'arr')
+    for(var i = 0;i< arrD.length;i++){
+
+    
+
+      var dep = new IncStatement();
+    
+      dep.category = arrD[i].item;
+      dep.type = "Ancome";
+      dep.month = month;
+      dep.year = year;
+      dep.total = arrD[i].total;
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+
+        })
+
+      }
+    }
+
+
+    for(var q = 0;q<arrD.length; q++){
+      
+      arr16.push(arrD[q].total)
+        }
+        //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+         number1=0;
+        for(var z in arr16) { number1 += arr16[z]; }
+
+
+
+        var inc = new IncStatement();
+    
+        
+        inc.type = "Ancome3";
+        inc.month = month;
+        inc.year = year;
+        inc.style = "border: 1;"
+        inc.total = number1
+      
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        inc.save()
+          .then(dep =>{
+    
+          })
+
+
+    var dep = new IncStatement();
+    
+    dep.category= "Income";
+    dep.type = "Anc";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+      res.redirect('/clerk/expYearCat')
+    })
+      /*}
+     
+  })*/
+  })
+  
+
+
+
+
+
+  router.get('/expYearCat',isLoggedIn,function(req,res){
+  
+
+    var m = moment()
+    var year = req.user.hostelYear
+    var month = req.user.hostelMonth
+    var arrD = []
+    let number1
+    var arr16=[]
+    var id = req.user._id
+  
+    /*ExpCategory.find(function(err,locs){
+      //if(locs){
+        for(var i = 0;i<locs.length;i++){
+  
+        
+       let category = locs[i].name*/
+    
+    
+      Expenses.find({year:year,month:month},function(err,docs) {
+        if(docs){
+  
+      
+        //.log(docs,'docs')
+        for(var i = 0;i<docs.length;i++){
+    //size = docs.length
+       
+            
+           if(arrD.length > 0 && arrD.find(value => value.category == docs[i].category)){
+                  console.log('true')
+                 arrD.find(value => value.category == docs[i].category).totalExpense += docs[i].totalExpense;
+                 
+                }else{
+        arrD.push(docs[i])
+  
+  
+            }
+    
+        
+        }
+   
+  
+      
+      console.log(arrD,'arr')
+      for(var i = 0;i< arrD.length;i++){
+  
+      
+  
+        var dep = new IncStatement();
+      
+        dep.category = arrD[i].category;
+        dep.type = "Expense";
+        dep.month = month;
+        dep.year = year;
+        dep.totalExpense = arrD[i].totalExpense;
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        dep.save()
+          .then(dep =>{
+  
+          })
+  
+        }
+      }
+  
+  
+      for(var q = 0;q<arrD.length; q++){
+        
+        arr16.push(arrD[q].totalExpense)
+          }
+          //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+           number1=0;
+          for(var z in arr16) { number1 += arr16[z]; }
+  
+  
+  
+          var inc = new IncStatement();
+      
+          
+          inc.type = "Expense3";
+          inc.month = month;
+          inc.year = year;
+          inc.style = "border: 1;"
+          inc.totalExpense = number1
+        
+          //dep.category = arrD[i].category;
+        
+         
+       
+        
+        
+          inc.save()
+            .then(dep =>{
+      
+            })
+  
+  
+      var dep = new IncStatement();
+      
+      dep.category= "Expenses";
+      dep.style = "font-weight: bold"
+      dep.type = "Expens";
+      dep.month = month;
+      dep.year = year;
+    
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+  
+        })
+
+        res.redirect('/clerk/profitLossYear')
+      })
+        /*}
+       
+    })*/
+    })
+
+
+
+
+
+
+
+router.get('/profitLossYear',function(req,res){
+  var m = moment()
+  var year = req.user.hostelYear
+  var month = req.user.hostelMonth
+
+  IncStatement.find({month:month,year:year,type:"Ancome3"},function(err,mocs){
+    let income = mocs[0].total
+  IncStatement.find({month:month,year:year,type:"Expense3"},function(err,pocs){
+    let expenses = pocs[0].totalExpense
+
+    //let net = income - expenses
+    let net = mocs[0].total - pocs[0].totalExpense
+
+    
+    var dep = new IncStatement();
+      
+    dep.category= "Profit/Loss";
+    dep.type = "Net";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+    dep.total = net
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+  })
+  res.redirect('/clerk/euritYearIncome')
+  })
+})
+
+  router.get('/euritYearIncome',isLoggedIn,function(req,res){
+    //console.log(arrSingleUpdate,'arrSingleUpdate')
+    var m = moment()
+    let dateValue = m.valueOf()
+    var mformat = m.format('L')
+    var year = req.user.hostelYear
+    var month = req.user.hostelMonth
+    //var term = req.user.term
+  
+    //console.log(docs,'docs')
+    
+  IncStatement.find({year:year}).lean().sort({"type":1}).then(docs=>{
+    const compile = async function (templateName, docs){
+    const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
+    
+    const html = await fs.readFile(filePath, 'utf8')
+    
+    return hbs.compile(html)(docs)
+    
+    };
+    
+    
+    
+    
+    (async function(){
+    
+    try{
+    //const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+    "--disable-setuid-sandbox",
+    "--no-sandbox",
+    "--single-process",
+    "--no-zygote",
+    ],
+    executablePath:
+    process.env.NODE_ENV === "production"
+      ? process.env.PUPPETEER_EXECUTABLE_PATH
+      : puppeteer.executablePath(),
+    });
+    
+    const page = await browser.newPage()
+    
+    
+    t
+    //const content = await compile('report3',arr[uid])
+    const content = await compile('euritIncome',docs)
+    
+    //const content = await compile('index',arr[code])
+    
+    await page.setContent(content, { waitUntil: 'networkidle2'});
+    //await page.setContent(content)
+    //create a pdf document
+    await page.emulateMediaType('screen')
+    await page.evaluate(() => matchMedia('screen').matches);
+    await page.setContent(content, { waitUntil: 'networkidle0'});
+    //console.log(await page.pdf(),'7777')
+    
+    await page.pdf({
+    //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
+    path:(`./public/incStatements/annual/${year}/income_statement_${year}`+'.pdf'),
+    format:"A4",
+    /*width:'30cm',
+    height:'21cm',*/
+    //height: height + 'px',
+    printBackground:true
+    
+    })
+    
+let filename = `income_statement_${year}`+'.pdf'
+
+    var repo = new IncFiles();
+   
+    repo.filename = filename;
+    repo.fileId = "null";
+   
+    repo.year = year;
+    
+    console.log('done')
+    
+    repo.save().then(poll =>{
+
+    })
+
+
+
+
+    const file = await fs.readFile(`./public/incStatements/annual/${year}/income_statement_${year}`+'.pdf');
+    const form = new FormData();
+    form.append("file", file,filename);
+   //const headers = form.getHeaders();
+    //Axios.defaults.headers.cookie = cookies;
+    //console.log(form)
+  await Axios({
+      method: "POST",
+    //url: 'https://portal.steuritinternationalschool.org/clerk/uploadMonthInc',
+      url: 'http://localhost:9500/clerk/uploadYearInc',
+      headers: {
+        "Content-Type": "multipart/form-data"  
+      },
+      data: form
+    });
+    
+    
+    req.flash('success', 'Income Statement Generated Successfully');
+      
+   res.redirect('/clerk/alloYearInc');
+     
+    
+    }catch(e) {
+    
+    console.log(e)
+    
+    
+    }
+    
+    
+    }) ()
+    
+    
+  })
+    
+   
+    
+    })
+    
+    
+
+
+
+    router.post('/uploadYearInc',upload.single('file'),(req,res,nxt)=>{
+      var fileId = req.file.id
+      console.log(fileId,'fileId')
+      var filename = req.file.filename
+      console.log(filename,'filename')
+      IncFiles.find({filename:filename},function(err,docs){
+  if(docs.length>0){
+  
+  
+  
+    //console.log(docs,'docs')
+    let id = docs[0]._id
+    IncFiles.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+  
+    })
+  
+  }
+    res.redirect('/clerk/alloYearBatchInc')
+  
+  
+  })
+  
+    })
+  
+
+
+
+
+//termly
+
+router.get('/alloTermlyBatchInc',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('incStat/alloYearBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloTermlyBatchInc',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var term = req.body.term
+  var year = req.body.year
+  var pro = req.user
+
+    
+    
+
+  req.check('term','Enter  Term').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/clerk/alloTermBatchInc');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+     /* Month.findOne({'month':month})
+      .then(lock=>{
+        if(lock){*/
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term}},function(err,docs){
+
+})
+
+ 
+res.redirect('/clerk/incTermCat');
+        
+          
+          
+          
+        /*}
+      })*/
+
+    
+
+    
+    }else{
+
+      req.flash('danger', 'Month/Year dont exist');
+ 
+      res.redirect('/clerk/alloTermBatchInc');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+
+router.get('/incTermCat',isLoggedIn,function(req,res){
+  
+
+  var m = moment()
+  var year = req.user.hostelYear
+  var term= req.user.hostelTerm
+  var arrD = []
+  let number1
+  var arr16=[]
+  var id = req.user._id
+
+  /*ExpCategory.find(function(err,locs){
+    //if(locs){
+      for(var i = 0;i<locs.length;i++){
+
+      
+     let category = locs[i].name*/
+  
+  
+     InvoiceSubBatch.find({year:year,term:term},function(err,docs) {
+      if(docs){
+
+    
+      //.log(docs,'docs')
+      for(var i = 0;i<docs.length;i++){
+  //size = docs.length
+     
+          
+         if(arrD.length > 0 && arrD.find(value => value.item == docs[i].item)){
+                console.log('true')
+               arrD.find(value => value.item == docs[i].item).total += docs[i].total;
+               
+              }else{
+      arrD.push(docs[i])
+
+
+          }
+  
+      
+      }
+ 
+
+    
+    console.log(arrD,'arr')
+    for(var i = 0;i< arrD.length;i++){
+
+    
+
+      var dep = new IncStatement();
+    
+      dep.category = arrD[i].item;
+      dep.type = "Ancome";
+      dep.month = month;
+      dep.year = year;
+      dep.total = arrD[i].total;
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+
+        })
+
+      }
+    }
+
+
+    for(var q = 0;q<arrD.length; q++){
+      
+      arr16.push(arrD[q].total)
+        }
+        //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+         number1=0;
+        for(var z in arr16) { number1 += arr16[z]; }
+
+
+
+        var inc = new IncStatement();
+    
+        
+        inc.type = "Ancome3";
+        inc.month = month;
+        inc.year = year;
+        inc.style = "border: 1;"
+        inc.total = number1
+      
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        inc.save()
+          .then(dep =>{
+    
+          })
+
+
+    var dep = new IncStatement();
+    
+    dep.category= "Income";
+    dep.type = "Anc";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+      res.redirect('/clerk/exTermCat')
+    })
+      /*}
+     
+  })*/
+  })
+  
+
+
+
+
+
+  router.get('/expTermCat',isLoggedIn,function(req,res){
+  
+
+    var m = moment()
+    var year = req.user.hostelYear
+    var term = req.user.hostelTerm
+    var arrD = []
+    let number1
+    var arr16=[]
+    var id = req.user._id
+  
+    /*ExpCategory.find(function(err,locs){
+      //if(locs){
+        for(var i = 0;i<locs.length;i++){
+  
+        
+       let category = locs[i].name*/
+    
+    
+      Expenses.find({year:year,term:term},function(err,docs) {
+        if(docs){
+  
+      
+        //.log(docs,'docs')
+        for(var i = 0;i<docs.length;i++){
+    //size = docs.length
+       
+            
+           if(arrD.length > 0 && arrD.find(value => value.category == docs[i].category)){
+                  console.log('true')
+                 arrD.find(value => value.category == docs[i].category).totalExpense += docs[i].totalExpense;
+                 
+                }else{
+        arrD.push(docs[i])
+  
+  
+            }
+    
+        
+        }
+   
+  
+      
+      console.log(arrD,'arr')
+      for(var i = 0;i< arrD.length;i++){
+  
+      
+  
+        var dep = new IncStatement();
+      
+        dep.category = arrD[i].category;
+        dep.type = "Expense";
+        dep.month = month;
+        dep.year = year;
+        dep.totalExpense = arrD[i].totalExpense;
+        //dep.category = arrD[i].category;
+      
+       
+     
+      
+      
+        dep.save()
+          .then(dep =>{
+  
+          })
+  
+        }
+      }
+  
+  
+      for(var q = 0;q<arrD.length; q++){
+        
+        arr16.push(arrD[q].totalExpense)
+          }
+          //adding all incomes from all lots of the same batch number & growerNumber & storing them in variable called total
+           number1=0;
+          for(var z in arr16) { number1 += arr16[z]; }
+  
+  
+  
+          var inc = new IncStatement();
+      
+          
+          inc.type = "Expense3";
+          inc.month = month;
+          inc.year = year;
+          inc.style = "border: 1;"
+          inc.totalExpense = number1
+        
+          //dep.category = arrD[i].category;
+        
+         
+       
+        
+        
+          inc.save()
+            .then(dep =>{
+      
+            })
+  
+  
+      var dep = new IncStatement();
+      
+      dep.category= "Expenses";
+      dep.style = "font-weight: bold"
+      dep.type = "Expens";
+      dep.month = month;
+      dep.year = year;
+    
+      //dep.category = arrD[i].category;
+    
+     
+   
+    
+    
+      dep.save()
+        .then(dep =>{
+  
+        })
+
+        res.redirect('/clerk/profitLossTerm')
+      })
+        /*}
+       
+    })*/
+    })
+
+
+
+
+
+
+
+router.get('/profitLossYear',function(req,res){
+  var m = moment()
+  var year = req.user.hostelYear
+  var term = req.user.hostelTerm
+
+  IncStatement.find({term:term,year:year,type:"Ancome3"},function(err,mocs){
+    let income = mocs[0].total
+  IncStatement.find({term:term,year:year,type:"Expense3"},function(err,pocs){
+    let expenses = pocs[0].totalExpense
+
+    //let net = income - expenses
+    let net = mocs[0].total - pocs[0].totalExpense
+
+    
+    var dep = new IncStatement();
+      
+    dep.category= "Profit/Loss";
+    dep.type = "Net";
+    dep.style = "font-weight: bold"
+    dep.month = month;
+    dep.year = year;
+    dep.total = net
+  
+    //dep.category = arrD[i].category;
+  
+   
+ 
+  
+  
+    dep.save()
+      .then(dep =>{
+
+      })
+  })
+  res.redirect('/clerk/euritTermIncome')
+  })
+})
+
+  router.get('/euritTermIncome',isLoggedIn,function(req,res){
+    //console.log(arrSingleUpdate,'arrSingleUpdate')
+    var m = moment()
+    let dateValue = m.valueOf()
+    var mformat = m.format('L')
+    var year = req.user.hostelYear
+    var term = req.user.hostelTerm
+    //var term = req.user.term
+  
+    //console.log(docs,'docs')
+    
+  IncStatement.find({term:term,year:year}).lean().sort({"type":1}).then(docs=>{
+    const compile = async function (templateName, docs){
+    const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
+    
+    const html = await fs.readFile(filePath, 'utf8')
+    
+    return hbs.compile(html)(docs)
+    
+    };
+    
+    
+    
+    
+    (async function(){
+    
+    try{
+    //const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+    "--disable-setuid-sandbox",
+    "--no-sandbox",
+    "--single-process",
+    "--no-zygote",
+    ],
+    executablePath:
+    process.env.NODE_ENV === "production"
+      ? process.env.PUPPETEER_EXECUTABLE_PATH
+      : puppeteer.executablePath(),
+    });
+    
+    const page = await browser.newPage()
+    
+    
+    t
+    //const content = await compile('report3',arr[uid])
+    const content = await compile('euritIncome',docs)
+    
+    //const content = await compile('index',arr[code])
+    
+    await page.setContent(content, { waitUntil: 'networkidle2'});
+    //await page.setContent(content)
+    //create a pdf document
+    await page.emulateMediaType('screen')
+    await page.evaluate(() => matchMedia('screen').matches);
+    await page.setContent(content, { waitUntil: 'networkidle0'});
+    //console.log(await page.pdf(),'7777')
+    
+    await page.pdf({
+    //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
+    path:(`./public/incStatements/termly/${year}/${term}/income_statement_term_${term}`+'.pdf'),
+    format:"A4",
+    /*width:'30cm',
+    height:'21cm',*/
+    //height: height + 'px',
+    printBackground:true
+    
+    })
+    
+     
+let filename = `income_statement_term_${term}`+'.pdf'
+
+var repo = new IncFiles();
+
+repo.filename = filename;
+repo.fileId = "null";
+repo.term = term
+repo.year = year;
+
+console.log('done')
+
+repo.save().then(poll =>{
+
+})
+
+
+
+
+const file = await fs.readFile(`./public/incStatements/termly/${year}/${term}/income_statement_term_${term}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+//url: 'https://portal.steuritinternationalschool.org/clerk/uploadMonthInc',
+  url: 'http://localhost:9500/clerk/uploadTermInc',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
+
+
+req.flash('success', 'Income Statement Generated Successfully');
+  
+res.redirect('/clerk/alloTermInc');
+ 
+
+}catch(e) {
+
+console.log(e)
+
+
+}
+
+
+}) ()
+
+
+})
+
+
+
+})
+
+
+
+
+
+router.post('/uploadTermInc',upload.single('file'),(req,res,nxt)=>{
+  var fileId = req.file.id
+  console.log(fileId,'fileId')
+  var filename = req.file.filename
+  console.log(filename,'filename')
+  IncFiles.find({filename:filename},function(err,docs){
+if(docs.length>0){
+
+
+
+//console.log(docs,'docs')
+let id = docs[0]._id
+IncFiles.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+
+})
+
+}
+res.redirect('/clerk/alloTermBatchInc')
+
+
+})
+
+})
+
+router.get('/incFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+  res.render('incReg/file',{pro:pro})
+})
+
+
+
+  router.get('/folderIncReg',isLoggedIn,function(req,res){
+    var pro = req.user
+    var id = req.user._id
+   
+  
+            res.render('incReg/folders2',{pro:pro,id:id,})
+   
+  })
+
+
+  router.get('/folderYearIncReg/',isLoggedIn,function(req,res){
+    var pro = req.user
+    var id = req.params.id
+    var uid = req.user._id
+    var arr = []
+  
+   /* User.findByIdAndUpdate(uid,{$set:{hostelFolder:'annual'}},function(err,locs){
+  
+    })*/
+  
+  
+    Year.find({}).sort({year:1}).then(docs=>{
+       
+            res.render('incReg/fileClass2',{listX:docs,pro:pro})
+  
+          
+    })
+  })
+
+
+//files
+router.get('/viewAnnualIncFile/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var pro = req.user
+  var hostel = req.user.hostel
+  var floor = req.user.hostelFloor
+  
+Year.findById(id,function(err,loc){
+  if(loc){
+
+
+  let year = loc.year
+  
+
+   IncFiles.find({year:year},function(err,docs){
+     if(docs){
+
+   
+
+
+
+res.render('incReg/files2',{listX:docs,year:year,pro:pro,id:id})
+}
+})
+    
+}
+  })
+
+})
+//download voucher annual file
+router.get('/downloadAnnualIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+  
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+  console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+    res.set('Content-disposition', `attachment; filename="${filename}"`);
+    res.set('Content-Type', contentType);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  })
+ //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+
+router.get('/openAnnualIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+
+
+
+//termly
+
+
+router.get('/folderTermIncReg/',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+
+ /* User.findByIdAndUpdate(uid,{$set:{hostelFolder:'annual'}},function(err,locs){
+
+  })*/
+
+
+  Year.find({}).sort({year:1}).then(docs=>{
+     
+          res.render('incReg/fileClass3',{listX:docs,pro:pro})
+
+        
+  })
+})
+
+//
+
+
+
+//////x2
+
+router.get('/incSelectTermFolderReg/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+  User.findByIdAndUpdate(uid,{$set:{hostelYear:id}},function(err,locs){
+
+  })
+
+
+     
+          res.render('incReg/term',{pro:pro,year:id})
+
+        
+  
+})
+
+
+////view files
+router.get('/viewTermlyIncFile/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var pro = req.user
+  var hostel = req.user.hostel
+  var year = req.user.hostelYear
+  
+
+  
+
+   IncFiles.find({year:year,term:id},function(err,docs){
+     if(docs){
+
+   
+
+
+
+res.render('incReg/filesTerm',{listX:docs,pro:pro,id:id,year:year})
+}
+})
+    
+
+
+})
+//
+
+
+//download voucher annual file
+
+  
+router.get('/downloadTermlyIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+  
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+  console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+    res.set('Content-disposition', `attachment; filename="${filename}"`);
+    res.set('Content-Type', contentType);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  })
+ //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+
+
+router.get('/openTermlyIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+
+
+
+
+
+
+
+//monthly
+
+router.get('/folderMonthlyIncReg/',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+
+ /* User.findByIdAndUpdate(uid,{$set:{hostelFolder:'annual'}},function(err,locs){
+
+  })*/
+
+
+  Year.find({}).sort({year:1}).then(docs=>{
+     
+          res.render('incReg/fileMonthly',{listX:docs,pro:pro})
+
+        
+  })
+})
+
+
+////
+router.get('/incSelectMonthFolderReg/:id',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+  User.findByIdAndUpdate(uid,{$set:{hostelYear:id}},function(err,locs){
+
+  })
+
+  Month.find({}).sort({num:1}).then(docs=>{
+     
+          res.render('incReg/month',{pro:pro,listX:docs,id:id})
+
+  })
+  
+})
+
+router.get('/viewMonthlyIncFile/:id',isLoggedIn,function(req,res){
+  var id = req.params.id
+  var pro = req.user
+
+  var year = req.user.hostelYear
+
+  
+
+   IncFiles.find({year:year,month:id},function(err,docs){
+     if(docs){
+
+   
+
+
+
+res.render('incReg/filesMonth',{listX:docs,pro:pro,id:id,year:year})
+}
+})
+    
+
+
+})
+
+
+  
+router.get('/downloadMonthlyIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+  
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+  console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+    res.set('Content-disposition', `attachment; filename="${filename}"`);
+    res.set('Content-Type', contentType);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  })
+ //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+
+
+router.get('/openMonthlyIncReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+
+
+//attendance repo
+
+  router.get('/folderRegFiles',isLoggedIn,function(req,res){
+    var pro = req.user
+    var id = req.params.id
+    var uid = req.user._id
+    var class1 = req.user.class1
+    var arr = []
+    var m = moment()
+      var year = m.format('YYYY')
+   
+      res.render('attRepo/fileAssgt2',{id:id,pro:pro,class1:class1})
+  
+  
+    
+  })
+  
+  router.get('/classAtt',isLoggedIn,function(req,res){
+    var pro = req.user
+  
+    Class1.find({},function(err,docs){
+      res.render('attRepo/folders',{listX:docs,pro:pro})
+  
+    })
+  
+  })
+  router.get('/typeFolderClassMonthlyRegFiles/:id',isLoggedIn,function(req,res){
+    var pro = req.user
+    var id = req.params.id
+    var uid = req.user._id
+    var arr = []
+    var m = moment()
+      var year = m.format('YYYY')
+    User.findByIdAndUpdate(uid,{$set:{class1:id}},function(err,locs){
+  
+    })
+  
+    Month.find({}).sort({num:1}).then(docs=>{
+       
+            res.render('attRepo/month',{pro:pro,listX:docs,id:id})
+  
+    })
+    
+  })
+  
+  
+  
+  
+  
+  
+  
+  router.get('/typeFolderMonthlyRegFiles/:id',isLoggedIn,function(req,res){
+    var arr = []
+    var month = req.params.id
+    var errorMsg = req.flash('danger')[0];
+    var successMsg = req.flash('success')[0];
+     var term = req.user.term
+     var m = moment()
+     var pro = req.user
+     var class1 = req.user.class1
+     var year = m.format('YYYY')
+  
+     var date = req.user.invoCode
+   ReportAtt.find({year:year,month:month,class1:class1},function(err,docs){
+       if(docs){
+   
+     
+        let arr=[]
+        for(var i = docs.length - 1; i>=0; i--){
+    
+          arr.push(docs[i])
+        }
+   
+   
+   res.render('attRepo/filesTerm2',{listX:arr,class1:class1,month:month,pro:pro,year:year,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+   }
+   })
+      
+   })
+   
+  
+  
+  
+  router.get('/typeFolderDailyRegFiles/',isLoggedIn,function(req,res){
+   var arr = []
+   var errorMsg = req.flash('danger')[0];
+   var successMsg = req.flash('success')[0];
+    var term = req.user.term
+    var m = moment()
+    var pro = req.user
+    var year = m.format('YYYY')
+    var month = m.format('MMMM')
+    var date = req.user.invoCode
+  ReportAtt.find({year:year,date:date},function(err,docs){
+      if(docs){
+  
+    
+       let arr=[]
+       for(var i = docs.length - 1; i>=0; i--){
+   
+         arr.push(docs[i])
+       }
+  
+  
+  res.render('attRepo/filesTerm',{listX:arr,pro:pro,year:year,term:term,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+  }
+  })
+     
+  })
+  
+  
+  
+  router.get('/downloadDailyAttReport/:id',(req,res)=>{
+    var fileId = req.params.id
+    
+  
+  
+  //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+    console.log(files[0].filename,'files9')
+  let filename = files[0].filename
+  let contentType = files[0].contentType
+  
+  
+      res.set('Content-disposition', `attachment; filename="${filename}"`);
+      res.set('Content-Type', contentType);
+      bucket.openDownloadStreamByName(filename).pipe(res);
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+  
+  
+  
+  router.get('/openDailyAttReport/:id',(req,res)=>{
+    var fileId = req.params.id
+      const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+      gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+      
+    
+        const readStream = bucket.openDownloadStream(files[0]._id);
+            readStream.pipe(res);
+    
+      })
+     //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+    })
+  
+
+
 module.exports = router;
 
 
@@ -11830,7 +23431,12 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-
+function adminX(req,res,next){
+  if(req.user.role == "clerk"){
+    return next()
+  }
+  res.render('errors/access')
+  }  
 
 function clerk(req,res,next){
     if(req.user.role == "clerk"){
@@ -11838,3 +23444,12 @@ function clerk(req,res,next){
     }
     res.render('errors/access')
     }  
+
+
+
+    function records(req,res,next){
+      if(req.user.role == "clerk"){
+        return next()
+      }
+      res.render('errors/access')
+      }  

@@ -141,6 +141,8 @@ var userSchema = new mongoose.Schema({
     studentNumber:{type:Number},
     invoiceGrade:{type:String},
     sibling:{type:String},
+    truckCode:{type:String},
+    truckId:{type:String},
     
 });
 

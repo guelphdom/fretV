@@ -16,6 +16,10 @@ var schema = new Schema({
     price: {type: Number, required: true},
     grossPrice: {type: Number},
     amountsIncludeVat: {type: String},
+    quantity: {type: Number, required: true},
+    openingQuantity: {type: Number},
+    rcvdQuantity: {type: Number},
+ 
     purchasedForResale: {type: String},
  
 });
